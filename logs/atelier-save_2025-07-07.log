@@ -244,3 +244,162 @@ sent 223431 bytes  received 1166 bytes  17144809 bytes/sec
 total size is 217741  speedup is 0.97
 [2025-07-07 23:32:26] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26
 [2025-07-07 23:32:26] [STEP] Committing and pushing to main repository...
+[main 18c33e8] 🎉 Creato atelier-save.sh - Script completo automazione versioning
+ Committer: PAOLO RICALDONE <paoloricaldone@PAOLOsMacStudio.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 49 files changed, 6795 insertions(+), 1 deletion(-)
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/SNAPSHOT_INFO.txt
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/atelier-backup.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/atelier-save.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/backup-manager.sh
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/docs/blueprint-v2.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/docs/cheat-sheet-versioning.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/frontend/css/style.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/frontend/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/frontend/js/app.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/.env
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/.env.example
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/eslint.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/package.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/postcss.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/public/vite.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/App.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/assets/react.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/layout/Layout.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/layout/Navbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/layout/Sidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/layout/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/ui/Button.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/ui/Card.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/ui/Input.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/components/ui/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/config/constants.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/config/openai.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/config/supabase.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/index.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/main.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/modules/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/modules/project-start/ProjectStart.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/modules/project-tracker/ProjectTracker.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/modules/visual-canvas/VisualCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/store/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/src/store/useStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/tailwind.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-07_23-32-26/webapp/vite.config.js
+ create mode 100644 logs/atelier-save_report_2025-07-07_23-31-09.txt
+[2025-07-07 23:32:26] [SUCCESS] Committed with message: 🎉 Creato atelier-save.sh - Script completo automazione versioning
+To https://github.com/PRicaldone/atelier.git
+   2d5d17c..18c33e8  main -> main
+[2025-07-07 23:32:28] [SUCCESS] Pushed to remote repository
+[2025-07-07 23:32:28] [STEP] Checking if weekly backup is needed...
+[2025-07-07 23:32:28] [INFO] Today is not Friday. Skipping weekly backup creation.
+[2025-07-07 23:32:28] [STEP] Pushing backups to backup repository...
+[2025-07-07 23:32:28] [INFO] No backups to push
+[2025-07-07 23:32:28] [STEP] Generating operation report...
+[2025-07-07 23:32:28] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-07_23-32-26.txt
+[2025-07-07 23:32:28] [SUCCESS] atelier-save.sh completed successfully! 🎉
+[2025-07-07 23:32:28] [INFO] Cleaning up temporary files...
+[2025-07-07 23:38:37] [INFO] Starting atelier-save.sh v2.0
+[2025-07-07 23:38:37] [INFO] Custom commit message: ✅ Test script enterprise
+[2025-07-07 23:38:37] [STEP] Checking prerequisites...
+[2025-07-07 23:38:37] [SUCCESS] Prerequisites check passed
+[2025-07-07 23:38:37] [STEP] Checking git repository status...
+[2025-07-07 23:38:37] [WARNING] Repository has uncommitted changes. They will be included in the commit.
+[2025-07-07 23:38:38] [SUCCESS] Git status check passed
+[2025-07-07 23:38:38] [STEP] Creating local snapshot in ATELIER-VERSIONS...
+Transfer starting: 71 files
+./
+.gitignore
+README.md
+atelier-backup.sh
+atelier-save.sh
+backup-manager.sh
+package-lock.json
+backend/
+backend/functions/
+docs/
+docs/blueprint-v2.1.md
+docs/cheat-sheet-versioning.md
+docs/progress-notes/
+docs/tech-specs/
+frontend/
+frontend/index.html
+frontend/css/
+frontend/css/style.css
+frontend/js/
+frontend/js/app.js
+webapp/
+webapp/.env
+webapp/.env.example
+webapp/.gitignore
+webapp/README.md
+webapp/eslint.config.js
+webapp/index.html
+webapp/package-lock.json
+webapp/package.json
+webapp/postcss.config.js
+webapp/tailwind.config.js
+webapp/vite.config.js
+webapp/public/
+webapp/public/vite.svg
+webapp/src/
+webapp/src/App.jsx
+webapp/src/index.css
+webapp/src/main.jsx
+webapp/src/assets/
+webapp/src/assets/react.svg
+webapp/src/components/
+webapp/src/components/layout/
+webapp/src/components/layout/Layout.jsx
+webapp/src/components/layout/Navbar.jsx
+webapp/src/components/layout/Sidebar.jsx
+webapp/src/components/layout/index.js
+webapp/src/components/ui/
+webapp/src/components/ui/Button.jsx
+webapp/src/components/ui/Card.jsx
+webapp/src/components/ui/Input.jsx
+webapp/src/components/ui/index.js
+webapp/src/config/
+webapp/src/config/constants.js
+webapp/src/config/openai.js
+webapp/src/config/supabase.js
+webapp/src/hooks/
+webapp/src/modules/
+webapp/src/modules/index.js
+webapp/src/modules/business-switcher/
+webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+webapp/src/modules/project-start/
+webapp/src/modules/project-start/ProjectStart.jsx
+webapp/src/modules/project-tracker/
+webapp/src/modules/project-tracker/ProjectTracker.jsx
+webapp/src/modules/visual-canvas/
+webapp/src/modules/visual-canvas/VisualCanvas.jsx
+webapp/src/services/
+webapp/src/store/
+webapp/src/store/index.js
+webapp/src/store/useStore.js
+webapp/src/utils/
+
+sent 223431 bytes  received 1166 bytes  14873973 bytes/sec
+total size is 217741  speedup is 0.97
+[2025-07-07 23:38:38] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-07_23-38-37
+[2025-07-07 23:38:38] [STEP] Committing and pushing to main repository...
