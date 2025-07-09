@@ -319,7 +319,6 @@ cp -R ATELIER-VERSIONS/snapshot_* ./emergency-recovery/
 # ✅ Buoni esempi - Fix e ottimizzazioni
 ./atelier-save.sh "🔧 Refactor: Ottimizzata performance canvas"
 ./atelier-save.sh "🐛 Fix: Risolto crash su iOS Safari"
-./atelier-save.sh "🐛 Debug breadcrumb sync avanzato - aggiunto logging dettagliato per identificare problema persistente"  # Latest real example
 ./atelier-save.sh "🔧 Implementato sistema di persistenza unificato per nested boards - risolto problema perdita dati"
 ./atelier-save.sh "⚡ Performance: Ridotto timeout auto-save da 1000ms a 500ms"
 
@@ -391,4 +390,4 @@ find ATELIER-VERSIONS/ -mtime +30 -exec rm -rf {} \;  # Rimuovi >30gg
   - 🧪 Test e verifica
 
 *🎨 Atelier Versioning System v2.1 - Enhanced with Critical Fix Patterns*  
-*Ultimo aggiornamento: July 2025*
+*Ultimo aggiornamento: Luglio 2025*
