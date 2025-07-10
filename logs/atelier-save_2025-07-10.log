@@ -1211,3 +1211,114 @@ sent 471837 bytes  received 1712 bytes  24793141 bytes/sec
 total size is 463079  speedup is 0.98
 [2025-07-10 13:26:06] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05
 [2025-07-10 13:26:06] [STEP] Committing and pushing to main repository...
+[main 25442f5] 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+ Committer: PAOLO RICALDONE <paoloricaldone@PAOLOsMacStudio.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 77 files changed, 13939 insertions(+), 14 deletions(-)
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/ATELIER-RESUME-COMMAND.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/CLAUDE.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/CLAUDE.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/SNAPSHOT_INFO.txt
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/atelier-backup.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/atelier-save.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/backup-manager.sh
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/docs/blueprint-v2.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/docs/blueprint-v2.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/docs/cheat-sheet-versioning.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/docs/cheat-sheet-versioning.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/docs/tech-specs/persistence-system-v2.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/frontend/css/style.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/frontend/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/frontend/js/app.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/.env
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/.env.example
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/eslint.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/package.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/postcss.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/public/vite.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/App.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/assets/react.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/layout/Layout.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/layout/Navbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/layout/Sidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/layout/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/ui/Button.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/ui/Card.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/ui/Input.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/components/ui/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/config/constants.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/config/openai.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/config/supabase.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/hooks/useTheme.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/index.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/main.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/project-start/ProjectStart.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/project-tracker/ProjectTracker.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/VisualCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/BreadcrumbNavigation.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/CanvasToolbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/DraggableElement.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/HoudiniTreeView.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/PathBreadcrumb.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/PropertiesPanel.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/TreeDraggableNode.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/TreeDropZone.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/TreeViewSidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/cards/AICard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/cards/BoardCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/cards/ImageCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/cards/LinkCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/components/cards/NoteCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/store.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/modules/visual-canvas/types.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/store/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/src/store/useStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/tailwind.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-10_13-26-05/webapp/vite.config.js
+ create mode 100644 logs/atelier-save_report_2025-07-10_12-57-45.txt
+[2025-07-10 13:26:06] [SUCCESS] Committed with message: 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+To https://github.com/PRicaldone/atelier.git
+   3d1844c..25442f5  main -> main
+[2025-07-10 13:26:08] [SUCCESS] Pushed to remote repository
+[2025-07-10 13:26:08] [STEP] Checking if weekly backup is needed...
+[2025-07-10 13:26:08] [INFO] Today is not Friday. Skipping weekly backup creation.
+[2025-07-10 13:26:08] [STEP] Pushing backups to backup repository...
+[2025-07-10 13:26:08] [INFO] No backups to push
+[2025-07-10 13:26:08] [STEP] Updating CLAUDE.md with latest session info...
+[2025-07-10 13:26:08] [SUCCESS] CLAUDE.md updated with latest session info
+[2025-07-10 13:26:08] [STEP] Analyzing commit for documentation updates...
+[2025-07-10 13:26:08] [INFO] Analyzing commit: 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+[2025-07-10 13:26:08] [INFO] Changed files:       77 files
+[2025-07-10 13:26:08] [INFO] Analysis result: Blueprint=true, CheatSheet=true
+[2025-07-10 13:26:08] [INFO] Reason: Major feature/architecture change detected. Documentation/workflow change detected. Critical system fix - updating both docs. 
+[2025-07-10 13:26:08] [INFO] 🎯 Updating blueprint: Major feature/architecture change detected. Documentation/workflow change detected. Critical system fix - updating both docs. 
+[2025-07-10 13:26:08] [STEP] Smart updating blueprint with latest changes...
+[2025-07-10 13:26:08] [SUCCESS] Blueprint updated with commit: 25442f5 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+[2025-07-10 13:26:08] [INFO] 🎯 Updating cheat-sheet: Major feature/architecture change detected. Documentation/workflow change detected. Critical system fix - updating both docs. 
+[2025-07-10 13:26:08] [STEP] Smart updating cheat-sheet with latest commit patterns...
+[2025-07-10 13:26:08] [INFO] Commit message not suitable for cheat-sheet example
+[2025-07-10 13:26:08] [SUCCESS] 🤖 Smart documentation updates completed
+[2025-07-10 13:26:08] [STEP] Generating operation report...
+[2025-07-10 13:26:08] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-10_13-26-05.txt
+[2025-07-10 13:26:08] [SUCCESS] atelier-save.sh completed successfully! 🎉
+[2025-07-10 13:26:08] [INFO] Cleaning up temporary files...
