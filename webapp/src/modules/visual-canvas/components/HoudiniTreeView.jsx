@@ -112,7 +112,9 @@ const HoudiniTreeView = ({ isDropEnabled = true }) => {
   const getElementTitle = (element) => {
     if (element.data?.title) return element.data.title;
     if (element.data?.text) return element.data.text.substring(0, 20) + '...';
-    return `${element.type.charAt(0).toUpperCase() + element.type.slice(1)} ${element.id.substring(0, 4)}`;
+    // Fix: ensure element.type is a string
+    const type = typeof element.type === 'string' ? element.type : 'unknown';
+    return `${type.charAt(0).toUpperCase() + type.slice(1)} ${element.id.substring(0, 4)}`;
   };
 
   // Toggle node expansion
