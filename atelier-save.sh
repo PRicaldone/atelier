@@ -572,11 +572,11 @@ update_blueprint_smart() {
     # Find all blueprint files and get the highest version
     if [[ -d "${SCRIPT_DIR}/docs" ]]; then
         # Find all blueprint-vX.Y.md files and sort by version number
-        local blueprints=($(find "${SCRIPT_DIR}/docs" -name "blueprint-v*.md" -type f | sort -V))
+        local blueprints_raw=$(find "${SCRIPT_DIR}/docs" -name "blueprint-v*.md" -type f | sort -V)
         
-        if [[ ${#blueprints[@]} -gt 0 ]]; then
-            # Take the highest version (last in sorted array)
-            blueprint_file="${blueprints[-1]}"
+        if [[ -n "$blueprints_raw" ]]; then
+            # Take the highest version (last line in sorted output)
+            blueprint_file=$(echo "$blueprints_raw" | tail -1)
             latest_version=$(basename "$blueprint_file" .md | sed 's/blueprint-v//')
             log "INFO" "Auto-detected latest Blueprint v${latest_version}"
         fi
