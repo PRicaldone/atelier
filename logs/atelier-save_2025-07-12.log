@@ -1093,3 +1093,156 @@ total size is 583464  speedup is 0.98
 [2025-07-12 00:28:47] [SUCCESS] Snapshot integrity validated
 [2025-07-12 00:28:47] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-12_00-28-46
 [2025-07-12 00:28:47] [STEP] Committing and pushing to main repository...
+[2025-07-12 01:19:36] [INFO] Starting atelier-save.sh v2.1 - Ultimate File Protection System
+[2025-07-12 01:19:36] [INFO] 🛡️ Triple-layer protection: Pre-validation + Post-validation + Smart-update protection
+[2025-07-12 01:19:36] [INFO] Custom commit message: ✅ Verificato atelier-save v2.1 - Sistema di protezione funzionante - ora pronto per la webapp
+[2025-07-12 01:19:36] [STEP] Checking prerequisites...
+[2025-07-12 01:19:36] [SUCCESS] Prerequisites check passed
+[2025-07-12 01:19:36] [STEP] Checking git repository status...
+[2025-07-12 01:19:36] [WARNING] Repository has uncommitted changes. They will be included in the commit.
+[2025-07-12 01:19:36] [SUCCESS] Git status check passed
+[2025-07-12 01:19:36] [STEP] Validating critical files before snapshot...
+[2025-07-12 01:19:36] [INFO] Found 3 blueprint files and 3 core files to validate
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v3.1.md validated (9162 bytes)
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v2.1.md validated (13518 bytes)
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v4.1.md validated (15191 bytes)
+[2025-07-12 01:19:36] [INFO] ✓ docs/cheat-sheet-versioning.md validated (11409 bytes)
+[2025-07-12 01:19:36] [INFO] ✓ CLAUDE.md validated (6272 bytes)
+[2025-07-12 01:19:36] [INFO] ✓ webapp/package.json validated (1069 bytes)
+[2025-07-12 01:19:36] [SUCCESS] All critical files validated successfully
+[2025-07-12 01:19:36] [STEP] Creating local snapshot in ATELIER-VERSIONS...
+Transfer starting: 121 files
+./
+.gitignore
+ATELIER-RESUME-COMMAND.md
+CLAUDE.md
+CLAUDE.md.backup
+README.md
+atelier-backup.sh
+atelier-save.sh
+backup-manager.sh
+package-lock.json
+.claude/
+.claude/settings.local.json
+backend/
+backend/functions/
+docs/
+docs/atelier-save-v2.1-changelog.md
+docs/blueprint-v2.1.md
+docs/blueprint-v2.1.md.backup
+docs/blueprint-v3.1.md
+docs/blueprint-v3.1.md.backup
+docs/blueprint-v4.1.md
+docs/cheat-sheet-versioning.md
+docs/cheat-sheet-versioning.md.backup
+docs/versioning-workflow.md
+docs/progress-notes/
+docs/tech-specs/
+docs/tech-specs/persistence-system-v2.md
+frontend/
+frontend/index.html
+frontend/css/
+frontend/css/style.css
+frontend/js/
+frontend/js/app.js
+webapp/
+webapp/.env
+webapp/.env.example
+webapp/.gitignore
+webapp/README.md
+webapp/SETUP-v3.1.md
+webapp/SETUP.md
+webapp/eslint.config.js
+webapp/index.html
+webapp/package-lock.json
+webapp/package.json
+webapp/postcss.config.js
+webapp/tailwind.config.js
+webapp/vite.config.js
+webapp/docs/
+webapp/docs/ATELIER-BLUEPRINT.md
+webapp/public/
+webapp/public/vite.svg
+webapp/src/
+webapp/src/App.jsx
+webapp/src/index.css
+webapp/src/main.jsx
+webapp/src/assets/
+webapp/src/assets/react.svg
+webapp/src/components/
+webapp/src/components/layout/
+webapp/src/components/layout/Layout.jsx
+webapp/src/components/layout/Navbar.jsx
+webapp/src/components/layout/Sidebar.jsx
+webapp/src/components/layout/index.js
+webapp/src/components/ui/
+webapp/src/components/ui/Button.jsx
+webapp/src/components/ui/Card.jsx
+webapp/src/components/ui/Input.jsx
+webapp/src/components/ui/index.js
+webapp/src/config/
+webapp/src/config/constants.js
+webapp/src/config/openai.js
+webapp/src/config/supabase.js
+webapp/src/hooks/
+webapp/src/hooks/useTheme.js
+webapp/src/modules/
+webapp/src/modules/index.js
+webapp/src/modules/ai-assistant/
+webapp/src/modules/ai-assistant/FloatingAssistant.jsx
+webapp/src/modules/automation/
+webapp/src/modules/business-switcher/
+webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+webapp/src/modules/content-studio/
+webapp/src/modules/content-studio/ContentStudio.jsx
+webapp/src/modules/content-studio/Analytics/
+webapp/src/modules/content-studio/Calendar/
+webapp/src/modules/content-studio/Composer/
+webapp/src/modules/project-start/
+webapp/src/modules/project-start/ProjectStart.jsx
+webapp/src/modules/project-start/MindGarden/
+webapp/src/modules/project-start/MindGarden/AICommandPalette.jsx
+webapp/src/modules/project-start/MindGarden/MindGardenCanvas.jsx
+webapp/src/modules/project-start/MindGarden/NodeCard.jsx
+webapp/src/modules/project-start/MindGarden/OrganicEdge.jsx
+webapp/src/modules/project-tracker/
+webapp/src/modules/project-tracker/ProjectTracker.jsx
+webapp/src/modules/visual-canvas/
+webapp/src/modules/visual-canvas/VisualCanvas.jsx
+webapp/src/modules/visual-canvas/store.js
+webapp/src/modules/visual-canvas/types.js
+webapp/src/modules/visual-canvas/components/
+webapp/src/modules/visual-canvas/components/BreadcrumbNavigation.jsx
+webapp/src/modules/visual-canvas/components/CanvasToolbar.jsx
+webapp/src/modules/visual-canvas/components/DraggableElement.jsx
+webapp/src/modules/visual-canvas/components/HoudiniTreeView.jsx
+webapp/src/modules/visual-canvas/components/PathBreadcrumb.jsx
+webapp/src/modules/visual-canvas/components/PropertiesPanel.jsx
+webapp/src/modules/visual-canvas/components/TreeDraggableNode.jsx
+webapp/src/modules/visual-canvas/components/TreeDropZone.jsx
+webapp/src/modules/visual-canvas/components/TreeViewSidebar.jsx
+webapp/src/modules/visual-canvas/components/cards/
+webapp/src/modules/visual-canvas/components/cards/AICard.jsx
+webapp/src/modules/visual-canvas/components/cards/BoardCard.jsx
+webapp/src/modules/visual-canvas/components/cards/ImageCard.jsx
+webapp/src/modules/visual-canvas/components/cards/LinkCard.jsx
+webapp/src/modules/visual-canvas/components/cards/NoteCard.jsx
+webapp/src/services/
+webapp/src/services/automation/
+webapp/src/store/
+webapp/src/store/index.js
+webapp/src/store/useStore.js
+webapp/src/utils/
+
+sent 594459 bytes  received 2074 bytes  24752406 bytes/sec
+total size is 583571  speedup is 0.98
+[2025-07-12 01:19:36] [INFO] Validating snapshot integrity...
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v3.1.md: 9162 bytes copied correctly
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v2.1.md: 13518 bytes copied correctly
+[2025-07-12 01:19:36] [INFO] ✓ docs/blueprint-v4.1.md: 15191 bytes copied correctly
+[2025-07-12 01:19:36] [INFO] ✓ docs/cheat-sheet-versioning.md: 11409 bytes copied correctly
+[2025-07-12 01:19:36] [INFO] ✓ CLAUDE.md: 6272 bytes copied correctly
+[2025-07-12 01:19:36] [INFO] ✓ webapp/package.json: 1069 bytes copied correctly
+[2025-07-12 01:19:36] [SUCCESS] Snapshot integrity validated
+[2025-07-12 01:19:36] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-12_01-19-36
+[2025-07-12 01:19:36] [STEP] Committing and pushing to main repository...
