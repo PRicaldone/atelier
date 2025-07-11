@@ -524,9 +524,9 @@ analyze_commit_for_docs_update() {
     # - New features completion (✅ ✨)
     # - Module completions
     # - Critical fixes that change system behavior
-    if echo "$commit_message" | grep -qE "(🔧|🏗️|✅|✨|Implementato|Completato|sistema|persistenza|Canvas|modulo)" || \
-       echo "$changed_files" | grep -qE "(store\.js|VisualCanvas|types\.js|components/.*\.jsx)" || \
-       echo "$commit_message" | grep -qiE "(unificato|fix critici|architettura|refactor|sistema|completo)"; then
+    if echo "$commit_message" | grep -qE "(🔧|🏗️|✅|✨|🌱|Implementato|Completato|sistema|persistenza|Canvas|modulo|Mind Garden|v3\.|blueprint)" || \
+       echo "$changed_files" | grep -qE "(store\.js|VisualCanvas|types\.js|components/.*\.jsx|MindGarden|ContentStudio|AIAssistant)" || \
+       echo "$commit_message" | grep -qiE "(unificato|fix critici|architettura|refactor|sistema|completo|evolution|garden|palette)"; then
         should_update_blueprint=true
         update_reason+="Major feature/architecture change detected. "
     fi
@@ -565,10 +565,16 @@ analyze_commit_for_docs_update() {
 update_blueprint_smart() {
     log "STEP" "Smart updating blueprint with latest changes..."
     
-    local blueprint_file="${SCRIPT_DIR}/docs/blueprint-v2.1.md"
-    
-    if [[ ! -f "$blueprint_file" ]]; then
-        log "WARNING" "Blueprint file not found: $blueprint_file"
+    # Find the latest blueprint version automatically
+    local blueprint_file=""
+    if [[ -f "${SCRIPT_DIR}/docs/blueprint-v3.1.md" ]]; then
+        blueprint_file="${SCRIPT_DIR}/docs/blueprint-v3.1.md"
+        log "INFO" "Using Blueprint v3.1"
+    elif [[ -f "${SCRIPT_DIR}/docs/blueprint-v2.1.md" ]]; then
+        blueprint_file="${SCRIPT_DIR}/docs/blueprint-v2.1.md"
+        log "INFO" "Using Blueprint v2.1"
+    else
+        log "WARNING" "No blueprint file found in docs/"
         return 0
     fi
     
@@ -583,14 +589,14 @@ update_blueprint_smart() {
     # Create temp file for updates
     local temp_file=$(mktemp)
     
-    # Update the changelog section
+    # Update the changelog section (works for both v2.1 and v3.1)
     awk -v commit="$current_commit" -v msg="$last_commit_msg" -v date="$current_date" '
-    /^## 🆕 Changelog v2\.1\.1/ {
+    /^## 🆕 Changelog/ {
         print $0
         print ""
         print "### " date " - Latest Updates"
         print "- **" commit "**: " msg
-        getline; if ($0 ~ /^### /) { print "- Previous updates maintained below"; print "" }
+        getline; if ($0 ~ /^### /) { print ""; }
         print $0
         next
     }
