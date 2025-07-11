@@ -107,11 +107,67 @@ STUDIO-ARCHIVE/
 - Webhook notifications
 - Mobile responsive completo
 
-### Fase 4 - Scale
+### Fase 4 - Desktop & Cross-Platform 🆕
+- **App Desktop per macOS** (Electron/Tauri)
+  - Funzionamento offline completo
+  - Integrazione nativa macOS (Dock, Shortcuts)
+  - File system access diretto
+  - Auto-updates integrati
+  - Performance ottimizzate
+- **Progressive Web App** (PWA)
+  - Installabile da browser
+  - Service worker per offline
+  - Push notifications
+- **Windows/Linux support** (futura estensione)
+
+### Fase 5 - Scale & Enterprise
 - Multi-user support
 - Plugin system
 - API pubblica
 - Analytics dashboard
+
+## 🖥️ Desktop App Architecture (Fase 4)
+
+### Electron Implementation
+```javascript
+// Main process setup
+const { app, BrowserWindow, ipcMain } = require('electron');
+
+// Auto-updater integration
+const { autoUpdater } = require('electron-updater');
+
+// Native file system integration
+const fs = require('fs').promises;
+```
+
+### Features Desktop
+- **Offline-first**: Tutti i dati in local storage/SQLite
+- **Native menus**: Menu macOS con shortcuts (Cmd+N, Cmd+S, etc.)
+- **File associations**: Apertura diretta file .atelier
+- **Tray integration**: Quick access da menu bar
+- **Deep linking**: atelier:// protocol handler
+- **System notifications**: Progress e completion alerts
+
+### Build & Distribution
+```bash
+# Electron build
+npm run electron:build
+
+# Code signing macOS
+npm run electron:sign
+
+# App Store submission
+npm run electron:mas
+
+# Auto-updater release
+npm run electron:publish
+```
+
+### Performance Optimizations
+- **Lazy loading**: Moduli caricati on-demand
+- **Memory management**: Cleanup automatico unused components
+- **Native scrolling**: Performance native su macOS
+- **GPU acceleration**: Canvas rendering hardware-accelerated
 
 ## 🔧 Infrastruttura Tecnica
 
@@ -267,6 +323,9 @@ npm run build
 - **Issues**: github.com/paoloricaldone/atelier/issues
 
 ## 🆕 Changelog v2.1.1
+
+### July 2025 - Latest Updates
+- **11e0141 🐛 Fix HoudiniTreeView crash + riavvio post-reboot Mac - App completamente funzionante**: 🐛 Fix HoudiniTreeView crash + riavvio post-reboot Mac - App completamente funzionante
 
 ### July 2025 - Latest Updates
 - **aa76a6e 🎯 Fix Tree→Canvas drag&drop - addCompleteElement method + board-to-board enabled**: 🎯 Fix Tree→Canvas drag&drop - addCompleteElement method + board-to-board enabled
