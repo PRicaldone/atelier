@@ -311,5 +311,5 @@ mkdir -p components/ProjectStart/MindGarden
 
 ---
 
-*Ultimo aggiornamento: July 2025*
+*Ultimo aggiornamento: Luglio 2025*
 *Versione Blueprint: 3.1 - Mind Garden Evolution*
