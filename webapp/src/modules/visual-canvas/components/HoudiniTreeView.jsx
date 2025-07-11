@@ -33,6 +33,7 @@ const HoudiniTreeView = ({ isDropEnabled = true }) => {
     exitBoard,
     getBreadcrumbs,
     getHierarchicalStructure,
+    loadFromStorage,
     lastUpdate
   } = useCanvasStore();
 
@@ -62,7 +63,9 @@ const HoudiniTreeView = ({ isDropEnabled = true }) => {
   // Listen for hierarchy changes
   useEffect(() => {
     const handleHierarchyChange = () => {
-      console.log('🔄 Hierarchy changed, refreshing tree view');
+      console.log('🔄 Hierarchy changed, refreshing tree view and reloading state');
+      // CRITICAL: Reload state from storage to sync with hierarchy changes
+      loadFromStorage();
       const newHierarchical = getHierarchicalStructure();
       const newBreadcrumbs = getBreadcrumbs();
       setHierarchicalData(newHierarchical);

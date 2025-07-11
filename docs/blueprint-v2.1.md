@@ -269,6 +269,9 @@ npm run build
 ## 🆕 Changelog v2.1.1
 
 ### July 2025 - Latest Updates
+- **60b7c6e 🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified**: 🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified
+
+### July 2025 - Latest Updates
 - **25442f5 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp**: 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
 
 ### July 2025 - Latest Updates

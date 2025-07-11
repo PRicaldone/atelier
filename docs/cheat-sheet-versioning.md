@@ -319,6 +319,7 @@ cp -R ATELIER-VERSIONS/snapshot_* ./emergency-recovery/
 # ✅ Buoni esempi - Fix e ottimizzazioni
 ./atelier-save.sh "🔧 Refactor: Ottimizzata performance canvas"
 ./atelier-save.sh "🐛 Fix: Risolto crash su iOS Safari"
+./atelier-save.sh "🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified"  # Latest real example
 ./atelier-save.sh "🐛 Debug breadcrumb sync avanzato - aggiunto logging dettagliato per identificare problema persistente"  # Latest real example
 ./atelier-save.sh "🔧 Implementato sistema di persistenza unificato per nested boards - risolto problema perdita dati"
 ./atelier-save.sh "⚡ Performance: Ridotto timeout auto-save da 1000ms a 500ms"

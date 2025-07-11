@@ -17,6 +17,9 @@ export const useCanvasStore = create(
     boardHistory: [],
     boardViewports: {},
     
+    // Auto-save control
+    autoSaveEnabled: true,
+    
     // Element management
     addElement: (type, position) => {
       const newElement = createCanvasElement(type, position);
@@ -802,10 +805,13 @@ export const useCanvasStore = create(
         return false;
       }
       
-      // Reset element position for new board
+      // Reset element position for new board with smart positioning
       const newElement = {
         ...element,
-        position: { x: 100, y: 100 }
+        position: { 
+          x: 50 + (targetBoard.data.elements?.length || 0) * 20, 
+          y: 50 + (targetBoard.data.elements?.length || 0) * 20 
+        }
       };
       
       targetBoard.data.elements.push(newElement);
@@ -837,6 +843,14 @@ export const useCanvasStore = create(
 useCanvasStore.subscribe(
   (state) => state.elements,
   () => {
+    const state = useCanvasStore.getState();
+    
+    // Skip auto-save if disabled (during drag operations)
+    if (!state.autoSaveEnabled) {
+      console.log('⏸️ Auto-save skipped - disabled during operation');
+      return;
+    }
+    
     // Debounce saves to avoid excessive localStorage writes
     clearTimeout(useCanvasStore.saveTimeout);
     useCanvasStore.saveTimeout = setTimeout(() => {

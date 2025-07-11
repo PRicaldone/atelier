@@ -193,11 +193,11 @@ Quando riprendi il lavoro:
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 10/07/2025 13:26
-**Ultimo commit:** 25442f5 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+**Data:** 11/07/2025 00:50
+**Ultimo commit:** 60b7c6e 🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified
 **Branch:** main
-**Commit totali:** 32
-**Snapshots:** 26 | **Backups:** 0
+**Commit totali:** 33
+**Snapshots:** 27 | **Backups:** 0
 
-**Ultima modifica:** 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+**Ultima modifica:** 🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified
 

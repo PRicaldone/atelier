@@ -269,6 +269,9 @@ npm run build
 ## 🆕 Changelog v2.1.1
 
 ### July 2025 - Latest Updates
+- **25442f5 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp**: 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
+
+### July 2025 - Latest Updates
 - **3d1844c 🚀 Implementato drag&drop Canvas↔Tree con drop zones visuali - fixing bug persistenza elementi in board**: 🚀 Implementato drag&drop Canvas↔Tree con drop zones visuali - fixing bug persistenza elementi in board
 
 ### July 2025 - Latest Updates

@@ -193,11 +193,11 @@ Quando riprendi il lavoro:
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 10/07/2025 12:57
-**Ultimo commit:** 3d1844c 🚀 Implementato drag&drop Canvas↔Tree con drop zones visuali - fixing bug persistenza elementi in board
+**Data:** 10/07/2025 13:26
+**Ultimo commit:** 25442f5 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
 **Branch:** main
-**Commit totali:** 31
-**Snapshots:** 25 | **Backups:** 0
+**Commit totali:** 32
+**Snapshots:** 26 | **Backups:** 0
 
-**Ultima modifica:** 🚀 Implementato drag&drop Canvas↔Tree con drop zones visuali - fixing bug persistenza elementi in board
+**Ultima modifica:** 🔧 Fixed drag&drop persistenza - aggiunto force refresh tree view con event system e lastUpdate timestamp
 

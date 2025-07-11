@@ -361,14 +361,17 @@ export const PropertiesPanel = () => {
               Background Color
             </label>
             <div className="grid grid-cols-5 gap-2">
-              {milanoteColors.map((color) => {
+              {milanoteColors.map((color, index) => {
                 // Get the corresponding light color for comparison
                 const lightColor = isDark ? lightColors.find(c => c.name === color.name)?.value : color.value;
                 const isSelected = element.data.backgroundColor === lightColor;
                 
+                // Generate stable unique ID: element_id + index (independent of color)
+                const uniqueKey = `colorBtn_${element.id}_${index}`;
+                
                 return (
                   <button
-                    key={color.value}
+                    key={uniqueKey}
                     onClick={() => handlePropertyChange('data.backgroundColor', lightColor)}
                     className={`w-8 h-8 rounded-lg border-2 transition-all dark:border-gray-600 ${
                       isSelected 

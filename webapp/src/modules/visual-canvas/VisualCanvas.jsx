@@ -206,52 +206,32 @@ const VisualCanvas = () => {
             console.log('📦 Dropping element onto board in canvas:', targetBoard.id);
             const store = useCanvasStore.getState();
             
-            // ATOMIC OPERATION: move element in one operation
-            console.log('🔒 Starting atomic move operation...');
+            // ATOMIC OPERATION: Disable auto-save during operation
+            console.log('🔒 Disabling auto-save for atomic operation...');
+            useCanvasStore.setState({ autoSaveEnabled: false });
             
-            // Get current hierarchy
-            const currentHierarchy = JSON.parse(localStorage.getItem('ATELIER_CANVAS_ELEMENTS') || '[]');
-            
-            // Find and update target board directly in hierarchy
-            const updateBoardInHierarchy = (elements, boardId, newElement) => {
-              return elements.map(el => {
-                if (el.id === boardId && el.type === 'board') {
-                  console.log('🎯 Adding element to board:', boardId);
-                  return {
-                    ...el,
-                    data: {
-                      ...el.data,
-                      elements: [...(el.data?.elements || []), {
-                        ...newElement,
-                        position: { x: 100, y: 100 }
-                      }]
-                    }
-                  };
-                }
-                if (el.type === 'board' && el.data?.elements) {
-                  return {
-                    ...el,
-                    data: {
-                      ...el.data,
-                      elements: updateBoardInHierarchy(el.data.elements, boardId, newElement)
-                    }
-                  };
-                }
-                return el;
-              });
-            };
-            
-            // Update hierarchy
-            const updatedHierarchy = updateBoardInHierarchy(currentHierarchy, targetBoard.id, draggedElement);
-            
-            // Save updated hierarchy
-            localStorage.setItem('ATELIER_CANVAS_ELEMENTS', JSON.stringify(updatedHierarchy));
-            
-            // Remove from current canvas state only
-            store.removeElementNoSave(draggedElement.id);
-            
-            // Force tree refresh
-            window.dispatchEvent(new CustomEvent('atelier-hierarchy-changed'));
+            try {
+              // Remove from current canvas state FIRST to avoid React key duplicates
+              store.removeElementNoSave(draggedElement.id);
+              
+              // Use store method that already works
+              const result = store.moveElementToBoard(draggedElement, targetBoard.id);
+              if (result) {
+                console.log('🎯 ✅ Element successfully moved to board');
+              } else {
+                console.error('🎯 ❌ Move operation failed!');
+                // Re-add element back if move failed
+                store.addElement(draggedElement.type, draggedElement.position);
+              }
+            } finally {
+              // CRITICAL: Save current canvas state before re-enabling auto-save
+              console.log('💾 Saving updated canvas state...');
+              store.saveCurrentLevelToHierarchy();
+              
+              // CRITICAL: Re-enable auto-save after operation
+              console.log('🔓 Re-enabling auto-save after operation');
+              useCanvasStore.setState({ autoSaveEnabled: true });
+            }
             
             console.log('✅ Atomic move operation completed');
             
