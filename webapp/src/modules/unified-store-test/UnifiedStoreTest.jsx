@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useUnifiedStore } from '../../store/unifiedStore';
 import { 
   Database, 
   Brain, 
@@ -14,29 +15,27 @@ import {
 } from 'lucide-react';
 
 const UnifiedStoreTest = () => {
-  const [storeState, setStoreState] = useState({
-    initialized: true,
-    aiReady: true,
-    currentModule: 'canvas',
-    canvasElements: 0,
-    suggestions: [],
-    lastAnalysis: 'None'
-  });
+  // Connect to real Unified Store
+  const {
+    initialized,
+    aiReady,
+    currentModule,
+    canvas,
+    ai,
+    navigation,
+    lastActivity,
+    analyzeCanvasContext,
+    generateAISuggestions,
+    navigateToModule,
+    addCanvasElement,
+    clearAISuggestions,
+    getCurrentModuleContext
+  } = useUnifiedStore();
 
   const [testResults, setTestResults] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Simulate store state updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStoreState(prev => ({
-        ...prev,
-        canvasElements: Math.floor(Math.random() * 10)
-      }));
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // No need for simulated updates - using real store
 
   const handleAnalyzeContext = async () => {
     setIsAnalyzing(true);
@@ -47,88 +46,55 @@ const UnifiedStoreTest = () => {
       status: 'running'
     }]);
 
-    // Simulate analysis
-    setTimeout(() => {
-      const newSuggestions = [
-        `💡 Add animated transitions to canvas elements`,
-        `🎨 Consider using warmer color palette for ${storeState.currentModule}`,
-        `⚡ Optimize rendering performance with React.memo`
-      ];
-      
-      setStoreState(prev => ({
-        ...prev,
-        lastAnalysis: new Date().toLocaleTimeString(),
-        suggestions: [...prev.suggestions, ...newSuggestions]
-      }));
+    // Use real unified store analysis
+    setTimeout(async () => {
+      await analyzeCanvasContext();
       
       setTestResults(prev => prev.map(result => 
         result.action === 'Analyze Context' && result.status === 'running'
-          ? { ...result, status: 'success', result: 'Context analyzed successfully' }
+          ? { ...result, status: 'success', result: 'Real unified store context analyzed successfully' }
           : result
       ));
       setIsAnalyzing(false);
-    }, 2000);
+    }, 1500);
   };
 
   const handleGenerateSuggestions = () => {
-    const suggestionTypes = [
-      `🎯 Create project template for ${storeState.currentModule}`,
-      `🔄 Add auto-save functionality`,
-      `📊 Implement analytics dashboard`,
-      `🌙 Add dark mode toggle`,
-      `⚡ Preload next canvas elements`,
-      `🎨 Suggest color scheme based on content`,
-      `📝 Add collaborative editing features`,
-      `🔍 Implement advanced search`,
-      `📱 Optimize for mobile devices`,
-      `🚀 Add keyboard shortcuts`
-    ];
-    
-    const randomSuggestions = Array.from({ length: 3 }, () => 
-      suggestionTypes[Math.floor(Math.random() * suggestionTypes.length)]
-    );
-    
-    setStoreState(prev => ({
-      ...prev,
-      suggestions: [...prev.suggestions, ...randomSuggestions]
-    }));
+    // Use real unified store suggestion generation
+    const newSuggestions = generateAISuggestions(getCurrentModuleContext());
     
     setTestResults(prev => [...prev, {
       id: Date.now(),
       action: 'Generate Suggestions',
       timestamp: new Date().toLocaleTimeString(),
       status: 'success',
-      result: `Generated: ${randomSuggestions.join(', ')}`
+      result: `Generated: ${newSuggestions.join(', ')}`
     }]);
   };
 
   const handleNavigate = (module) => {
-    setStoreState(prev => ({
-      ...prev,
-      currentModule: module
-    }));
+    // Use real unified store navigation
+    navigateToModule(module, { source: 'unified-store-test' });
     
     setTestResults(prev => [...prev, {
       id: Date.now(),
       action: `Navigate to ${module}`,
       timestamp: new Date().toLocaleTimeString(),
       status: 'success',
-      result: `Module switched to ${module}`
+      result: `Real navigation to ${module} completed`
     }]);
   };
 
   const handleAddTestElement = () => {
-    setStoreState(prev => ({
-      ...prev,
-      canvasElements: prev.canvasElements + 1
-    }));
+    // Use real unified store element addition
+    addCanvasElement('note', { x: Math.random() * 400, y: Math.random() * 300 });
     
     setTestResults(prev => [...prev, {
       id: Date.now(),
       action: 'Add Test Element',
       timestamp: new Date().toLocaleTimeString(),
       status: 'success',
-      result: 'Test element added to canvas'
+      result: 'Real test element added to unified store canvas'
     }]);
   };
 
@@ -161,7 +127,7 @@ const UnifiedStoreTest = () => {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Initialized:</span>
                 <div className="flex items-center">
-                  {storeState.initialized ? (
+                  {initialized ? (
                     <>
                       <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
                       <span className="text-green-600 font-medium">Ready</span>
@@ -178,7 +144,7 @@ const UnifiedStoreTest = () => {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">AI Ready:</span>
                 <div className="flex items-center">
-                  {storeState.aiReady ? (
+                  {aiReady ? (
                     <>
                       <Brain className="w-4 h-4 text-purple-500 mr-1" />
                       <span className="text-purple-600 font-medium">Active</span>
@@ -195,28 +161,28 @@ const UnifiedStoreTest = () => {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Current Module:</span>
                 <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-sm font-medium">
-                  {storeState.currentModule}
+                  {currentModule}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Canvas Elements:</span>
                 <span className="text-gray-900 dark:text-white font-mono">
-                  {storeState.canvasElements}
+                  {canvas.elements.length}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">AI Suggestions:</span>
                 <span className="text-gray-900 dark:text-white font-mono">
-                  {storeState.suggestions.length}
+                  {ai.suggestions.length}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Last Analysis:</span>
                 <span className="text-gray-900 dark:text-white font-mono text-sm">
-                  {storeState.lastAnalysis}
+                  {ai.lastAnalysis ? new Date(ai.lastAnalysis).toLocaleTimeString() : 'None'}
                 </span>
               </div>
             </div>
@@ -274,7 +240,7 @@ const UnifiedStoreTest = () => {
               </button>
 
               <button
-                onClick={() => console.log('Raw State Debug:', storeState)}
+                onClick={() => console.log('Unified Store State:', { initialized, aiReady, currentModule, canvas, ai, navigation })}
                 className="w-full flex items-center justify-center px-4 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
               >
                 <Bug className="w-4 h-4 mr-2" />
@@ -338,14 +304,14 @@ const UnifiedStoreTest = () => {
         </div>
 
         {/* AI Suggestions Panel */}
-        {storeState.suggestions.length > 0 && (
+        {ai.suggestions.length > 0 && (
           <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <Zap className="w-5 h-5 mr-2 text-purple-500" />
-              🤖 AI Suggestions ({storeState.suggestions.length})
+              🤖 AI Suggestions ({ai.suggestions.length})
             </h2>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {storeState.suggestions.map((suggestion, index) => (
+              {ai.suggestions.map((suggestion, index) => (
                 <div
                   key={index}
                   className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-500"
@@ -357,7 +323,7 @@ const UnifiedStoreTest = () => {
               ))}
             </div>
             <button
-              onClick={() => setStoreState(prev => ({ ...prev, suggestions: [] }))}
+              onClick={clearAISuggestions}
               className="mt-3 px-3 py-1 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded transition-colors"
             >
               Clear Suggestions
@@ -372,7 +338,16 @@ const UnifiedStoreTest = () => {
             🔍 Raw State Debug
           </h2>
           <pre className="text-green-400 text-sm overflow-x-auto">
-            {JSON.stringify(storeState, null, 2)}
+            {JSON.stringify({ 
+              initialized, 
+              aiReady, 
+              currentModule, 
+              canvasElementsCount: canvas.elements.length,
+              suggestionsCount: ai.suggestions.length,
+              lastAnalysis: ai.lastAnalysis,
+              navigationHistory: navigation.history.slice(-3),
+              lastActivity
+            }, null, 2)}
           </pre>
         </div>
       </div>
