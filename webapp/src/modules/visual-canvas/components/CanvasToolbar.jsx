@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useCanvasStore } from '../store.js';
+import { useUnifiedStore } from '../../../store/unifiedStore.js';
 import { ELEMENT_TYPES } from '../types.js';
 import { 
   StickyNote, 
@@ -22,6 +23,14 @@ import {
 } from 'lucide-react';
 
 export const CanvasToolbar = () => {
+  // Unified Store integration
+  const { 
+    ai, 
+    getAISuggestionCount,
+    analyzeCanvasContext,
+    navigateToModule 
+  } = useUnifiedStore();
+  
   const {
     addElement,
     viewport,
@@ -161,8 +170,13 @@ export const CanvasToolbar = () => {
               title="Add AI Assistant"
             >
               <Brain size={20} />
+              {getAISuggestionCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-purple-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {getAISuggestionCount()}
+                </span>
+              )}
               <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                AI Assistant
+                AI Assistant {getAISuggestionCount() > 0 ? `(${getAISuggestionCount()} suggestions)` : ''}
               </span>
             </button>
           </div>
@@ -270,6 +284,31 @@ export const CanvasToolbar = () => {
               title="Delete Selected"
             >
               <Trash2 size={18} />
+            </button>
+          </div>
+
+          {/* AI & Store actions */}
+          <div className="flex items-center space-x-2 border-r border-gray-200 dark:border-gray-700 pr-4">
+            <button
+              onClick={analyzeCanvasContext}
+              className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors group relative"
+              title="Analyze Canvas Context"
+            >
+              <Brain size={18} />
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                AI Analysis
+              </span>
+            </button>
+            
+            <button
+              onClick={() => navigateToModule('unified-store-test', { source: 'canvas-toolbar' })}
+              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors group relative"
+              title="Open Unified Store Test"
+            >
+              <Layout size={18} />
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Store Test
+              </span>
             </button>
           </div>
 

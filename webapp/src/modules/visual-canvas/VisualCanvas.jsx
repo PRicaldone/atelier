@@ -10,6 +10,7 @@ import {
   useDraggable
 } from '@dnd-kit/core';
 import { useCanvasStore } from './store.js';
+import { useUnifiedStore, useCanvasState } from '../../store/unifiedStore.js';
 import { CanvasToolbar } from './components/CanvasToolbar.jsx';
 import { PropertiesPanel } from './components/PropertiesPanel.jsx';
 import { DraggableElement } from './components/DraggableElement.jsx';
@@ -33,6 +34,15 @@ const VisualCanvas = () => {
   const [zoomStart, setZoomStart] = useState(null);
   const [initialZoom, setInitialZoom] = useState(1);
   
+  // Unified Store integration
+  const {
+    navigateToModule,
+    analyzeCanvasContext
+  } = useUnifiedStore();
+  
+  const unifiedCanvas = useCanvasState();
+  
+  // Legacy Canvas Store (gradually migrate to unified)
   const {
     elements,
     selectedIds,
@@ -57,7 +67,16 @@ const VisualCanvas = () => {
   // Initialize canvas on mount
   useEffect(() => {
     initialize();
-  }, [initialize]);
+    // Set current module in unified store
+    navigateToModule('canvas', { source: 'visual-canvas-init' });
+  }, [initialize, navigateToModule]);
+  
+  // Trigger AI analysis when elements change
+  useEffect(() => {
+    if (elements.length > 0) {
+      analyzeCanvasContext();
+    }
+  }, [elements.length, analyzeCanvasContext]);
 
   // Drag & Drop sensors
   const sensors = useSensors(
