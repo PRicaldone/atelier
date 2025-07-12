@@ -19,7 +19,7 @@ const UnifiedStoreTest = () => {
     aiReady: true,
     currentModule: 'canvas',
     canvasElements: 0,
-    suggestions: 0,
+    suggestions: [],
     lastAnalysis: 'None'
   });
 
@@ -31,8 +31,7 @@ const UnifiedStoreTest = () => {
     const interval = setInterval(() => {
       setStoreState(prev => ({
         ...prev,
-        canvasElements: Math.floor(Math.random() * 10),
-        suggestions: Math.floor(Math.random() * 5)
+        canvasElements: Math.floor(Math.random() * 10)
       }));
     }, 3000);
 
@@ -50,10 +49,16 @@ const UnifiedStoreTest = () => {
 
     // Simulate analysis
     setTimeout(() => {
+      const newSuggestions = [
+        `💡 Add animated transitions to canvas elements`,
+        `🎨 Consider using warmer color palette for ${storeState.currentModule}`,
+        `⚡ Optimize rendering performance with React.memo`
+      ];
+      
       setStoreState(prev => ({
         ...prev,
         lastAnalysis: new Date().toLocaleTimeString(),
-        suggestions: prev.suggestions + 2
+        suggestions: [...prev.suggestions, ...newSuggestions]
       }));
       
       setTestResults(prev => prev.map(result => 
@@ -66,9 +71,26 @@ const UnifiedStoreTest = () => {
   };
 
   const handleGenerateSuggestions = () => {
+    const suggestionTypes = [
+      `🎯 Create project template for ${storeState.currentModule}`,
+      `🔄 Add auto-save functionality`,
+      `📊 Implement analytics dashboard`,
+      `🌙 Add dark mode toggle`,
+      `⚡ Preload next canvas elements`,
+      `🎨 Suggest color scheme based on content`,
+      `📝 Add collaborative editing features`,
+      `🔍 Implement advanced search`,
+      `📱 Optimize for mobile devices`,
+      `🚀 Add keyboard shortcuts`
+    ];
+    
+    const randomSuggestions = Array.from({ length: 3 }, () => 
+      suggestionTypes[Math.floor(Math.random() * suggestionTypes.length)]
+    );
+    
     setStoreState(prev => ({
       ...prev,
-      suggestions: prev.suggestions + 3
+      suggestions: [...prev.suggestions, ...randomSuggestions]
     }));
     
     setTestResults(prev => [...prev, {
@@ -76,7 +98,7 @@ const UnifiedStoreTest = () => {
       action: 'Generate Suggestions',
       timestamp: new Date().toLocaleTimeString(),
       status: 'success',
-      result: '3 new suggestions generated'
+      result: `Generated: ${randomSuggestions.join(', ')}`
     }]);
   };
 
@@ -187,7 +209,7 @@ const UnifiedStoreTest = () => {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-gray-400">AI Suggestions:</span>
                 <span className="text-gray-900 dark:text-white font-mono">
-                  {storeState.suggestions}
+                  {storeState.suggestions.length}
                 </span>
               </div>
 
@@ -314,6 +336,34 @@ const UnifiedStoreTest = () => {
             )}
           </div>
         </div>
+
+        {/* AI Suggestions Panel */}
+        {storeState.suggestions.length > 0 && (
+          <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <Zap className="w-5 h-5 mr-2 text-purple-500" />
+              🤖 AI Suggestions ({storeState.suggestions.length})
+            </h2>
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {storeState.suggestions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-500"
+                >
+                  <p className="text-purple-800 dark:text-purple-200 text-sm">
+                    {suggestion}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setStoreState(prev => ({ ...prev, suggestions: [] }))}
+              className="mt-3 px-3 py-1 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded transition-colors"
+            >
+              Clear Suggestions
+            </button>
+          </div>
+        )}
 
         {/* Raw State Debug */}
         <div className="mt-6 bg-gray-900 rounded-lg p-6">
