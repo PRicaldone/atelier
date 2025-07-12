@@ -2095,3 +2095,273 @@ sent 571821 bytes  received 2118 bytes  20424875 bytes/sec
 total size is 560762  speedup is 0.98
 [2025-07-12 01:45:28] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28
 [2025-07-12 01:45:28] [STEP] Committing and pushing to main repository...
+[main a235ae0] 🔧 Updated atelier-save script to v2.1 - version alignment
+ Committer: PAOLO RICALDONE <paoloricaldone@PAOLOsMacStudio.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 91 files changed, 17012 insertions(+), 14 deletions(-)
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/ATELIER-RESUME-COMMAND.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/CLAUDE.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/CLAUDE.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/SNAPSHOT_INFO.txt
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/atelier-backup.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/atelier-save.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/backup-manager.sh
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/atelier-save-v2.1-changelog.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/blueprint-v2.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/blueprint-v2.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/blueprint-v3.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/blueprint-v3.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/blueprint-v4.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/cheat-sheet-versioning.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/cheat-sheet-versioning.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/tech-specs/persistence-system-v2.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/docs/versioning-workflow.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/frontend/css/style.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/frontend/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/frontend/js/app.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/.env
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/.env.example
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/SETUP-v3.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/SETUP.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/docs/ATELIER-BLUEPRINT.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/eslint.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/package.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/postcss.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/public/vite.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/App.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/assets/react.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/layout/Layout.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/layout/Navbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/layout/Sidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/layout/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/ui/Button.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/ui/Card.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/ui/Input.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/components/ui/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/config/constants.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/config/openai.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/config/supabase.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/hooks/useTheme.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/index.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/main.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/ai-assistant/FloatingAssistant.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/content-studio/ContentStudio.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-start/MindGarden/AICommandPalette.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-start/MindGarden/MindGardenCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-start/MindGarden/NodeCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-start/MindGarden/OrganicEdge.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-start/ProjectStart.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/project-tracker/ProjectTracker.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/VisualCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/BreadcrumbNavigation.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/CanvasToolbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/DraggableElement.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/HoudiniTreeView.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/PathBreadcrumb.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/PropertiesPanel.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/TreeDraggableNode.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/TreeDropZone.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/TreeViewSidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/cards/AICard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/cards/BoardCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/cards/ImageCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/cards/LinkCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/components/cards/NoteCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/store.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/modules/visual-canvas/types.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/store/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/src/store/useStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/tailwind.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/test.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-12_01-45-28/webapp/vite.config.js
+ create mode 100644 logs/atelier-save_report_2025-07-12_01-43-39.txt
+[2025-07-12 01:45:29] [SUCCESS] Committed with message: 🔧 Updated atelier-save script to v2.1 - version alignment
+To https://github.com/PRicaldone/atelier.git
+   6baa593..a235ae0  main -> main
+[2025-07-12 01:45:30] [SUCCESS] Pushed to remote repository
+[2025-07-12 01:45:30] [STEP] Checking if weekly backup is needed...
+[2025-07-12 01:45:30] [INFO] Today is not Friday. Skipping weekly backup creation.
+[2025-07-12 01:45:30] [STEP] Pushing backups to backup repository...
+Cloning into '/Users/paoloricaldone/atelier/temp-backup-repo'...
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+[2025-07-12 01:45:31] [ERROR] Failed to clone backup repository
+[2025-07-12 01:45:31] [WARNING] Backup repository sync had issues, but continuing...
+[2025-07-12 01:45:31] [STEP] Updating CLAUDE.md with latest session info...
+[2025-07-12 01:45:31] [SUCCESS] CLAUDE.md updated with latest session info
+[2025-07-12 01:45:31] [STEP] Analyzing commit for documentation updates...
+[2025-07-12 01:45:31] [INFO] Analyzing commit: 🔧 Updated atelier-save script to v2.1 - version alignment
+[2025-07-12 01:45:31] [INFO] Changed files:       91 files
+[2025-07-12 01:45:31] [INFO] Analysis result: Blueprint=true, CheatSheet=true
+[2025-07-12 01:45:31] [INFO] Reason: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-12 01:45:31] [INFO] 🎯 Updating blueprint: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-12 01:45:31] [STEP] Smart updating blueprint with latest changes...
+[2025-07-12 01:45:31] [SUCCESS] Blueprint updated with commit: a235ae0 🔧 Updated atelier-save script to v2.1 - version alignment
+[2025-07-12 01:45:31] [INFO] 🎯 Updating cheat-sheet: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-12 01:45:31] [STEP] Smart updating cheat-sheet with latest commit patterns...
+[2025-07-12 01:45:31] [INFO] Commit message not suitable for cheat-sheet example
+[2025-07-12 01:45:31] [SUCCESS] 🤖 Smart documentation updates completed
+[2025-07-12 01:45:31] [STEP] Generating operation report...
+[2025-07-12 01:45:31] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-12_01-45-28.txt
+[2025-07-12 01:45:31] [SUCCESS] atelier-save.sh completed successfully! 🎉
+[2025-07-12 01:45:31] [INFO] Cleaning up temporary files...
+[2025-07-12 02:42:44] [INFO] Starting atelier-save.sh v2.1
+[2025-07-12 02:42:44] [INFO] Custom commit message: 📋 Blueprint v4.1.1 - Hybrid Intelligence Architecture with Claude Code SDK future roadmap
+[2025-07-12 02:42:44] [STEP] Checking prerequisites...
+[2025-07-12 02:42:44] [SUCCESS] Prerequisites check passed
+[2025-07-12 02:42:44] [STEP] Checking git repository status...
+[2025-07-12 02:42:44] [WARNING] Repository has uncommitted changes. They will be included in the commit.
+[2025-07-12 02:42:44] [SUCCESS] Git status check passed
+[2025-07-12 02:42:44] [STEP] Creating local snapshot in ATELIER-VERSIONS...
+Transfer starting: 123 files
+./
+.gitignore
+ATELIER-RESUME-COMMAND.md
+CLAUDE.md
+CLAUDE.md.backup
+README.md
+SNAPSHOT_INFO.txt
+atelier-backup.sh
+atelier-save.sh
+backup-manager.sh
+package-lock.json
+.claude/
+.claude/settings.local.json
+backend/
+backend/functions/
+docs/
+docs/atelier-save-v2.1-changelog.md
+docs/blueprint-v2.1.md
+docs/blueprint-v2.1.md.backup
+docs/blueprint-v3.1.md
+docs/blueprint-v3.1.md.backup
+docs/blueprint-v4.1.md
+docs/cheat-sheet-versioning.md
+docs/cheat-sheet-versioning.md.backup
+docs/versioning-workflow.md
+docs/progress-notes/
+docs/tech-specs/
+docs/tech-specs/persistence-system-v2.md
+frontend/
+frontend/index.html
+frontend/css/
+frontend/css/style.css
+frontend/js/
+frontend/js/app.js
+webapp/
+webapp/.env
+webapp/.env.example
+webapp/.gitignore
+webapp/README.md
+webapp/SETUP-v3.1.md
+webapp/SETUP.md
+webapp/eslint.config.js
+webapp/index.html
+webapp/package-lock.json
+webapp/package.json
+webapp/postcss.config.js
+webapp/tailwind.config.js
+webapp/test.html
+webapp/vite.config.js
+webapp/docs/
+webapp/docs/ATELIER-BLUEPRINT.md
+webapp/public/
+webapp/public/vite.svg
+webapp/src/
+webapp/src/App.jsx
+webapp/src/index.css
+webapp/src/main.jsx
+webapp/src/assets/
+webapp/src/assets/react.svg
+webapp/src/components/
+webapp/src/components/layout/
+webapp/src/components/layout/Layout.jsx
+webapp/src/components/layout/Navbar.jsx
+webapp/src/components/layout/Sidebar.jsx
+webapp/src/components/layout/index.js
+webapp/src/components/ui/
+webapp/src/components/ui/Button.jsx
+webapp/src/components/ui/Card.jsx
+webapp/src/components/ui/Input.jsx
+webapp/src/components/ui/index.js
+webapp/src/config/
+webapp/src/config/constants.js
+webapp/src/config/openai.js
+webapp/src/config/supabase.js
+webapp/src/hooks/
+webapp/src/hooks/useTheme.js
+webapp/src/modules/
+webapp/src/modules/index.js
+webapp/src/modules/ai-assistant/
+webapp/src/modules/ai-assistant/FloatingAssistant.jsx
+webapp/src/modules/automation/
+webapp/src/modules/business-switcher/
+webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+webapp/src/modules/content-studio/
+webapp/src/modules/content-studio/ContentStudio.jsx
+webapp/src/modules/content-studio/Analytics/
+webapp/src/modules/content-studio/Calendar/
+webapp/src/modules/content-studio/Composer/
+webapp/src/modules/project-start/
+webapp/src/modules/project-start/ProjectStart.jsx
+webapp/src/modules/project-start/MindGarden/
+webapp/src/modules/project-start/MindGarden/AICommandPalette.jsx
+webapp/src/modules/project-start/MindGarden/MindGardenCanvas.jsx
+webapp/src/modules/project-start/MindGarden/NodeCard.jsx
+webapp/src/modules/project-start/MindGarden/OrganicEdge.jsx
+webapp/src/modules/project-tracker/
+webapp/src/modules/project-tracker/ProjectTracker.jsx
+webapp/src/modules/visual-canvas/
+webapp/src/modules/visual-canvas/VisualCanvas.jsx
+webapp/src/modules/visual-canvas/store.js
+webapp/src/modules/visual-canvas/types.js
+webapp/src/modules/visual-canvas/components/
+webapp/src/modules/visual-canvas/components/BreadcrumbNavigation.jsx
+webapp/src/modules/visual-canvas/components/CanvasToolbar.jsx
+webapp/src/modules/visual-canvas/components/DraggableElement.jsx
+webapp/src/modules/visual-canvas/components/HoudiniTreeView.jsx
+webapp/src/modules/visual-canvas/components/PathBreadcrumb.jsx
+webapp/src/modules/visual-canvas/components/PropertiesPanel.jsx
+webapp/src/modules/visual-canvas/components/TreeDraggableNode.jsx
+webapp/src/modules/visual-canvas/components/TreeDropZone.jsx
+webapp/src/modules/visual-canvas/components/TreeViewSidebar.jsx
+webapp/src/modules/visual-canvas/components/cards/
+webapp/src/modules/visual-canvas/components/cards/AICard.jsx
+webapp/src/modules/visual-canvas/components/cards/BoardCard.jsx
+webapp/src/modules/visual-canvas/components/cards/ImageCard.jsx
+webapp/src/modules/visual-canvas/components/cards/LinkCard.jsx
+webapp/src/modules/visual-canvas/components/cards/NoteCard.jsx
+webapp/src/services/
+webapp/src/services/automation/
+webapp/src/store/
+webapp/src/store/index.js
+webapp/src/store/useStore.js
+webapp/src/utils/
+
+sent 577813 bytes  received 2118 bytes  19928900 bytes/sec
+total size is 566754  speedup is 0.98
+[2025-07-12 02:42:45] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-12_02-42-44
+[2025-07-12 02:42:45] [STEP] Committing and pushing to main repository...
