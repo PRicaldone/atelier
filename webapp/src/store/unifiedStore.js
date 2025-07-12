@@ -162,7 +162,7 @@ const createAIActions = (set, get) => ({
         ...state.ai,
         context: contextAnalysis,
         lastAnalysis: contextAnalysis.timestamp,
-        analysisHistory: [...state.ai.analysisHistory, contextAnalysis].slice(-10)
+        analysisHistory: [...(state.ai.analysisHistory || []), contextAnalysis].slice(-10)
       }
     }));
     
@@ -191,8 +191,8 @@ const createAIActions = (set, get) => ({
     set((state) => ({
       ai: {
         ...state.ai,
-        suggestions: [...state.ai.suggestions, ...newSuggestions],
-        suggestionsGenerated: state.ai.suggestionsGenerated + newSuggestions.length
+        suggestions: [...(state.ai.suggestions || []), ...newSuggestions],
+        suggestionsGenerated: (state.ai.suggestionsGenerated || 0) + newSuggestions.length
       }
     }));
     
@@ -203,8 +203,8 @@ const createAIActions = (set, get) => ({
     set((state) => ({
       ai: {
         ...state.ai,
-        suggestions: state.ai.suggestions.filter((_, index) => index !== suggestionIndex),
-        suggestionsAccepted: state.ai.suggestionsAccepted + 1
+        suggestions: (state.ai.suggestions || []).filter((_, index) => index !== suggestionIndex),
+        suggestionsAccepted: (state.ai.suggestionsAccepted || 0) + 1
       }
     }));
   },
@@ -232,14 +232,14 @@ const createNavigationActions = (set, get) => ({
       lastActivity: new Date().toISOString(),
       navigation: {
         ...state.navigation,
-        history: [...state.navigation.history, {
+        history: [...(state.navigation.history || []), {
           from: currentModule,
           to: module,
           timestamp: new Date().toISOString(),
           context
         }].slice(-20), // Keep last 20 navigations
         breadcrumbs: [
-          ...state.navigation.breadcrumbs.filter(b => b.module !== module),
+          ...(state.navigation.breadcrumbs || []).filter(b => b.module !== module),
           { module, timestamp: new Date().toISOString() }
         ].slice(-5) // Keep last 5 breadcrumbs
       }
@@ -283,7 +283,7 @@ const createSystemActions = (set, get) => ({
   // Project Management
   addProject: (project) => {
     set((state) => ({
-      projects: [...state.projects, { 
+      projects: [...(state.projects || []), { 
         ...project, 
         id: Date.now(),
         created: new Date().toISOString()
@@ -293,7 +293,7 @@ const createSystemActions = (set, get) => ({
   
   updateProject: (id, updates) => {
     set((state) => ({
-      projects: state.projects.map(p => 
+      projects: (state.projects || []).map(p => 
         p.id === id ? { ...p, ...updates, updated: new Date().toISOString() } : p
       )
     }));
@@ -301,7 +301,7 @@ const createSystemActions = (set, get) => ({
   
   deleteProject: (id) => {
     set((state) => ({
-      projects: state.projects.filter(p => p.id !== id)
+      projects: (state.projects || []).filter(p => p.id !== id)
     }));
   }
 });
@@ -324,12 +324,12 @@ export const useUnifiedStore = create(
         ...createSystemActions(set, get),
         
         // Computed/Derived State
-        getCanvasElementCount: () => get().canvas.elements.length,
-        getAISuggestionCount: () => get().ai.suggestions.length,
+        getCanvasElementCount: () => (get().canvas?.elements || []).length,
+        getAISuggestionCount: () => (get().ai?.suggestions || []).length,
         getCurrentModuleContext: () => ({
           module: get().currentModule,
-          elementCount: get().canvas.elements.length,
-          suggestionsCount: get().ai.suggestions.length,
+          elementCount: (get().canvas?.elements || []).length,
+          suggestionsCount: (get().ai?.suggestions || []).length,
           lastActivity: get().lastActivity
         })
       })),
