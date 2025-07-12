@@ -76,7 +76,7 @@ const VisualCanvas = () => {
     if (elements.length > 0) {
       analyzeCanvasContext();
     }
-  }, [elements.length, analyzeCanvasContext]);
+  }, [elements.length]); // Removed analyzeCanvasContext from deps to prevent loop
 
   // Drag & Drop sensors
   const sensors = useSensors(

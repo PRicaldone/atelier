@@ -11,41 +11,65 @@ import {
 } from './modules'
 import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
 
-// Navigation sync component
+// Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentModule, navigateToModule } = useUnifiedStore();
   
+  // Use useRef to track if we're in a navigation cycle
+  const navigationInProgress = React.useRef(false);
+  
+  // Route mapping
+  const routeToModule = {
+    '/canvas': 'canvas',
+    '/unified-store': 'unified-store-test',
+    '/start': 'mind-garden',
+    '/tracker': 'projects'
+  };
+  
+  const moduleToRoute = {
+    'canvas': '/canvas',
+    'unified-store-test': '/unified-store',
+    'mind-garden': '/start',
+    'projects': '/tracker'
+  };
+  
+  // Only sync when there's a real mismatch and we're not already navigating
   useEffect(() => {
-    // Bidirectional sync: Route changes update store module
-    const routeToModule = {
-      '/canvas': 'canvas',
-      '/unified-store': 'unified-store-test',
-      '/start': 'mind-garden',
-      '/tracker': 'projects'
-    };
+    console.log('🔄 NavigationSync check:', {
+      pathname: location.pathname,
+      currentModule,
+      navigationInProgress: navigationInProgress.current
+    });
     
-    const currentModuleFromRoute = routeToModule[location.pathname];
-    if (currentModuleFromRoute && currentModuleFromRoute !== currentModule) {
-      // Update store module to match current route
-      navigateToModule(currentModuleFromRoute, { source: 'route-sync' });
-      return; // Don't navigate if we just updated the module
+    if (navigationInProgress.current) {
+      console.log('🔄 Skipping - navigation in progress');
+      return;
     }
     
-    // Store changes update route (only if different)
-    const moduleToRoute = {
-      'canvas': '/canvas',
-      'unified-store-test': '/unified-store',
-      'mind-garden': '/start',
-      'projects': '/tracker'
-    };
+    const moduleFromRoute = routeToModule[location.pathname];
+    const routeFromModule = moduleToRoute[currentModule];
     
-    const targetRoute = moduleToRoute[currentModule];
-    if (targetRoute && location.pathname !== targetRoute) {
-      navigate(targetRoute);
+    console.log('🔄 Mappings:', { moduleFromRoute, routeFromModule });
+    
+    // Check if we need Store→Route sync first (button clicks)
+    if (routeFromModule && location.pathname !== routeFromModule) {
+      // Store changed, update route (higher priority)
+      console.log('🔄 Store→Route sync:', currentModule, '→', routeFromModule);
+      navigationInProgress.current = true;
+      navigate(routeFromModule);
+      setTimeout(() => { navigationInProgress.current = false; }, 50);
+    } else if (moduleFromRoute && moduleFromRoute !== currentModule) {
+      // URL changed manually, update store
+      console.log('🔄 Route→Store sync:', location.pathname, '→', moduleFromRoute);
+      navigationInProgress.current = true;
+      navigateToModule(moduleFromRoute, { source: 'url-sync' });
+      setTimeout(() => { navigationInProgress.current = false; }, 50);
+    } else {
+      console.log('🔄 No sync needed');
     }
-  }, [currentModule, navigate, location.pathname, navigateToModule]);
+  }, [location.pathname, currentModule]); // Minimal dependencies
   
   return null;
 }

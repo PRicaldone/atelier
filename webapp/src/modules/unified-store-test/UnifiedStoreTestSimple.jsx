@@ -43,10 +43,15 @@ const UnifiedStoreTestSimple = () => {
                 onClick={() => {
                   console.log('🧪 Navigating to canvas...');
                   console.log('🧪 Current module before:', store.currentModule);
-                  store.navigateToModule?.('canvas');
-                  setTimeout(() => {
-                    console.log('🧪 Current module after:', store.currentModule);
-                  }, 100);
+                  console.log('🧪 navigateToModule function:', typeof store.navigateToModule);
+                  if (store.navigateToModule) {
+                    store.navigateToModule('canvas');
+                    setTimeout(() => {
+                      console.log('🧪 Current module after:', store.currentModule);
+                    }, 100);
+                  } else {
+                    console.error('🧪 navigateToModule not available!');
+                  }
                 }}
                 className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
               >

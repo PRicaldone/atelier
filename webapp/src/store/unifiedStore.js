@@ -91,8 +91,8 @@ const createCanvasActions = (set, get) => ({
       lastActivity: new Date().toISOString()
     }));
     
-    // Trigger AI context analysis
-    get().analyzeCanvasContext();
+    // Trigger AI context analysis - DISABLED to prevent loops
+    // get().analyzeCanvasContext();
   },
   
   removeCanvasElement: (id) => {
@@ -246,8 +246,8 @@ const createNavigationActions = (set, get) => ({
       }
     }));
     
-    // Analyze context when switching modules
-    setTimeout(() => get().analyzeCanvasContext(), 100);
+    // Analyze context when switching modules - DISABLED to prevent loops
+    // setTimeout(() => get().analyzeCanvasContext(), 100);
   }
 });
 
@@ -263,8 +263,8 @@ const createSystemActions = (set, get) => ({
       lastActivity: new Date().toISOString()
     });
     
-    // Initial context analysis
-    setTimeout(() => get().analyzeCanvasContext(), 500);
+    // Initial context analysis - DISABLED to prevent loops
+    // setTimeout(() => get().analyzeCanvasContext(), 500);
   },
   
   setBusinessMode: (mode) => {
