@@ -290,7 +290,10 @@ export const CanvasToolbar = () => {
           {/* AI & Store actions */}
           <div className="flex items-center space-x-2 border-r border-gray-200 dark:border-gray-700 pr-4">
             <button
-              onClick={analyzeCanvasContext}
+              onClick={() => {
+                console.log('🎯 AI Analysis button clicked manually');
+                analyzeCanvasContext();
+              }}
               className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors group relative"
               title="Analyze Canvas Context"
             >

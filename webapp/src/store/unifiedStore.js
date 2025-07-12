@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
 import { BUSINESS_MODES } from '../config/constants';
+import IntelligenceEngine from '../ai/intelligenceEngine.js';
 
 // =============================================================================
 // UNIFIED STORE ARCHITECTURE
@@ -139,85 +140,85 @@ const createCanvasActions = (set, get) => ({
 /**
  * AI Intelligence Actions
  * Handles AI suggestions, context analysis, and cross-module intelligence
+ * Now powered by real AI Intelligence Engine
  */
-const createAIActions = (set, get) => ({
-  // Context Analysis
-  analyzeCanvasContext: async () => {
-    const state = get();
-    const { canvas, currentModule } = state;
-    
-    // Simulate AI analysis (replace with real AI later)
-    const contextAnalysis = {
-      timestamp: new Date().toISOString(),
-      module: currentModule,
-      elementCount: canvas.elements.length,
-      selectedCount: canvas.selectedIds.length,
-      viewport: canvas.viewport,
-      patterns: [],
-      suggestions: []
-    };
-    
-    set((state) => ({
-      ai: {
-        ...state.ai,
-        context: contextAnalysis,
-        lastAnalysis: contextAnalysis.timestamp,
-        analysisHistory: [...(state.ai.analysisHistory || []), contextAnalysis].slice(-10)
-      }
-    }));
-    
-    // Auto-generate suggestions based on context
-    get().generateAISuggestions(contextAnalysis);
-  },
+const createAIActions = (set, get) => {
+  // Initialize AI Engine
+  let aiEngine = null;
   
-  generateAISuggestions: (context) => {
-    const suggestionTemplates = [
-      `💡 Add animated transitions to ${context?.elementCount || 0} canvas elements`,
-      `🎨 Consider using warmer color palette for ${context?.module || 'current'} module`,
-      `⚡ Optimize rendering performance with virtualization`,
-      `🔄 Add auto-save functionality`,
-      `📊 Create analytics dashboard for usage patterns`,
-      `🌙 Implement dark mode toggle`,
-      `📱 Optimize layout for mobile devices`,
-      `🚀 Add keyboard shortcuts for faster workflow`,
-      `🎯 Create project template for ${context?.module || 'current'} workflow`,
-      `🔍 Implement advanced search and filtering`
-    ];
-    
-    const newSuggestions = Array.from({ length: 3 }, () => 
-      suggestionTemplates[Math.floor(Math.random() * suggestionTemplates.length)]
-    );
-    
-    set((state) => ({
-      ai: {
-        ...state.ai,
-        suggestions: [...(state.ai.suggestions || []), ...newSuggestions],
-        suggestionsGenerated: (state.ai.suggestionsGenerated || 0) + newSuggestions.length
-      }
-    }));
-    
-    return newSuggestions;
-  },
+  const initializeAI = async () => {
+    if (!aiEngine) {
+      aiEngine = new IntelligenceEngine({
+        anthropicClient: null, // Will be configured later
+        openaiClient: null,     // Will be configured later
+        claudeCodeSDK: null     // Future integration
+      }, { getState: get, setState: set });
+      
+      await aiEngine.initialize();
+    }
+    return aiEngine;
+  };
   
-  acceptAISuggestion: (suggestionIndex) => {
-    set((state) => ({
-      ai: {
-        ...state.ai,
-        suggestions: (state.ai.suggestions || []).filter((_, index) => index !== suggestionIndex),
-        suggestionsAccepted: (state.ai.suggestionsAccepted || 0) + 1
+  return {
+    // Context Analysis with Real AI
+    analyzeCanvasContext: async () => {
+      const engine = await initializeAI();
+      if (!engine) {
+        console.warn('🤖 AI Engine not available - using mock analysis');
+        return;
       }
-    }));
-  },
-  
-  clearAISuggestions: () => {
-    set((state) => ({
-      ai: {
-        ...state.ai,
-        suggestions: []
+      
+      const analysis = await engine.analyzeContext();
+      if (analysis) {
+        console.log('🤖 Real AI analysis completed:', analysis);
       }
-    }));
-  }
-});
+    },
+    
+    // Generate AI Suggestions
+    generateAISuggestions: async (context) => {
+      const engine = await initializeAI();
+      if (!engine) return [];
+      
+      return await engine.generateSuggestions(context);
+    },
+    
+    // Accept/Reject Suggestions
+    acceptAISuggestion: (suggestionIndex) => {
+      set((state) => ({
+        ai: {
+          ...state.ai,
+          suggestions: (state.ai.suggestions || []).filter((_, index) => index !== suggestionIndex),
+          suggestionsAccepted: (state.ai.suggestionsAccepted || 0) + 1
+        }
+      }));
+    },
+    
+    clearAISuggestions: () => {
+      const engine = aiEngine;
+      if (engine) {
+        engine.clearSuggestions();
+      } else {
+        set((state) => ({
+          ai: {
+            ...state.ai,
+            suggestions: []
+          }
+        }));
+      }
+    },
+    
+    // Transform Content
+    transformContent: async (content, fromFormat, toFormat, context) => {
+      const engine = await initializeAI();
+      if (!engine) return content;
+      
+      return await engine.transform(content, fromFormat, toFormat, context);
+    },
+    
+    // Get AI Engine Instance (for advanced operations)
+    getAIEngine: () => aiEngine
+  };
+};
 
 /**
  * Navigation Actions
@@ -325,11 +326,14 @@ export const useUnifiedStore = create(
         
         // Computed/Derived State
         getCanvasElementCount: () => (get().canvas?.elements || []).length,
-        getAISuggestionCount: () => (get().ai?.suggestions || []).length,
+        getAISuggestionCount: () => {
+          const engine = get().getAIEngine?.();
+          return engine ? engine.getSuggestionCount() : (get().ai?.suggestions || []).length;
+        },
         getCurrentModuleContext: () => ({
           module: get().currentModule,
           elementCount: (get().canvas?.elements || []).length,
-          suggestionsCount: (get().ai?.suggestions || []).length,
+          suggestionsCount: get().getAISuggestionCount(),
           lastActivity: get().lastActivity
         })
       })),

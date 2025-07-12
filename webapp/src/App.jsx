@@ -9,27 +9,43 @@ import {
   BusinessSwitcher,
   UnifiedStoreTest 
 } from './modules'
+import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
 
 // Navigation sync component
 function NavigationSync() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentModule } = useUnifiedStore();
+  const { currentModule, navigateToModule } = useUnifiedStore();
   
   useEffect(() => {
-    // Map unified store modules to routes
+    // Bidirectional sync: Route changes update store module
+    const routeToModule = {
+      '/canvas': 'canvas',
+      '/unified-store': 'unified-store-test',
+      '/start': 'mind-garden',
+      '/tracker': 'projects'
+    };
+    
+    const currentModuleFromRoute = routeToModule[location.pathname];
+    if (currentModuleFromRoute && currentModuleFromRoute !== currentModule) {
+      // Update store module to match current route
+      navigateToModule(currentModuleFromRoute, { source: 'route-sync' });
+      return; // Don't navigate if we just updated the module
+    }
+    
+    // Store changes update route (only if different)
     const moduleToRoute = {
       'canvas': '/canvas',
       'unified-store-test': '/unified-store',
-      'mind-garden': '/start', // Temporary mapping
-      'projects': '/tracker'   // Temporary mapping
+      'mind-garden': '/start',
+      'projects': '/tracker'
     };
     
     const targetRoute = moduleToRoute[currentModule];
     if (targetRoute && location.pathname !== targetRoute) {
       navigate(targetRoute);
     }
-  }, [currentModule, navigate, location.pathname]);
+  }, [currentModule, navigate, location.pathname, navigateToModule]);
   
   return null;
 }
@@ -44,7 +60,7 @@ function App() {
         <Route path="/start" element={<ProjectStart />} />
         <Route path="/tracker" element={<ProjectTracker />} />
         <Route path="/business" element={<BusinessSwitcher />} />
-        <Route path="/unified-store" element={<UnifiedStoreTest />} />
+        <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
       </Routes>
     </Layout>
   )
