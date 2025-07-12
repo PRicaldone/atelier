@@ -137,6 +137,33 @@ check_prerequisites() {
     log "SUCCESS" "Prerequisites check passed"
 }
 
+# WIP Protection: Auto-commit uncommitted changes before save
+protect_wip() {
+    log "STEP" "Checking for uncommitted changes (WIP Protection)..."
+    
+    # Check for uncommitted changes
+    if [ -n "$(git -C "$MAIN_REPO" status --porcelain)" ]; then
+        log "WARNING" "🚧 Uncommitted changes detected - protecting your work!"
+        
+        # Show what will be committed
+        local changed_files=$(git -C "$MAIN_REPO" status --porcelain | wc -l | tr -d ' ')
+        log "INFO" "📝 Found $changed_files modified files"
+        
+        # Auto-commit with WIP marker
+        local wip_message="🚧 WIP Auto-Save: $(date '+%Y-%m-%d %H:%M:%S') - $changed_files files"
+        
+        git -C "$MAIN_REPO" add . 2>/dev/null
+        if git -C "$MAIN_REPO" commit -m "$wip_message" 2>/dev/null; then
+            log "SUCCESS" "✅ WIP changes auto-committed successfully"
+            log "INFO" "💡 Use 'git reset --soft HEAD~1' to undo if needed"
+        else
+            log "WARNING" "⚠️  Could not auto-commit WIP changes"
+        fi
+    else
+        log "INFO" "✅ No uncommitted changes found"
+    fi
+}
+
 check_git_status() {
     log "STEP" "Checking git repository status..."
     
@@ -780,6 +807,7 @@ main() {
     
     # Phase 1: Prerequisites and validation
     check_prerequisites
+    protect_wip
     check_git_status
     
     print_separator

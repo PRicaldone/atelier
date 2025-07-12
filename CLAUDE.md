@@ -162,17 +162,25 @@ npm run build
 npm run typecheck
 ```
 
-## 🧠 Context Monitor System (ATTIVO)
+## 🧠 Context Monitor System (ATTIVO + WIP PROTECTION)
 
 **Sistema di monitoraggio automatico del contesto conversazione:**
 - 📊 **Auto-tracking**: Lunghezza conversazione, task complexity, file processing
 - 🚨 **Smart alerts**: Avvisi proattivi quando contesto raggiunge 80-90%
 - ⚡ **Trigger patterns**: Read-heavy ops, multi-file edits, debug sessions
 - 🎯 **Save timing**: Suggerisce atelier-save ai momenti ottimali
+- 🚧 **WIP Protection**: Auto-detect sviluppo significativo non salvato
 
 **Thresholds automatici:**
 - 🟨 **WARNING (80%)**: "Considera atelier-save dopo questo task"
 - 🟥 **CRITICAL (90%)**: "SAVE NOW - contesto quasi esaurito"
+- 🚧 **WIP ALERT**: "Detected significant changes - commit WIP before continuing?"
+
+**WIP Detection Triggers:**
+- ✨ **New files created**: >3 nuovi file .jsx/.js
+- 📝 **Heavy modifications**: >10 file modificati
+- 🕐 **Time-based**: >20 minuti di sviluppo attivo
+- 🎯 **Feature completion**: Route, componente o modulo completato
 
 ## 🎯 Focus Areas per Nuova Sessione
 
@@ -261,6 +269,43 @@ git add . && git commit && git push  # Push sicuro
 ```
 
 **Risultato**: GitHub push protection superata, versioning ripristinato, API keys protette.
+
+### **WIP Protection System** ✅ 
+```bash
+# PROBLEMA: Lavoro significativo perso durante reset (Unified Store Test)
+# SOLUZIONE: Auto-commit di modifiche non salvate in atelier-save.sh
+
+protect_wip() {
+    if [ -n "$(git status --porcelain)" ]; then
+        log "WARNING" "🚧 Uncommitted changes detected"
+        git add . && git commit -m "🚧 WIP Auto-Save: $(date)"
+        log "SUCCESS" "✅ WIP changes auto-committed"
+    fi
+}
+```
+
+**Risultato**: Modifiche non committate vengono auto-salvate prima di ogni snapshot, prevenendo perdite di lavoro.
+
+### **Branch Development Strategy** ✅ 
+```bash
+# STRATEGIA: Feature branches per sviluppo sicuro
+git checkout -b feature/unified-store-test  # Branch dedicato
+git commit -am "Add test actions"           # Commit frequenti
+git commit -am "Add debug panel"            # Sviluppo libero
+git checkout main && git merge feature/unified-store-test  # Merge quando pronto
+```
+
+**Risultato**: Sviluppo isolato su branch dedicati, merge sicuro su main quando completo.
+
+### **Auto-Backup Working Directory** ✅ 
+```bash
+# SISTEMA: Backup automatico ogni ora del working directory
+./scripts/auto-backup.sh --install          # Installa cron job
+./scripts/auto-backup.sh --status           # Verifica stato
+# Backup include anche modifiche non committate + git status/diff
+```
+
+**Risultato**: Backup automatici ogni ora in `~/atelier-working-backups/`, include modifiche non committate.
 
 **IMPORTANTE**: Non assumere mai le versioni. Usa sempre i comandi sopra per essere sicuro di lavorare sui file più aggiornati.
 
