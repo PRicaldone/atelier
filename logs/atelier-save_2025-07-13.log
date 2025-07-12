@@ -346,3 +346,10 @@ Next: Optional NavigationSync loop fix and real AI API implementation.
 [2025-07-13 00:10:07] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-13_00-10-03.txt
 [2025-07-13 00:10:07] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-13 00:10:07] [INFO] Cleaning up temporary files...
+[2025-07-13 00:40:56] [INFO] Starting atelier-save.sh v2.1
+[2025-07-13 00:40:56] [INFO] Custom commit message: 🔄 NavigationSync Bidirezionale Milestone - AI Intelligence + Stable Navigation Complete
+[2025-07-13 00:40:56] [STEP] Checking prerequisites...
+[2025-07-13 00:40:56] [SUCCESS] Prerequisites check passed
+[2025-07-13 00:40:56] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-13 00:40:56] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-13 00:40:56] [INFO] 📝 Found 1 modified files
