@@ -231,46 +231,15 @@ grep -o "ATELIER SAVE v[0-9]*\.[0-9]*" /Users/paoloricaldone/atelier/atelier-sav
 grep -o "Starting atelier-save.sh v[0-9]*\.[0-9]*" /Users/paoloricaldone/atelier/atelier-save.sh | sed 's/Starting atelier-save.sh v//' | head -1
 ```
 
-## 🔧 Fix Critici Implementati
-
-**IMPORTANTE**: atelier-save.sh ora è completamente dinamico!
-
-### **Blueprint Auto-Update Fix** ✅
-```bash
-# PRIMA (hardcoded - SBAGLIATO):
-# local blueprint_file="${SCRIPT_DIR}/docs/blueprint-v2.1.md"
-
-# DOPO (dinamico - CORRETTO):
-local blueprint_file=$(find "$SCRIPT_DIR" -name "blueprint-v*.md" -not -path "*/ATELIER-VERSIONS/*" | sort -V | tail -1)
-```
-
-**Risultato**: atelier-save.sh aggiorna sempre l'ultimo blueprint (v4.1, v5.0, v6.0, etc.) invece di essere bloccato sul v2.1.
-
-### **GitHub Push Protection Fix** ✅ 
-```bash
-# PROBLEMA: GitHub blocca push per API keys nei file .env
-# remote: - Push cannot contain secrets
-# remote: Anthropic API Key in webapp/.env:5
-# remote: OpenAI API Key in webapp/.env:6
-
-# SOLUZIONE:
-git reset --hard HEAD~2          # Reset ai commit senza API keys
-echo "webapp/.env" > .gitignore  # Ignora .env in futuro
-# Sanitizza .env con placeholder values
-git add . && git commit && git push  # Push sicuro
-```
-
-**Risultato**: GitHub push protection superata, versioning ripristinato, API keys protette.
-
 **IMPORTANTE**: Non assumere mai le versioni. Usa sempre i comandi sopra per essere sicuro di lavorare sui file più aggiornati.
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 12/07/2025 02:42
-**Ultimo commit:** f302698 📋 Blueprint v4.1.1 - Hybrid Intelligence Architecture with Claude Code SDK future roadmap
+**Data:** 12/07/2025 01:45
+**Ultimo commit:** a235ae0 🔧 Updated atelier-save script to v2.1 - version alignment
 **Branch:** main
-**Commit totali:** 58
-**Snapshots:** 47 | **Backups:** 0
+**Commit totali:** 57
+**Snapshots:** 46 | **Backups:** 0
 
-**Ultima modifica:** 📋 Blueprint v4.1.1 - Hybrid Intelligence Architecture with Claude Code SDK future roadmap
+**Ultima modifica:** 🔧 Updated atelier-save script to v2.1 - version alignment
 
