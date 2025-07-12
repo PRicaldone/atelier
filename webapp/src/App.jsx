@@ -4,7 +4,8 @@ import {
   VisualCanvas, 
   ProjectStart, 
   ProjectTracker, 
-  BusinessSwitcher 
+  BusinessSwitcher,
+  UnifiedStoreTest 
 } from './modules'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/start" element={<ProjectStart />} />
         <Route path="/tracker" element={<ProjectTracker />} />
         <Route path="/business" element={<BusinessSwitcher />} />
+        <Route path="/unified-store" element={<UnifiedStoreTest />} />
       </Routes>
     </Layout>
   )
