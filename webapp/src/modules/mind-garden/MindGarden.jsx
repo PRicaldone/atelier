@@ -122,14 +122,34 @@ const MindGardenInner = () => {
   }, []);
 
   const onNodeDoubleClick = useCallback((event, node) => {
-    const rect = reactFlowWrapper.current.getBoundingClientRect();
-    setCommandPosition({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top + 20
-    });
-    setSelectedNodeId(node.id);
-    setCommandPaletteOpen(true);
-  }, []);
+    // Shift+Double click = AI Command Palette
+    if (event.shiftKey) {
+      const rect = reactFlowWrapper.current.getBoundingClientRect();
+      setCommandPosition({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top + 20
+      });
+      setSelectedNodeId(node.id);
+      setCommandPaletteOpen(true);
+      return;
+    }
+    
+    // Regular double click = Edit mode
+    const newTitle = prompt('Edit title:', node.data.title || '');
+    const newContent = prompt('Edit content:', node.data.content || '');
+    
+    // Update both title and content in a single operation
+    if ((newTitle !== null && newTitle !== node.data.title) || 
+        (newContent !== null && newContent !== node.data.content)) {
+      updateNode(node.id, {
+        data: {
+          ...node.data,
+          title: newTitle !== null ? newTitle : node.data.title,
+          content: newContent !== null ? newContent : node.data.content
+        }
+      });
+    }
+  }, [updateNode]);
 
   const onPaneClick = useCallback((event) => {
     if (event.detail === 2) { // Double click on pane
@@ -340,7 +360,8 @@ const MindGardenInner = () => {
       <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
         <div className="font-medium mb-1">🌱 Mind Garden</div>
         <div>• Double-click canvas to add node</div>
-        <div>• Double-click node for AI commands</div>
+        <div>• Double-click node to edit content</div>
+        <div>• Shift+double-click node for AI commands</div>
         <div>• Shift+click to multi-select</div>
         <div>• Right-click+drag to zoom (Wacom friendly)</div>
       </div>
