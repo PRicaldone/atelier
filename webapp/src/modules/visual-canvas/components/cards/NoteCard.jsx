@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useCanvasStore } from '../../store.js';
-import { Edit3, Type, Palette } from 'lucide-react';
+import { Edit3, Type, Palette, Sparkles } from 'lucide-react';
 
 export const NoteCard = ({ element }) => {
   const { updateElement } = useCanvasStore();
