@@ -178,9 +178,24 @@ const createAIActions = (set, get) => {
         return;
       }
       
+      // Analyze context and generate suggestions
       const analysis = await engine.analyzeContext();
+      const suggestions = await engine.generateSuggestions(get());
+      
       if (analysis) {
         console.log('🤖 Real AI analysis completed:', analysis);
+      }
+      
+      if (suggestions && suggestions.length > 0) {
+        console.log('🤖 Generated suggestions:', suggestions);
+        set((state) => ({
+          ai: {
+            ...state.ai,
+            suggestions: suggestions,
+            lastAnalysis: analysis,
+            suggestionsGenerated: (state.ai.suggestionsGenerated || 0) + suggestions.length
+          }
+        }));
       }
     },
     
@@ -207,14 +222,24 @@ const createAIActions = (set, get) => {
       const engine = aiEngine;
       if (engine) {
         engine.clearSuggestions();
-      } else {
-        set((state) => ({
-          ai: {
-            ...state.ai,
-            suggestions: []
-          }
-        }));
       }
+      
+      set((state) => ({
+        ai: {
+          ...state.ai,
+          suggestions: []
+        }
+      }));
+    },
+    
+    // Dismiss specific suggestion
+    dismissAISuggestion: (suggestionIndex) => {
+      set((state) => ({
+        ai: {
+          ...state.ai,
+          suggestions: state.ai.suggestions.filter((_, index) => index !== suggestionIndex)
+        }
+      }));
     },
     
     // Transform Content

@@ -335,13 +335,10 @@ const MindGardenInner = () => {
           
           addNode(newNode);
           
-          // Add edge with different styling based on relationship
-          const edgeColor = {
-            'evolution': 'rgba(34, 197, 94, 0.5)',
-            'alternative': 'rgba(168, 85, 247, 0.5)',
-            'support': 'rgba(59, 130, 246, 0.5)',
-            'application': 'rgba(249, 115, 22, 0.5)'
-          }[idea.relationship] || 'rgba(16, 185, 129, 0.5)';
+          // Add edge with consistent styling for content nodes
+          const edgeColor = idea.relationship === 'content' 
+            ? 'rgba(99, 102, 241, 0.5)' // Indigo for content
+            : 'rgba(16, 185, 129, 0.5)'; // Default green
           
           const newEdge = {
             id: `e_${node.id}_${newNode.id}`,

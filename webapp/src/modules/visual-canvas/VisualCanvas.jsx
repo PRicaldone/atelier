@@ -13,6 +13,7 @@ import { useCanvasStore } from './store.js';
 import { useUnifiedStore, useCanvasState } from '../../store/unifiedStore.js';
 import { CanvasToolbar } from './components/CanvasToolbar.jsx';
 import { PropertiesPanel } from './components/PropertiesPanel.jsx';
+import { AISuggestions } from './components/AISuggestions.jsx';
 import { DraggableElement } from './components/DraggableElement.jsx';
 import TreeViewSidebar from './components/TreeViewSidebar.jsx';
 import HoudiniTreeView from './components/HoudiniTreeView.jsx';
@@ -73,7 +74,8 @@ const VisualCanvas = () => {
   
   // Trigger AI analysis when elements change
   useEffect(() => {
-    if (elements.length > 0) {
+    // Trigger analysis when there are elements or when entering Canvas
+    if (elements.length > 0 || elements.length === 0) {
       analyzeCanvasContext();
     }
   }, [elements.length]); // Removed analyzeCanvasContext from deps to prevent loop
@@ -672,6 +674,9 @@ const VisualCanvas = () => {
 
       {/* Properties Panel */}
       <PropertiesPanel />
+      
+      {/* AI Suggestions */}
+      <AISuggestions />
       
       {/* Path Breadcrumb */}
       <PathBreadcrumb />
