@@ -634,3 +634,10 @@ and the repository exists.
 [2025-07-13 00:41:00] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-13_00-40-56.txt
 [2025-07-13 00:41:00] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-13 00:41:00] [INFO] Cleaning up temporary files...
+[2025-07-13 16:20:17] [INFO] Starting atelier-save.sh v2.1
+[2025-07-13 16:20:17] [INFO] Custom commit message: 🌱 Mind Garden Complete - React Flow + Smart Export + Unified Store Integration
+[2025-07-13 16:20:17] [STEP] Checking prerequisites...
+[2025-07-13 16:20:17] [SUCCESS] Prerequisites check passed
+[2025-07-13 16:20:17] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-13 16:20:17] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-13 16:20:17] [INFO] 📝 Found 1 modified files
