@@ -37,29 +37,61 @@ export const NoteCard = ({ element }) => {
     }
   };
 
-  // Improve contrast by using accent colors as border and keeping readable backgrounds
+  // Use Mind Garden elegant styling with better contrast
   const accentColor = data.backgroundColor || '#f59e0b';
-  const cardStyle = {
-    backgroundColor: '#ffffff', // Always white background for maximum readability
-    borderColor: accentColor,
-    borderLeftWidth: '4px', // Accent stripe on left
-    borderLeftColor: accentColor,
-    color: '#111827' // Very dark text for maximum contrast
-  };
 
   return (
     <motion.div
-      className="w-full h-full rounded-lg border-2 shadow-md hover:shadow-lg transition-shadow duration-200 relative overflow-hidden"
-      style={cardStyle}
-      whileHover={{ y: -2 }}
+      className={`
+        w-full h-full relative
+        bg-white/[0.02] dark:bg-gray-900/50
+        border rounded-xl
+        backdrop-blur-md
+        transition-all duration-200
+        border-white/10 hover:border-white/20
+        shadow-lg hover:shadow-xl
+      `}
+      style={{
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        borderColor: `${accentColor}20`
+      }}
+      whileHover={{ scale: 1.02, y: -2 }}
     >
+      {/* Accent Line */}
+      <div 
+        className="absolute top-0 left-4 right-4 h-0.5 rounded-full"
+        style={{ 
+          backgroundColor: accentColor, 
+          opacity: 0.6
+        }}
+      />
+
       {/* Header */}
-      <div className="flex items-center justify-between p-2 border-b border-current opacity-20 dark:opacity-30">
-        <Type size={14} />
-        <div className="flex space-x-1">
-          <div className="w-2 h-2 rounded-full bg-current opacity-40 dark:opacity-50" />
-          <div className="w-2 h-2 rounded-full bg-current opacity-40 dark:opacity-50" />
-          <div className="w-2 h-2 rounded-full bg-current opacity-40 dark:opacity-50" />
+      <div className="flex items-center justify-between p-3 mb-2">
+        <div className="flex items-center space-x-2 text-gray-400 dark:text-gray-500">
+          <Type size={14} />
+          <span className="text-xs uppercase tracking-wider opacity-60">
+            note
+          </span>
+          {data.sourceModule === 'mind-garden' && (
+            <div className="flex items-center space-x-1">
+              <Sparkles className="w-3 h-3 text-purple-500" />
+              <span className="text-xs text-purple-500 font-medium">Mind Garden</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          {data.phase && (
+            <span 
+              className="text-xs px-2 py-1 rounded-full text-white font-medium"
+              style={{ 
+                backgroundColor: accentColor,
+                opacity: 0.8
+              }}
+            >
+              {data.phase}
+            </span>
+          )}
         </div>
       </div>
 
@@ -77,7 +109,7 @@ export const NoteCard = ({ element }) => {
               fontSize: `${data.fontSize || 14}px`,
               fontWeight: data.fontWeight || 'normal',
               textAlign: data.textAlign || 'left',
-              color: '#111827' // Dark text for editing mode too
+              color: '#374151' // Dark gray for editing mode
             }}
             placeholder="Start typing..."
           />
@@ -93,14 +125,11 @@ export const NoteCard = ({ element }) => {
           >
             {/* Support both formats: legacy (data.text) and new (data.title + data.content) */}
             {data.title && (
-              <div className="font-bold text-sm mb-2 pb-1" style={{ 
-                borderBottom: `1px solid ${accentColor}`, 
-                color: '#111827' 
-              }}>
+              <div className="font-medium text-base mb-3 text-gray-900 dark:text-white">
                 {data.title}
               </div>
             )}
-            <div className="text-sm leading-relaxed font-medium" style={{ color: '#374151' }}>
+            <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
               {data.content || data.text || 'Double-click to edit'}
             </div>
           </div>
@@ -110,24 +139,13 @@ export const NoteCard = ({ element }) => {
       {/* Edit indicator */}
       {!isEditing && (
         <motion.div
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
         >
-          <Edit3 size={12} className="text-current opacity-60 dark:opacity-70" />
+          <Edit3 size={12} className="text-gray-400 dark:text-gray-500" />
         </motion.div>
       )}
-
-      {/* Color palette indicator */}
-      <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full border border-current opacity-30 dark:opacity-40" />
-      
-      {/* Sticky note fold effect */}
-      <div className="absolute top-0 right-0 w-4 h-4">
-        <div 
-          className="absolute top-0 right-0 w-0 h-0 border-l-4 border-b-4 border-l-transparent"
-          style={{ borderBottomColor: data.borderColor || '#f59e0b' }}
-        />
-      </div>
     </motion.div>
   );
 };
