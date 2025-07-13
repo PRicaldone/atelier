@@ -35,9 +35,10 @@ const OrganicEdge = ({
           style={{
             ...style,
             stroke: data?.color || '#3B82F6',
-            strokeWidth: (strength * 2) + 8,
-            opacity: 0.3,
-            filter: 'blur(8px)'
+            strokeWidth: (strength * 2) + 4,
+            opacity: 0.14,
+            filter: 'blur(3px)',
+            pointerEvents: 'none'
           }}
           className="react-flow__edge-path"
           d={edgePath}
@@ -45,19 +46,35 @@ const OrganicEdge = ({
         />
       )}
       
-      {/* Main edge path */}
+      {/* Main edge path with thick hover area */}
       <path
         id={id}
         style={{
           ...style,
-          stroke: data?.color || 'rgba(255, 255, 255, 0.2)',
-          strokeWidth: strength * 2,
+          stroke: isHighlighted ? '#3B82F6' : (data?.color || 'rgba(255, 255, 255, 0.2)'),
+          strokeWidth: isHighlighted ? strength * 2 : strength * 2,
           strokeDasharray: data?.animated ? '5 5' : 'none',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          cursor: 'pointer'
         }}
         className="react-flow__edge-path hover:stroke-blue-400"
         d={edgePath}
         markerEnd={markerEnd}
+        strokeLinecap="round"
+      />
+      
+      {/* Invisible thick overlay for easier clicking */}
+      <path
+        id={`${id}-hitarea`}
+        style={{
+          ...style,
+          stroke: 'transparent',
+          strokeWidth: 15,
+          cursor: 'pointer',
+          pointerEvents: 'stroke'
+        }}
+        className="react-flow__edge-path"
+        d={edgePath}
       />
       
       {/* Animated dots for active connections */}

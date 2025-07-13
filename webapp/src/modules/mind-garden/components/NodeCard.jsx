@@ -30,8 +30,15 @@ const NodeCard = ({ data, selected }) => {
       <Handle
         type="target"
         position={Position.Top}
-        className="!bg-transparent !border-0"
-        style={{ width: 8, height: 8 }}
+        className="!bg-blue-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all hover:scale-125"
+        style={{ 
+          width: 28, 
+          height: 28, 
+          borderRadius: '50%',
+          cursor: 'crosshair',
+          top: -8  // Sporge di 8px oltre il bordo
+        }}
+        isConnectable={true}
       />
       
       <motion.div
@@ -144,8 +151,15 @@ const NodeCard = ({ data, selected }) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        className="!bg-transparent !border-0"
-        style={{ width: 8, height: 8 }}
+        className="!bg-green-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all hover:scale-125"
+        style={{ 
+          width: 28, 
+          height: 28, 
+          borderRadius: '50%',
+          cursor: 'crosshair',
+          bottom: -8  // Sporge di 8px oltre il bordo
+        }}
+        isConnectable={true}
       />
     </>
   );

@@ -32,6 +32,7 @@ const MindGardenInner = () => {
   const [commandPosition, setCommandPosition] = useState({ x: 0, y: 0 });
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedNodes, setSelectedNodes] = useState([]);
+  const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [isRightDragging, setIsRightDragging] = useState(false);
   const [zoomStart, setZoomStart] = useState(null);
   const [initialZoom, setInitialZoom] = useState(1);
@@ -119,6 +120,12 @@ const MindGardenInner = () => {
 
   const onNodeClick = useCallback((event, node) => {
     setSelectedNodeId(node.id);
+    setSelectedEdgeId(null); // Deselect any selected edge
+  }, []);
+
+  const onEdgeClick = useCallback((event, edge) => {
+    setSelectedEdgeId(edge.id);
+    setSelectedNodeId(null); // Deselect any selected node
   }, []);
 
   const onNodeDoubleClick = useCallback((event, node) => {
@@ -152,6 +159,10 @@ const MindGardenInner = () => {
   }, [updateNode]);
 
   const onPaneClick = useCallback((event) => {
+    // Deselect everything on single click
+    setSelectedNodeId(null);
+    setSelectedEdgeId(null);
+    
     if (event.detail === 2) { // Double click on pane
       const rect = reactFlowWrapper.current.getBoundingClientRect();
       const position = reactFlowInstance.project({
@@ -225,11 +236,13 @@ const MindGardenInner = () => {
       const zoomFactor = 1 + (deltaY * -0.01);
       const newZoom = Math.max(0.1, Math.min(1, initialZoom * zoomFactor));
       
-      reactFlowInstance.setViewport({
-        x: reactFlowInstance.getViewport().x,
-        y: reactFlowInstance.getViewport().y,
-        zoom: newZoom
-      });
+      // Get mouse position relative to ReactFlow container
+      const rect = reactFlowWrapper.current.getBoundingClientRect();
+      const mouseX = zoomStart.x - rect.left;
+      const mouseY = zoomStart.y - rect.top;
+      
+      // Zoom to mouse position
+      reactFlowInstance.zoomTo(newZoom, { x: mouseX, y: mouseY });
     }
   }, [isRightDragging, zoomStart, initialZoom, reactFlowInstance]);
 
@@ -239,6 +252,31 @@ const MindGardenInner = () => {
       setZoomStart(null);
     }
   }, []);
+
+  // Keyboard event handler for deletion
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (selectedEdgeId) {
+          // Delete selected edge
+          setEdges((eds) => eds.filter((edge) => edge.id !== selectedEdgeId));
+          setSelectedEdgeId(null);
+          event.preventDefault();
+        } else if (selectedNodeId) {
+          // Delete selected node
+          removeNode(selectedNodeId);
+          setSelectedNodeId(null);
+          event.preventDefault();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedEdgeId, selectedNodeId, setEdges, removeNode]);
 
   // Add global mouse event listeners
   useEffect(() => {
@@ -267,7 +305,14 @@ const MindGardenInner = () => {
     >
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={edges.map(edge => ({
+          ...edge,
+          selected: edge.id === selectedEdgeId,
+          data: {
+            ...edge.data,
+            highlighted: edge.id === selectedEdgeId
+          }
+        }))}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
@@ -275,6 +320,7 @@ const MindGardenInner = () => {
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         onNodeDoubleClick={onNodeDoubleClick}
+        onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         onMoveEnd={onMoveEnd}
         defaultViewport={viewport}
@@ -283,6 +329,14 @@ const MindGardenInner = () => {
           type: 'organic',
         }}
         multiSelectionKeyCode="Shift"
+        connectionMode="loose"
+        connectOnClick={false}
+        selectionOnDrag={false}
+        panOnDrag={[1]}
+        panOnScroll={false}
+        zoomOnScroll={true}
+        minZoom={0.1}
+        maxZoom={1}
         proOptions={{ hideAttribution: true }}
       >
         <Background 
@@ -361,9 +415,9 @@ const MindGardenInner = () => {
         <div className="font-medium mb-1">🌱 Mind Garden</div>
         <div>• Double-click canvas to add node</div>
         <div>• Double-click node to edit content</div>
-        <div>• Shift+double-click node for AI commands</div>
-        <div>• Shift+click to multi-select</div>
-        <div>• Right-click+drag to zoom (Wacom friendly)</div>
+        <div>• Click connection line → Del to remove</div>
+        <div>• Shift+click to multi-select nodes</div>
+        <div>• Right-click+drag OR scroll to zoom</div>
       </div>
     </div>
   );
