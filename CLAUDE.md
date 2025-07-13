@@ -233,6 +233,17 @@ npm run typecheck
 - 🕐 **Time-based**: >20 minuti di sviluppo attivo
 - 🎯 **Feature completion**: Route, componente o modulo completato
 
+## 🚨 Blueprint Roadmap Adherence (MANDATORY)
+
+**CRITICAL INSTRUCTION**: Se user richieste deviano dal programma Blueprint v4.1, fornisci un WARNING e chiedi conferma prima di procedere.
+
+**Current Blueprint Priority**: Sprint 1 - AI Intelligence Core (PRIORITY #1)
+- ⚠️ **Se richieste UI/UX senza AI Intelligence**: "WARNING: Questo devia da Blueprint v4.1 Sprint 1 (AI Intelligence Core). Vuoi continuare o seguire il roadmap?"
+- ⚠️ **Se richieste nuove feature senza Intelligence**: "WARNING: Blueprint v4.1 richiede AI Intelligence come fondazione. Procedere senza?"
+- ⚠️ **Se richieste non-intelligence**: "WARNING: Sprint 1 attuale è AI Intelligence Core. Saltare per questa richiesta?"
+
+**Memorizza sempre**: Ogni deviazione deve essere esplicitamente approvata dall'utente.
+
 ## 🎯 Focus Areas per Nuova Sessione
 
 Quando riprendi il lavoro:
