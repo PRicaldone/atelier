@@ -29,12 +29,16 @@ export const NoteCard = ({ element }) => {
   };
 
   const handleKeyDown = (e) => {
+    // Stop propagation for all key events when editing to prevent Canvas shortcuts
+    e.stopPropagation();
+    
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       handleTextBlur();
     }
     if (e.key === 'Escape') {
       handleTextBlur();
     }
+    // Allow all other keys (including spacebar) to work normally in textarea
   };
 
   // Use Mind Garden elegant styling with better contrast
@@ -128,6 +132,7 @@ export const NoteCard = ({ element }) => {
             onChange={handleTextChange}
             onBlur={handleTextBlur}
             onKeyDown={handleKeyDown}
+            onClick={(e) => e.stopPropagation()}
             className="w-full h-full bg-transparent border-none outline-none resize-none min-h-[60px]"
             style={{
               fontSize: `${data.fontSize || 14}px`,
