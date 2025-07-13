@@ -23,6 +23,12 @@ export const useCanvasStore = create(
     // Element management
     addElement: (type, position) => {
       const newElement = createCanvasElement(type, position);
+      
+      // Auto-enable editing mode for notes created via double-click
+      if (type === 'note') {
+        newElement.editing = true;
+      }
+      
       set((state) => ({
         elements: [...state.elements, newElement],
         selectedIds: [newElement.id]

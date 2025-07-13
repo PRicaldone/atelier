@@ -330,12 +330,28 @@ const VisualCanvas = () => {
     setDragOffset({ x: 0, y: 0 });
   }, [selectedIds, viewport.zoom, moveElement, elements, settings.snapToGrid, selectElement, addElement, viewport.x, viewport.y, draggedElement]);
 
-  // Handle canvas click
+  // Handle canvas click and double-click
   const handleCanvasClick = useCallback((e) => {
     if (e.target === canvasRef.current) {
-      clearSelection();
+      if (e.detail === 2) {
+        // Double click - create new note at mouse position
+        const canvasBounds = canvasRef.current.getBoundingClientRect();
+        const canvasX = (e.clientX - canvasBounds.left - viewport.x) / viewport.zoom;
+        const canvasY = (e.clientY - canvasBounds.top - viewport.y) / viewport.zoom;
+        
+        // Snap to grid if enabled
+        const position = settings.snapToGrid ? {
+          x: Math.round(canvasX / GRID_SIZE) * GRID_SIZE,
+          y: Math.round(canvasY / GRID_SIZE) * GRID_SIZE
+        } : { x: canvasX, y: canvasY };
+        
+        addElement('note', position);
+      } else {
+        // Single click - clear selection
+        clearSelection();
+      }
     }
-  }, [clearSelection]);
+  }, [clearSelection, addElement, viewport, settings.snapToGrid]);
 
   // Handle mouse down for selection box, panning, and zooming
   const handleMouseDown = useCallback((e) => {
@@ -671,6 +687,8 @@ const VisualCanvas = () => {
       {/* Help overlay */}
       <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300" style={{ right: '340px' }}>
         <div className="font-medium mb-1">Shortcuts:</div>
+        <div>Double-click canvas: Add note</div>
+        <div>Double-click note: Edit text</div>
         <div>Drag: Move elements</div>
         <div>Alt+drag: Pan canvas</div>
         <div>Middle mouse: Pan canvas</div>
