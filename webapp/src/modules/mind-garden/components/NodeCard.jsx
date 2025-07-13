@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import { motion } from 'framer-motion';
-import { Type, Image, Link2, Hash, ChevronRight } from 'lucide-react';
+import { Type, Image, Link2, Hash, ChevronRight, Sparkles, Bot } from 'lucide-react';
 
 const NodeCard = ({ data, selected }) => {
   const getNodeIcon = (type) => {
@@ -88,18 +88,29 @@ const NodeCard = ({ data, selected }) => {
             <span className="text-xs uppercase tracking-wider opacity-60">
               {data.type}
             </span>
+            {data.aiGenerated && (
+              <div className="flex items-center space-x-1">
+                <Bot className="w-3 h-3 text-purple-500" />
+                <span className="text-xs text-purple-500 font-medium">AI</span>
+              </div>
+            )}
           </div>
-          {data.phase && (
-            <span 
-              className="text-xs px-2 py-1 rounded-full"
-              style={{ 
-                backgroundColor: `${accentColor}20`,
-                color: accentColor
-              }}
-            >
-              {data.phase}
-            </span>
-          )}
+          <div className="flex items-center space-x-2">
+            {data.phase && (
+              <span 
+                className="text-xs px-2 py-1 rounded-full"
+                style={{ 
+                  backgroundColor: `${accentColor}20`,
+                  color: accentColor
+                }}
+              >
+                {data.phase}
+              </span>
+            )}
+            {data.aiEnhanced && !data.aiGenerated && (
+              <Sparkles className="w-3 h-3 text-amber-500" title="AI Enhanced" />
+            )}
+          </div>
         </div>
 
         {/* Content */}

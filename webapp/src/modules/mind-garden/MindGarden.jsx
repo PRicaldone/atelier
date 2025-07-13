@@ -185,16 +185,219 @@ const MindGardenInner = () => {
   const handleAICommand = useCallback(async (command) => {
     console.log('🌱 AI Command:', command, 'on node:', selectedNodeId);
     
-    // Trigger AI Intelligence Engine
+    if (!selectedNodeId) {
+      console.warn('🌱 No node selected for AI command');
+      setCommandPaletteOpen(false);
+      return;
+    }
+    
+    const selectedNode = nodes.find(node => node.id === selectedNodeId);
+    if (!selectedNode) {
+      console.warn('🌱 Selected node not found');
+      setCommandPaletteOpen(false);
+      return;
+    }
+    
     try {
+      // Get AI Intelligence Engine from unified store
+      const { getIntelligenceEngine } = useUnifiedStore.getState();
+      const intelligenceEngine = await getIntelligenceEngine();
+      
+      if (!intelligenceEngine) {
+        console.warn('🤖 AI Intelligence Engine not available');
+        setCommandPaletteOpen(false);
+        return;
+      }
+      
+      switch (command) {
+        case '@expand':
+          await handleExpandNode(selectedNode, intelligenceEngine);
+          break;
+          
+        case '@connect':
+          await handleSpreadIdeas(selectedNode, intelligenceEngine);
+          break;
+          
+        case '@visual':
+        case '@technical':
+        case '@narrative':
+          await handleTransformNode(selectedNode, command, intelligenceEngine);
+          break;
+          
+        default:
+          console.log('🌱 AI Command not implemented yet:', command);
+          break;
+      }
+      
+      // Trigger context analysis
       await analyzeCanvasContext();
-      console.log('🤖 AI analysis completed for Mind Garden');
+      
     } catch (error) {
-      console.error('🤖 AI analysis failed:', error);
+      console.error('🤖 AI command failed:', error);
     }
     
     setCommandPaletteOpen(false);
-  }, [selectedNodeId, analyzeCanvasContext]);
+  }, [selectedNodeId, nodes, analyzeCanvasContext]);
+  
+  // EXPAND NODE WITH AI
+  const handleExpandNode = useCallback(async (node, intelligenceEngine) => {
+    console.log('🌱 Expanding node with AI:', node.data.title);
+    
+    try {
+      const expandedIdeas = await intelligenceEngine.transform(
+        node.data,
+        'mindNode',
+        'expandedIdeas',
+        { projectType: 'creative project', currentPhase }
+      );
+      
+      if (Array.isArray(expandedIdeas)) {
+        // Create new nodes for each expanded idea
+        expandedIdeas.forEach((idea, index) => {
+          const angle = (index / expandedIdeas.length) * 2 * Math.PI;
+          const radius = 200;
+          const newPosition = {
+            x: node.position.x + Math.cos(angle) * radius,
+            y: node.position.y + Math.sin(angle) * radius
+          };
+          
+          const newNode = {
+            id: `expanded_${Date.now()}_${index}`,
+            type: 'card',
+            position: newPosition,
+            data: {
+              title: idea.title,
+              content: idea.content,
+              type: 'text',
+              phase: node.data.phase,
+              aiGenerated: true,
+              sourceNode: node.id
+            }
+          };
+          
+          addNode(newNode);
+          
+          // Add edge to connect to original node
+          const newEdge = {
+            id: `e_${node.id}_${newNode.id}`,
+            source: node.id,
+            target: newNode.id,
+            type: 'organic',
+            data: { strength: 1, color: 'rgba(16, 185, 129, 0.5)' }
+          };
+          
+          setEdges(edges => [...edges, newEdge]);
+        });
+        
+        console.log('🌱 Created', expandedIdeas.length, 'expanded nodes');
+      }
+    } catch (error) {
+      console.error('🌱 Expand node failed:', error);
+    }
+  }, [addNode, setEdges, currentPhase]);
+  
+  // SPREAD IDEAS FROM NODE
+  const handleSpreadIdeas = useCallback(async (node, intelligenceEngine) => {
+    console.log('🌱 Spreading ideas from node:', node.data.title);
+    
+    try {
+      const relatedIdeas = await intelligenceEngine.transform(
+        node.data,
+        'mindNode',
+        'spreadIdeas',
+        { projectType: 'creative project', currentPhase }
+      );
+      
+      if (Array.isArray(relatedIdeas)) {
+        // Create new nodes in a fan pattern
+        relatedIdeas.forEach((idea, index) => {
+          const angle = -Math.PI/2 + (index / (relatedIdeas.length - 1)) * Math.PI;
+          const radius = 250;
+          const newPosition = {
+            x: node.position.x + Math.cos(angle) * radius,
+            y: node.position.y + Math.sin(angle) * radius
+          };
+          
+          const newNode = {
+            id: `spread_${Date.now()}_${index}`,
+            type: 'card',
+            position: newPosition,
+            data: {
+              title: idea.title,
+              content: idea.content,
+              type: 'text',
+              phase: node.data.phase,
+              aiGenerated: true,
+              sourceNode: node.id,
+              relationship: idea.relationship
+            }
+          };
+          
+          addNode(newNode);
+          
+          // Add edge with different styling based on relationship
+          const edgeColor = {
+            'evolution': 'rgba(34, 197, 94, 0.5)',
+            'alternative': 'rgba(168, 85, 247, 0.5)',
+            'support': 'rgba(59, 130, 246, 0.5)',
+            'application': 'rgba(249, 115, 22, 0.5)'
+          }[idea.relationship] || 'rgba(16, 185, 129, 0.5)';
+          
+          const newEdge = {
+            id: `e_${node.id}_${newNode.id}`,
+            source: node.id,
+            target: newNode.id,
+            type: 'organic',
+            data: { 
+              strength: 1.5, 
+              color: edgeColor,
+              animated: true 
+            }
+          };
+          
+          setEdges(edges => [...edges, newEdge]);
+        });
+        
+        console.log('🌱 Created', relatedIdeas.length, 'related idea nodes');
+      }
+    } catch (error) {
+      console.error('🌱 Spread ideas failed:', error);
+    }
+  }, [addNode, setEdges, currentPhase]);
+  
+  // TRANSFORM NODE
+  const handleTransformNode = useCallback(async (node, command, intelligenceEngine) => {
+    console.log('🌱 Transforming node:', node.data.title, 'with command:', command);
+    
+    try {
+      const transformationType = {
+        '@visual': 'visualReferences',
+        '@technical': 'technicalBreakdown', 
+        '@narrative': 'narrativeStructure'
+      }[command];
+      
+      const transformedContent = await intelligenceEngine.transform(
+        node.data,
+        'mindNode',
+        transformationType,
+        { projectType: 'creative project', currentPhase, command }
+      );
+      
+      // Update the current node with enhanced content
+      updateNode(node.id, {
+        data: {
+          ...node.data,
+          content: transformedContent,
+          aiEnhanced: true,
+          transformationType
+        }
+      });
+      
+      console.log('🌱 Node transformed successfully');
+    } catch (error) {
+      console.error('🌱 Transform node failed:', error);
+    }
+  }, [updateNode, currentPhase]);
 
   const handleExportToCanvas = useCallback(() => {
     console.log('🌱 DEBUG: selectedNodes in handleExportToCanvas:', selectedNodes);

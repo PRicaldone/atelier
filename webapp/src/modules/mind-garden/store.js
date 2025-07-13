@@ -146,28 +146,29 @@ export const useMindGardenStore = create(
           console.log('🌱 DEBUG: node structure:', node);
           console.log('🌱 DEBUG: node.data:', node.data);
           return {
-          id: `mind_${node.id}_${Date.now()}`,
-          type: 'note',
-          position: {
-            x: node.position.x,
-            y: node.position.y
-          },
-          size: {
-            width: 200,
-            height: 120
-          },
-          rotation: 0,
-          visible: true,
-          data: {
-            title: node.data.title || 'Untitled',
-            content: node.data.content || '',
-            backgroundColor: getPhaseColor(node.data.phase),
-            sourceModule: 'mind-garden',
-            sourceId: node.id,
-            tags: node.data.tags || [],
-            mindGardenPhase: node.data.phase
-          }
-        }));
+            id: `mind_${node.id}_${Date.now()}`,
+            type: 'note',
+            position: {
+              x: node.position.x,
+              y: node.position.y
+            },
+            size: {
+              width: 200,
+              height: 120
+            },
+            rotation: 0,
+            visible: true,
+            data: {
+              title: node.data.title || 'Untitled',
+              content: node.data.content || '',
+              backgroundColor: getPhaseColor(node.data.phase),
+              sourceModule: 'mind-garden',
+              sourceId: node.id,
+              tags: node.data.tags || [],
+              mindGardenPhase: node.data.phase
+            }
+          };
+        });
 
         // Add to canvas through Canvas Store using proper Canvas element creation
         const { useCanvasStore } = await import('../visual-canvas/store');

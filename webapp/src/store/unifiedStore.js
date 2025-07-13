@@ -44,7 +44,8 @@ const createUnifiedState = () => ({
     lastAnalysis: null,
     analysisHistory: [],
     suggestionsAccepted: 0,
-    suggestionsGenerated: 0
+    suggestionsGenerated: 0,
+    intelligenceEngine: null
   },
   
   // Mind Garden State
@@ -156,6 +157,14 @@ const createAIActions = (set, get) => {
       }, { getState: get, setState: set });
       
       await aiEngine.initialize();
+      
+      // Store reference in state for easy access
+      set((state) => ({
+        ai: {
+          ...state.ai,
+          intelligenceEngine: aiEngine
+        }
+      }));
     }
     return aiEngine;
   };
@@ -217,7 +226,17 @@ const createAIActions = (set, get) => {
     },
     
     // Get AI Engine Instance (for advanced operations)
-    getAIEngine: () => aiEngine
+    getAIEngine: async () => {
+      if (!aiEngine) {
+        aiEngine = await initializeAI();
+      }
+      return aiEngine;
+    },
+    
+    // Direct access to AI Intelligence Engine (for Mind Garden)
+    getIntelligenceEngine: async () => {
+      return await initializeAI();
+    }
   };
 };
 
