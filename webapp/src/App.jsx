@@ -7,7 +7,8 @@ import {
   ProjectStart, 
   ProjectTracker, 
   BusinessSwitcher,
-  UnifiedStoreTest 
+  UnifiedStoreTest,
+  MindGarden
 } from './modules'
 import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
 
@@ -25,13 +26,14 @@ function NavigationSync() {
     '/canvas': 'canvas',
     '/unified-store': 'unified-store-test',
     '/start': 'mind-garden',
+    '/mind-garden': 'mind-garden',
     '/tracker': 'projects'
   };
   
   const moduleToRoute = {
     'canvas': '/canvas',
     'unified-store-test': '/unified-store',
-    'mind-garden': '/start',
+    'mind-garden': '/mind-garden',
     'projects': '/tracker'
   };
   
@@ -82,6 +84,7 @@ function App() {
         <Route path="/" element={<Navigate to="/canvas" replace />} />
         <Route path="/canvas" element={<VisualCanvas />} />
         <Route path="/start" element={<ProjectStart />} />
+        <Route path="/mind-garden" element={<MindGarden />} />
         <Route path="/tracker" element={<ProjectTracker />} />
         <Route path="/business" element={<BusinessSwitcher />} />
         <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />

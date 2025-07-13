@@ -47,12 +47,13 @@ const createUnifiedState = () => ({
     suggestionsGenerated: 0
   },
   
-  // Mind Garden State (future)
+  // Mind Garden State
   mindGarden: {
     nodes: [],
     edges: [],
     selectedNodes: [],
     viewport: { x: 0, y: 0, zoom: 1 },
+    currentPhase: 'dump',
     exportHistory: []
   },
   
@@ -252,6 +253,75 @@ const createNavigationActions = (set, get) => ({
 });
 
 /**
+ * Mind Garden Actions
+ * Manages Mind Garden state synchronization and operations
+ */
+const createMindGardenActions = (set, get) => ({
+  // Set complete Mind Garden state
+  setMindGardenState: (mindGardenState) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        ...mindGardenState
+      },
+      lastActivity: new Date().toISOString()
+    }));
+  },
+  
+  // Update Mind Garden nodes
+  updateMindGardenNodes: (nodes) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        nodes: typeof nodes === 'function' ? nodes(state.mindGarden.nodes) : nodes
+      },
+      lastActivity: new Date().toISOString()
+    }));
+  },
+  
+  // Update Mind Garden edges
+  updateMindGardenEdges: (edges) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        edges: typeof edges === 'function' ? edges(state.mindGarden.edges) : edges
+      },
+      lastActivity: new Date().toISOString()
+    }));
+  },
+  
+  // Set Mind Garden viewport
+  setMindGardenViewport: (viewport) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        viewport
+      }
+    }));
+  },
+  
+  // Select Mind Garden nodes
+  selectMindGardenNodes: (nodeIds) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        selectedNodes: Array.isArray(nodeIds) ? nodeIds : [nodeIds]
+      }
+    }));
+  },
+  
+  // Add to export history
+  addMindGardenExport: (exportRecord) => {
+    set((state) => ({
+      mindGarden: {
+        ...state.mindGarden,
+        exportHistory: [...state.mindGarden.exportHistory, exportRecord].slice(-10)
+      }
+    }));
+  }
+});
+
+/**
  * System Actions
  * Handles system initialization, preferences, and global state
  */
@@ -322,6 +392,7 @@ export const useUnifiedStore = create(
         ...createCanvasActions(set, get),
         ...createAIActions(set, get),
         ...createNavigationActions(set, get),
+        ...createMindGardenActions(set, get),
         ...createSystemActions(set, get),
         
         // Computed/Derived State
@@ -344,6 +415,7 @@ export const useUnifiedStore = create(
           businessMode: state.businessMode,
           theme: state.theme,
           canvas: state.canvas,
+          mindGarden: state.mindGarden,
           projects: state.projects,
           ai: {
             suggestionsAccepted: state.ai.suggestionsAccepted,
@@ -363,6 +435,7 @@ export const useCanvasState = () => useUnifiedStore(state => state.canvas);
 export const useAIState = () => useUnifiedStore(state => state.ai);
 export const useNavigationState = () => useUnifiedStore(state => state.navigation);
 export const useCurrentModule = () => useUnifiedStore(state => state.currentModule);
+export const useMindGardenState = () => useUnifiedStore(state => state.mindGarden);
 
 // Auto-initialize store
 useUnifiedStore.getState().initializeStore();
