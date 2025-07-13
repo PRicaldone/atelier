@@ -520,8 +520,12 @@ const VisualCanvas = () => {
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Don't handle shortcuts when typing in inputs
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      // Don't handle shortcuts when typing in inputs, textareas, or contentEditable elements
+      if (e.target.tagName === 'INPUT' || 
+          e.target.tagName === 'TEXTAREA' || 
+          e.target.contentEditable === 'true' ||
+          e.target.closest('[contenteditable="true"]') ||
+          e.target.closest('textarea')) return;
       
       switch (e.key) {
         case 'Delete':
