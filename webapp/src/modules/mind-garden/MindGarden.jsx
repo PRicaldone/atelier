@@ -1,12 +1,10 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import ReactFlow, {
-  Controls,
   Background,
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
   useReactFlow,
-  MiniMap,
   ReactFlowProvider,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -65,6 +63,21 @@ const MindGardenInner = () => {
     initializeStore();
     // Don't auto-navigate to avoid redirect loop
   }, [initializeStore]);
+
+  // Center view on nodes after ReactFlow is ready
+  useEffect(() => {
+    if (reactFlowInstance && nodes.length > 0) {
+      // Delay to ensure ReactFlow is fully rendered
+      setTimeout(() => {
+        reactFlowInstance.fitView({
+          padding: 0.2, // 20% padding around nodes
+          maxZoom: 1, // Canvas zoom level
+          minZoom: 1,
+          duration: 0 // No animation, instant
+        });
+      }, 100);
+    }
+  }, [reactFlowInstance, nodes.length]);
 
   // Sync to unified store on changes
   useEffect(() => {
@@ -166,7 +179,12 @@ const MindGardenInner = () => {
   }, [selectedNodes]);
 
   const onMoveEnd = useCallback((event, viewport) => {
-    setViewport(viewport);
+    // Clamp zoom to max 1 (default zoom)
+    const clampedViewport = {
+      ...viewport,
+      zoom: Math.max(0.1, Math.min(1, viewport.zoom))
+    };
+    setViewport(clampedViewport);
   }, [setViewport]);
 
   // Right-click zoom functionality (exactly like Visual Canvas)
@@ -185,7 +203,7 @@ const MindGardenInner = () => {
       const deltaY = event.clientY - zoomStart.y;
       // Zoom sensitivity: negative deltaY = zoom in, positive = zoom out (exactly like Canvas)
       const zoomFactor = 1 + (deltaY * -0.01);
-      const newZoom = Math.max(0.1, Math.min(5, initialZoom * zoomFactor));
+      const newZoom = Math.max(0.1, Math.min(1, initialZoom * zoomFactor));
       
       reactFlowInstance.setViewport({
         x: reactFlowInstance.getViewport().x,
@@ -245,43 +263,17 @@ const MindGardenInner = () => {
           type: 'organic',
         }}
         multiSelectionKeyCode="Shift"
-        fitView
+        proOptions={{ hideAttribution: true }}
       >
         <Background 
           color="rgba(255, 255, 255, 0.02)" 
           gap={32}
           size={2}
         />
-        <Controls 
-          className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg"
-        />
-        <MiniMap 
-          nodeColor={(node) => {
-            switch (node.data?.phase) {
-              case 'narrative': return '#3B82F6';
-              case 'formal': return '#10B981';
-              case 'symbolic': return '#8B5CF6';
-              default: return '#6B7280';
-            }
-          }}
-          className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-lg"
-        />
       </ReactFlow>
 
-      {/* Floating Action Buttons */}
-      <div className="absolute bottom-6 right-6 flex flex-col gap-3">
-        {/* Export to Canvas Button */}
-        {selectedNodes.length > 0 && (
-          <button
-            onClick={handleExportToCanvas}
-            className="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-            title="Export selected nodes to Canvas"
-          >
-            <Download className="w-6 h-6" />
-          </button>
-        )}
-        
-        {/* Add Node Button */}
+      {/* Add Button - Top Left (like Canvas toolbar) */}
+      <div className="absolute top-4 left-4 z-50">
         <button
           onClick={(e) => {
             const rect = reactFlowWrapper.current.getBoundingClientRect();
@@ -295,6 +287,23 @@ const MindGardenInner = () => {
           title="Add new node"
         >
           <Plus className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Export Button - Top Right (always visible) */}
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={selectedNodes.length > 0 ? handleExportToCanvas : undefined}
+          disabled={selectedNodes.length === 0}
+          className={`px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors ${
+            selectedNodes.length > 0
+              ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
+              : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+          }`}
+          title={selectedNodes.length > 0 ? "Export selected nodes to Canvas" : "Select nodes to export"}
+        >
+          <Download className="w-4 h-4" />
+          Export to Canvas
         </button>
       </div>
 
@@ -317,25 +326,24 @@ const MindGardenInner = () => {
         }}
       />
 
-      {/* Instructions Overlay */}
-      <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md rounded-lg p-3 text-xs text-gray-300 max-w-xs">
-        <p className="mb-1">🌱 <strong>Mind Garden</strong></p>
-        <p>• Double-click canvas to add node</p>
-        <p>• Double-click node for AI commands</p>
-        <p>• Shift+click to multi-select</p>
-        <p>• Right-click+drag to zoom (Wacom friendly)</p>
-        <p>• Selected nodes: {selectedNodes.length}</p>
-      </div>
-
-      {/* Export History */}
+      {/* Export History - Bottom Left */}
       {exportHistory.length > 0 && (
-        <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md rounded-lg p-3 text-xs text-gray-300">
-          <p className="mb-1">📤 <strong>Recent Exports</strong></p>
-          {exportHistory.slice(-3).map((exp, idx) => (
-            <p key={idx}>• {exp.nodeCount} nodes → Canvas ({exp.timestamp})</p>
+        <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs space-y-1">
+          <div className="font-medium mb-1">📤 Recent Exports</div>
+          {exportHistory.slice(-2).map((exp, idx) => (
+            <div key={idx}>• {exp.nodeCount} nodes → Canvas ({exp.timestamp})</div>
           ))}
         </div>
       )}
+
+      {/* Instructions Panel - Bottom Right (like Canvas) */}
+      <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
+        <div className="font-medium mb-1">🌱 Mind Garden</div>
+        <div>• Double-click canvas to add node</div>
+        <div>• Double-click node for AI commands</div>
+        <div>• Shift+click to multi-select</div>
+        <div>• Right-click+drag to zoom (Wacom friendly)</div>
+      </div>
     </div>
   );
 };

@@ -292,10 +292,49 @@ export const useMindGardenStore = create(
     },
 
     // Initialize store
+    // Calculate centered viewport for nodes
+    getCenteredViewport: (nodes) => {
+      if (!nodes || nodes.length === 0) {
+        return { x: 0, y: 0, zoom: 1 };
+      }
+
+      // Calculate bounding box of all nodes
+      const positions = nodes.map(node => node.position);
+      const minX = Math.min(...positions.map(p => p.x));
+      const maxX = Math.max(...positions.map(p => p.x));
+      const minY = Math.min(...positions.map(p => p.y));
+      const maxY = Math.max(...positions.map(p => p.y));
+
+      // Calculate center point of nodes
+      const nodesCenterX = (minX + maxX) / 2;
+      const nodesCenterY = (minY + maxY) / 2;
+
+      // Calculate screen center (accounting for sidebars and UI)
+      const screenCenterX = window.innerWidth / 2;
+      const screenCenterY = window.innerHeight / 2;
+
+      // ReactFlow viewport offset calculation
+      // Negative values move the content towards center
+      const zoom = 1;
+      return {
+        x: screenCenterX - (nodesCenterX * zoom),
+        y: screenCenterY - (nodesCenterY * zoom),
+        zoom: zoom
+      };
+    },
+
     initializeStore: () => {
       if (get().initialized) return;
       
       get().loadFromLocalStorage();
+      
+      // Center viewport on loaded nodes
+      const currentNodes = get().nodes;
+      if (currentNodes.length > 0) {
+        const centeredViewport = get().getCenteredViewport(currentNodes);
+        set({ viewport: centeredViewport });
+      }
+      
       set({ initialized: true });
       
       // Sync to unified store
