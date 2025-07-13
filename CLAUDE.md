@@ -11,12 +11,12 @@ Ciao Claude! Sto lavorando su Atelier, il mio command center creativo per proget
 Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/blueprint.md e ~/atelier/docs/cheat-sheet.md per i dettagli.
-L'ultimo salvataggio è del 09/07/2025 con Visual Canvas completato.
+L'ultimo salvataggio è del 13/07/2025 con Mind Garden Visual Enhancements completato.
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 09/07/2025)
+## 📊 Stato Progetto (Ultimo aggiornamento: 13/07/2025)
 
 ### ✅ Moduli Completati
 
@@ -30,11 +30,21 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
    - Snap-to-grid, multi-select, shortcuts
    - Persistenza automatica in localStorage
 
-2. **Business Switcher** (funzionale)
+2. **Mind Garden** (100% completo)
+   - ReactFlow-based visual mind mapping
+   - Ultra-intense selection visual (Ring4 + Triple Glow + Badge)
+   - Right-click zoom Wacom-friendly (clamp max 1x)
+   - Export to Canvas workflow (Mind Garden → Canvas notes)
+   - Auto-centering nodes with optimal zoom
+   - Canvas-coherent UI layout
+   - AI Command Palette integration
+   - Organic edges e phase-based coloring
+
+3. **Business Switcher** (funzionale)
    - Switch tra business multipli
    - Stato persistente
 
-3. **Project Tracker** (base implementata)
+4. **Project Tracker** (base implementata)
    - Lista progetti
    - Stati e progressi
 
@@ -352,11 +362,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 13/07/2025 16:20
-**Ultimo commit:** 161e07e 🌱 Mind Garden Complete - React Flow + Smart Export + Unified Store Integration
-**Branch:** main
-**Commit totali:** 80
+**Data:** 13/07/2025 17:45
+**Ultimo commit:** 2d2c6f1 🌱 Mind Garden Visual Enhancements - FINAL
+**Branch:** main  
+**Commit totali:** 82
 **Snapshots:** 54 | **Backups:** 0
 
-**Ultima modifica:** 🌱 Mind Garden Complete - React Flow + Smart Export + Unified Store Integration
+**Ultima modifica:** 🌱 Mind Garden Visual Enhancements - FINAL (merged from feature branch)
 
