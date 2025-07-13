@@ -26,7 +26,6 @@ export const CanvasToolbar = () => {
   // Unified Store integration
   const { 
     ai, 
-    getAISuggestionCount,
     analyzeCanvasContext,
     navigateToModule 
   } = useUnifiedStore();
@@ -170,13 +169,13 @@ export const CanvasToolbar = () => {
               title="Add AI Assistant"
             >
               <Brain size={20} />
-              {getAISuggestionCount() > 0 && (
+              {(ai?.suggestions?.length || 0) > 0 && (
                 <span className="absolute -top-1 -right-1 bg-purple-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {getAISuggestionCount()}
+                  {ai.suggestions.length}
                 </span>
               )}
               <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                AI Assistant {getAISuggestionCount() > 0 ? `(${getAISuggestionCount()} suggestions)` : ''}
+                AI Assistant {(ai?.suggestions?.length || 0) > 0 ? `(${ai.suggestions.length} suggestions)` : ''}
               </span>
             </button>
           </div>
