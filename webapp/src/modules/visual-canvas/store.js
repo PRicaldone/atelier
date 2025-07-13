@@ -751,9 +751,9 @@ export const useCanvasStore = create(
               updates.boardHistory = [];
             }
           } else {
-            // We're at root level
-            updates.elements = rootElements;
-            console.log('📚 Loaded root elements:', updates.elements.length);
+            // We're at root level - filter out invalid elements
+            updates.elements = rootElements.filter(el => el && el.size && el.size.width && el.size.height);
+            console.log('📚 Loaded root elements:', updates.elements.length, '(filtered from', rootElements.length, ')');
           }
         }
 

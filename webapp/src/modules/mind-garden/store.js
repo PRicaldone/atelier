@@ -140,7 +140,7 @@ export const useMindGardenStore = create(
         const { useUnifiedStore } = await import('../../store/unifiedStore');
         const unifiedStore = useUnifiedStore.getState();
 
-        // Transform nodes to canvas elements
+        // Transform nodes to canvas elements (with all required Canvas properties)
         const canvasElements = selectedNodes.map(node => ({
           id: `mind_${node.id}_${Date.now()}`,
           type: 'note',
@@ -148,6 +148,12 @@ export const useMindGardenStore = create(
             x: node.position.x,
             y: node.position.y
           },
+          size: {
+            width: 200,
+            height: 120
+          },
+          rotation: 0,
+          visible: true,
           data: {
             title: node.data.title || 'Untitled',
             content: node.data.content || '',
@@ -159,21 +165,36 @@ export const useMindGardenStore = create(
           }
         }));
 
-        // Add to canvas through unified store
-        // Get current canvas elements
-        const currentCanvasElements = unifiedStore.canvas.elements || [];
+        // Add to canvas through Canvas Store using proper Canvas element creation
+        const { useCanvasStore } = await import('../visual-canvas/store');
+        const { createCanvasElement } = await import('../visual-canvas/types');
         
-        // Add all new elements at once by directly setting the canvas state
-        const updatedElements = [...currentCanvasElements, ...canvasElements];
+        // Create proper Canvas elements and merge with our data
+        const properCanvasElements = canvasElements.map(element => {
+          const baseElement = createCanvasElement(element.type, element.position);
+          const mergedElement = {
+            ...baseElement,
+            data: { ...baseElement.data, ...element.data }
+          };
+          console.log('🐛 Created canvas element:', JSON.stringify(mergedElement, null, 2));
+          return mergedElement;
+        });
         
-        // Use a direct state update since addCanvasElement expects (type, position)
+        // Add elements to Canvas Store state (ensure all elements have size)
+        useCanvasStore.setState((state) => ({
+          ...state,
+          elements: [...state.elements.filter(el => el.size), ...properCanvasElements],
+          selectedIds: properCanvasElements.map(el => el.id)
+        }));
+        
+        // Force save to localStorage immediately
+        const canvasStore = useCanvasStore.getState();
+        canvasStore.saveCurrentLevelToHierarchy();
+        
+        // Also update Unified Store for coordination
         useUnifiedStore.setState((state) => ({
-          canvas: {
-            ...state.canvas,
-            elements: updatedElements,
-            selectedIds: canvasElements.map(el => el.id)
-          },
-          lastActivity: new Date().toISOString()
+          lastActivity: new Date().toISOString(),
+          currentModule: 'canvas'
         }));
 
         // Record export history

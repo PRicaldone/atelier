@@ -34,6 +34,9 @@ const MindGardenInner = () => {
   const [commandPosition, setCommandPosition] = useState({ x: 0, y: 0 });
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedNodes, setSelectedNodes] = useState([]);
+  const [isRightDragging, setIsRightDragging] = useState(false);
+  const [zoomStart, setZoomStart] = useState(null);
+  const [initialZoom, setInitialZoom] = useState(1);
   const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
 
@@ -60,8 +63,8 @@ const MindGardenInner = () => {
   // Initialize on mount
   useEffect(() => {
     initializeStore();
-    navigateToModule('mind-garden', { source: 'mind-garden-init' });
-  }, [initializeStore, navigateToModule]);
+    // Don't auto-navigate to avoid redirect loop
+  }, [initializeStore]);
 
   // Sync to unified store on changes
   useEffect(() => {
@@ -166,8 +169,64 @@ const MindGardenInner = () => {
     setViewport(viewport);
   }, [setViewport]);
 
+  // Right-click zoom functionality (exactly like Visual Canvas)
+  const handleMouseDown = useCallback((event) => {
+    if (event.button === 2) { // Right mouse button
+      event.preventDefault();
+      setIsRightDragging(true);
+      setZoomStart({ x: event.clientX, y: event.clientY });
+      setInitialZoom(reactFlowInstance?.getZoom() || 1);
+    }
+  }, [reactFlowInstance]);
+
+  const handleMouseMove = useCallback((event) => {
+    if (isRightDragging && zoomStart && reactFlowInstance) {
+      event.preventDefault();
+      const deltaY = event.clientY - zoomStart.y;
+      // Zoom sensitivity: negative deltaY = zoom in, positive = zoom out (exactly like Canvas)
+      const zoomFactor = 1 + (deltaY * -0.01);
+      const newZoom = Math.max(0.1, Math.min(5, initialZoom * zoomFactor));
+      
+      reactFlowInstance.setViewport({
+        x: reactFlowInstance.getViewport().x,
+        y: reactFlowInstance.getViewport().y,
+        zoom: newZoom
+      });
+    }
+  }, [isRightDragging, zoomStart, initialZoom, reactFlowInstance]);
+
+  const handleMouseUp = useCallback((event) => {
+    if (event.button === 2) { // Right mouse button
+      setIsRightDragging(false);
+      setZoomStart(null);
+    }
+  }, []);
+
+  // Add global mouse event listeners
+  useEffect(() => {
+    const handleGlobalMouseMove = (event) => handleMouseMove(event);
+    const handleGlobalMouseUp = (event) => handleMouseUp(event);
+    
+    if (isRightDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      document.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+    
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('contextmenu', (e) => e.preventDefault());
+    };
+  }, [isRightDragging, handleMouseMove, handleMouseUp]);
+
   return (
-    <div className="h-full w-full relative" ref={reactFlowWrapper}>
+    <div 
+      className="h-full w-full relative" 
+      ref={reactFlowWrapper}
+      onMouseDown={handleMouseDown}
+      style={{ cursor: isRightDragging ? 'ns-resize' : 'default' }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -264,6 +323,7 @@ const MindGardenInner = () => {
         <p>• Double-click canvas to add node</p>
         <p>• Double-click node for AI commands</p>
         <p>• Shift+click to multi-select</p>
+        <p>• Right-click+drag to zoom (Wacom friendly)</p>
         <p>• Selected nodes: {selectedNodes.length}</p>
       </div>
 

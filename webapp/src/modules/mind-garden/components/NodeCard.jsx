@@ -45,15 +45,15 @@ const NodeCard = ({ data, selected }) => {
           backdrop-blur-md
           transition-all duration-200
           ${selected 
-            ? 'ring-8 ring-blue-300 border-blue-300 bg-blue-400/20 scale-110 shadow-2xl' 
+            ? 'ring-4 ring-blue-300 border-blue-300 bg-blue-400/12 scale-106 shadow-lg' 
             : 'border-white/10 hover:border-white/20'
           }
         `}
         style={{
           boxShadow: selected 
-            ? `0 0 80px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2)`
+            ? `0 0 51px rgba(59, 130, 246, 0.51), 0 0 25px rgba(59, 130, 246, 0.38), 0 0 12px rgba(59, 130, 246, 0.25), 0 8px 32px rgba(0, 0, 0, 0.2)`
             : '0 8px 32px rgba(0, 0, 0, 0.1)',
-          transform: selected ? 'scale(1.1)' : 'scale(1)',
+          transform: selected ? 'scale(1.06)' : 'scale(1)',
           zIndex: selected ? 1000 : 1
         }}
       >
@@ -63,7 +63,7 @@ const NodeCard = ({ data, selected }) => {
           style={{ 
             backgroundColor: selected ? '#3B82F6' : accentColor, 
             opacity: selected ? 1 : 0.6,
-            boxShadow: selected ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+            boxShadow: selected ? '0 0 6px rgba(59, 130, 246, 0.51)' : 'none'
           }}
         />
         

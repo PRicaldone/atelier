@@ -16,7 +16,7 @@ const createUnifiedState = () => ({
   // System Status
   initialized: false,
   aiReady: false,
-  currentModule: 'canvas',
+  currentModule: null, // Will be set by initial navigation
   lastActivity: null,
   
   // Business & App State
