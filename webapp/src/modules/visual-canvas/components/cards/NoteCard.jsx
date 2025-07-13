@@ -89,11 +89,11 @@ export const NoteCard = ({ element }) => {
           >
             {/* Support both formats: legacy (data.text) and new (data.title + data.content) */}
             {data.title && (
-              <div className="font-bold text-sm mb-2 border-b border-current opacity-60 pb-1 text-gray-800 dark:text-gray-100">
+              <div className="font-bold text-sm mb-2 border-b border-current opacity-80 pb-1 text-gray-900 dark:text-gray-100">
                 {data.title}
               </div>
             )}
-            <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+            <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed font-medium">
               {data.content || data.text || 'Double-click to edit'}
             </div>
           </div>

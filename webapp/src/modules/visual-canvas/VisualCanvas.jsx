@@ -79,6 +79,16 @@ const VisualCanvas = () => {
       analyzeCanvasContext();
     }
   }, [elements.length]); // Removed analyzeCanvasContext from deps to prevent loop
+  
+  // Auto-center viewport when new elements are added (like from Mind Garden export)
+  useEffect(() => {
+    if (elements.length > 0) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        centerViewport();
+      }, 100);
+    }
+  }, [elements.length, centerViewport]);
 
   // Drag & Drop sensors
   const sensors = useSensors(
