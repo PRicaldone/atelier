@@ -37,10 +37,14 @@ export const NoteCard = ({ element }) => {
     }
   };
 
+  // Improve contrast by using accent colors as border and keeping readable backgrounds
+  const accentColor = data.backgroundColor || '#f59e0b';
   const cardStyle = {
-    backgroundColor: data.backgroundColor || '#fef3c7',
-    borderColor: data.borderColor || '#f59e0b',
-    color: data.color || '#1f2937'
+    backgroundColor: '#ffffff', // Always white background for maximum readability
+    borderColor: accentColor,
+    borderLeftWidth: '4px', // Accent stripe on left
+    borderLeftColor: accentColor,
+    color: '#111827' // Very dark text for maximum contrast
   };
 
   return (
@@ -73,7 +77,7 @@ export const NoteCard = ({ element }) => {
               fontSize: `${data.fontSize || 14}px`,
               fontWeight: data.fontWeight || 'normal',
               textAlign: data.textAlign || 'left',
-              color: 'inherit'
+              color: '#111827' // Dark text for editing mode too
             }}
             placeholder="Start typing..."
           />
@@ -89,11 +93,14 @@ export const NoteCard = ({ element }) => {
           >
             {/* Support both formats: legacy (data.text) and new (data.title + data.content) */}
             {data.title && (
-              <div className="font-bold text-sm mb-2 border-b border-current opacity-80 pb-1 text-gray-900 dark:text-gray-100">
+              <div className="font-bold text-sm mb-2 pb-1" style={{ 
+                borderBottom: `1px solid ${accentColor}`, 
+                color: '#111827' 
+              }}>
                 {data.title}
               </div>
             )}
-            <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed font-medium">
+            <div className="text-sm leading-relaxed font-medium" style={{ color: '#374151' }}>
               {data.content || data.text || 'Double-click to edit'}
             </div>
           </div>
