@@ -153,8 +153,8 @@ export const useMindGardenStore = create(
               y: node.position.y
             },
             size: {
-              width: 200,
-              height: 120
+              width: null, // Let Canvas component determine adaptive size
+              height: null
             },
             rotation: 0,
             visible: true,
@@ -185,10 +185,10 @@ export const useMindGardenStore = create(
           return mergedElement;
         });
         
-        // Add elements to Canvas Store state (ensure all elements have size)
+        // Add elements to Canvas Store state (support adaptive sizing)
         useCanvasStore.setState((state) => ({
           ...state,
-          elements: [...state.elements.filter(el => el.size), ...properCanvasElements],
+          elements: [...state.elements, ...properCanvasElements],
           selectedIds: properCanvasElements.map(el => el.id)
         }));
         

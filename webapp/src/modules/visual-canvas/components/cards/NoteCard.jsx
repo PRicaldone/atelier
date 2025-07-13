@@ -40,10 +40,34 @@ export const NoteCard = ({ element }) => {
   // Use Mind Garden elegant styling with better contrast
   const accentColor = data.backgroundColor || '#f59e0b';
 
+  // Calculate adaptive dimensions based on content length like Mind Garden
+  const titleLength = (data.title || '').length;
+  const contentLength = (data.content || data.text || '').length;
+  const totalLength = titleLength + contentLength;
+  
+  // Adaptive width based on content (similar to Mind Garden)
+  const getAdaptiveWidth = () => {
+    if (totalLength < 50) return 'min-w-[200px] max-w-[280px]';
+    if (totalLength < 100) return 'min-w-[240px] max-w-[320px]';
+    if (totalLength < 200) return 'min-w-[280px] max-w-[360px]';
+    return 'min-w-[320px] max-w-[400px]';
+  };
+  
+  // Adaptive height based on content lines
+  const getAdaptiveHeight = () => {
+    const estimatedLines = Math.ceil(totalLength / 40); // Rough estimate
+    if (estimatedLines <= 3) return 'min-h-[120px]';
+    if (estimatedLines <= 6) return 'min-h-[160px]';
+    if (estimatedLines <= 10) return 'min-h-[200px]';
+    return 'min-h-[240px] max-h-[300px]';
+  };
+
   return (
     <motion.div
       className={`
-        w-full h-full relative
+        relative
+        ${getAdaptiveWidth()}
+        ${getAdaptiveHeight()}
         bg-white/[0.02] dark:bg-gray-900/50
         border rounded-xl
         backdrop-blur-md
@@ -96,7 +120,7 @@ export const NoteCard = ({ element }) => {
       </div>
 
       {/* Content */}
-      <div className="p-3 h-full">
+      <div className="p-3 flex-1 overflow-hidden">
         {isEditing ? (
           <textarea
             ref={textareaRef}
@@ -104,7 +128,7 @@ export const NoteCard = ({ element }) => {
             onChange={handleTextChange}
             onBlur={handleTextBlur}
             onKeyDown={handleKeyDown}
-            className="w-full h-full bg-transparent border-none outline-none resize-none"
+            className="w-full h-full bg-transparent border-none outline-none resize-none min-h-[60px]"
             style={{
               fontSize: `${data.fontSize || 14}px`,
               fontWeight: data.fontWeight || 'normal',
@@ -115,7 +139,7 @@ export const NoteCard = ({ element }) => {
           />
         ) : (
           <div
-            className="w-full h-full whitespace-pre-wrap cursor-text space-y-1"
+            className="w-full whitespace-pre-wrap cursor-text space-y-1 overflow-y-auto"
             style={{
               fontSize: `${data.fontSize || 14}px`,
               fontWeight: data.fontWeight || 'normal',

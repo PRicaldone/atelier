@@ -751,8 +751,8 @@ export const useCanvasStore = create(
               updates.boardHistory = [];
             }
           } else {
-            // We're at root level - filter out invalid elements
-            updates.elements = rootElements.filter(el => el && el.size && el.size.width && el.size.height);
+            // We're at root level - filter out invalid elements (allow adaptive sizing)
+            updates.elements = rootElements.filter(el => el && el.id && el.type);
             console.log('📚 Loaded root elements:', updates.elements.length, '(filtered from', rootElements.length, ')');
           }
         }

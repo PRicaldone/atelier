@@ -98,8 +98,9 @@ export const DraggableElement = ({ element }) => {
         position: 'absolute',
         left: element.position.x,
         top: element.position.y,
-        width: element.size.width,
-        height: element.size.height,
+        // Allow adaptive sizing for notes with null dimensions
+        ...(element.size.width !== null && { width: element.size.width }),
+        ...(element.size.height !== null && { height: element.size.height }),
         transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0) rotate(${element.rotation}deg)`,
         visibility: element.visible ? 'visible' : 'hidden'
       }}
