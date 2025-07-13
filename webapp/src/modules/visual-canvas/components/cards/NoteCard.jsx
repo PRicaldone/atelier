@@ -79,7 +79,7 @@ export const NoteCard = ({ element }) => {
           />
         ) : (
           <div
-            className="w-full h-full whitespace-pre-wrap cursor-text"
+            className="w-full h-full whitespace-pre-wrap cursor-text space-y-1"
             style={{
               fontSize: `${data.fontSize || 14}px`,
               fontWeight: data.fontWeight || 'normal',
@@ -87,7 +87,15 @@ export const NoteCard = ({ element }) => {
             }}
             onDoubleClick={() => setIsEditing(true)}
           >
-            {data.text || 'Double-click to edit'}
+            {/* Support both formats: legacy (data.text) and new (data.title + data.content) */}
+            {data.title && (
+              <div className="font-bold text-sm mb-2 border-b border-current opacity-60 pb-1 text-gray-800 dark:text-gray-100">
+                {data.title}
+              </div>
+            )}
+            <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+              {data.content || data.text || 'Double-click to edit'}
+            </div>
           </div>
         )}
       </div>

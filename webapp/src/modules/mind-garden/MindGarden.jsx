@@ -87,21 +87,17 @@ const MindGardenInner = () => {
 
   const onNodesChange = useCallback(
     (changes) => {
-      setNodes((nds) => applyNodeChanges(changes, nds));
-      
-      // Track selections
-      const selections = changes
-        .filter(change => change.type === 'select')
-        .map(change => ({ id: change.id, selected: change.selected }));
-      
-      if (selections.length > 0) {
-        const selected = nodes.filter(node => 
-          selections.find(s => s.id === node.id)?.selected
-        );
-        setSelectedNodes(selected);
-      }
+      setNodes((nds) => {
+        const updatedNodes = applyNodeChanges(changes, nds);
+        
+        // Track selections - get all currently selected nodes
+        const allSelected = updatedNodes.filter(node => node.selected);
+        setSelectedNodes(allSelected);
+        
+        return updatedNodes;
+      });
     },
-    [nodes, setNodes]
+    [setNodes]
   );
 
   const onEdgesChange = useCallback(
@@ -201,6 +197,7 @@ const MindGardenInner = () => {
   }, [selectedNodeId, analyzeCanvasContext]);
 
   const handleExportToCanvas = useCallback(() => {
+    console.log('🌱 DEBUG: selectedNodes in handleExportToCanvas:', selectedNodes);
     if (selectedNodes.length === 0) {
       console.warn('🌱 No nodes selected for export');
       return;

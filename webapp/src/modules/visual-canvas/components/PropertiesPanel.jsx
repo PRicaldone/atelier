@@ -62,6 +62,32 @@ export const PropertiesPanel = () => {
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            Title
+          </label>
+          <input
+            type="text"
+            value={element.data.title || ''}
+            onChange={(e) => handlePropertyChange('data.title', e.target.value)}
+            placeholder="Note title..."
+            className="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            Content
+          </label>
+          <textarea
+            value={element.data.content || ''}
+            onChange={(e) => handlePropertyChange('data.content', e.target.value)}
+            placeholder="Note content..."
+            rows={3}
+            className="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
             Background Color
           </label>
           <input

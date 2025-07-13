@@ -141,7 +141,11 @@ export const useMindGardenStore = create(
         const unifiedStore = useUnifiedStore.getState();
 
         // Transform nodes to canvas elements (with all required Canvas properties)
-        const canvasElements = selectedNodes.map(node => ({
+        console.log('🌱 DEBUG: selectedNodes structure:', selectedNodes);
+        const canvasElements = selectedNodes.map(node => {
+          console.log('🌱 DEBUG: node structure:', node);
+          console.log('🌱 DEBUG: node.data:', node.data);
+          return {
           id: `mind_${node.id}_${Date.now()}`,
           type: 'note',
           position: {
@@ -354,12 +358,12 @@ export const useMindGardenStore = create(
   }))
 );
 
-// Helper function to get phase colors
+// Helper function to get phase colors (more vibrant for Canvas notes)
 function getPhaseColor(phase) {
   switch (phase) {
-    case 'narrative': return '#3B82F6';
-    case 'formal': return '#10B981';
-    case 'symbolic': return '#8B5CF6';
-    default: return '#6B7280';
+    case 'narrative': return '#DBEAFE'; // Light blue background
+    case 'formal': return '#D1FAE5';    // Light green background  
+    case 'symbolic': return '#EDE9FE';  // Light purple background
+    default: return '#FEF3C7';         // Light yellow instead of gray
   }
 }
