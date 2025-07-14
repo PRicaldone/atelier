@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useCanvasStore } from '../../store.js';
 import { Edit3, Type, Palette, Sparkles } from 'lucide-react';
@@ -24,20 +24,20 @@ export const NoteCard = ({ element }) => {
       
       // Escape is handled by individual input handlers
     }
-  }, [isEditing, data.title, data.content]);
+  }, [isEditing]); // Remove data dependencies that cause re-renders
 
   const handleTitleChange = useCallback((e) => {
     console.log('Title change:', e.target.value, 'Focus on:', document.activeElement);
     updateElement(element.id, {
-      data: { ...data, title: e.target.value }
+      data: { ...element.data, title: e.target.value }
     });
-  }, [element.id, data, updateElement]);
+  }, [element.id, updateElement]); // Remove 'data' dependency!
 
   const handleContentChange = useCallback((e) => {
     updateElement(element.id, {
-      data: { ...data, content: e.target.value }
+      data: { ...element.data, content: e.target.value }
     });
-  }, [element.id, data, updateElement]);
+  }, [element.id, updateElement]); // Remove 'data' dependency!
 
   const handleTextBlur = () => {
     setIsEditing(false);
