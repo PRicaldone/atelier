@@ -294,7 +294,7 @@ export const useMindGardenStore = create(
           parentChain.push({
             id: parentId,
             prompt: parentNode.data.prompt,
-            aiResponse: parentNode.data.aiResponse,
+            response: parentNode.data.aiResponse, // Fix: renamed aiResponse to response for PromptBuilder compatibility
             branch: parentNode.data.context?.branch,
             timestamp: parentNode.data.timestamp
           });

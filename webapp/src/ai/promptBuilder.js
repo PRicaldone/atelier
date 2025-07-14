@@ -18,25 +18,29 @@ export class PromptBuilder {
     this.systemPrompts.set(CONVERSATION_FOCUS.CREATIVE, {
       identity: "You are a creative AI assistant specializing in artistic and conceptual development",
       approach: "Focus on imaginative thinking, visual concepts, and creative exploration",
-      style: "Be inspiring, open-minded, and encourage bold creative directions"
+      style: "Be inspiring, open-minded, and encourage bold creative directions",
+      language: "IMPORTANT: Always respond in the same language as the user's input. If the user writes in Italian, respond in Italian. If in English, respond in English."
     });
 
     this.systemPrompts.set(CONVERSATION_FOCUS.TECHNICAL, {
       identity: "You are a technical AI assistant with expertise in software development and implementation",
       approach: "Provide specific, actionable technical guidance with concrete examples",
-      style: "Be precise, practical, and include specific tools, frameworks, and implementation details"
+      style: "Be precise, practical, and include specific tools, frameworks, and implementation details",
+      language: "IMPORTANT: Always respond in the same language as the user's input. If the user writes in Italian, respond in Italian. If in English, respond in English."
     });
 
     this.systemPrompts.set(CONVERSATION_FOCUS.STRATEGIC, {
       identity: "You are a strategic AI assistant focused on planning and goal achievement",
       approach: "Think systematically about objectives, timelines, and resource allocation",
-      style: "Be structured, goal-oriented, and consider broader implications and dependencies"
+      style: "Be structured, goal-oriented, and consider broader implications and dependencies",
+      language: "IMPORTANT: Always respond in the same language as the user's input. If the user writes in Italian, respond in Italian. If in English, respond in English."
     });
 
     this.systemPrompts.set(CONVERSATION_FOCUS.ANALYTICAL, {
       identity: "You are an analytical AI assistant specializing in critical thinking and evaluation",
       approach: "Examine ideas from multiple angles, identify strengths and weaknesses",
-      style: "Be thorough, objective, and provide balanced analysis with evidence-based reasoning"
+      style: "Be thorough, objective, and provide balanced analysis with evidence-based reasoning",
+      language: "IMPORTANT: Always respond in the same language as the user's input. If the user writes in Italian, respond in Italian. If in English, respond in English."
     });
   }
 
@@ -53,6 +57,16 @@ export class PromptBuilder {
     conversationFlow 
   }) {
     const systemPrompt = this.systemPrompts.get(conversationType) || this.systemPrompts.get(CONVERSATION_FOCUS.CREATIVE);
+    
+    console.log('🎯 PromptBuilder debug:', { 
+      currentPrompt, 
+      conversationHistoryLength: conversationHistory?.length || 0,
+      depth,
+      lastExchangePrompt: conversationHistory?.[conversationHistory.length - 1]?.prompt,
+      lastExchangeResponseExists: !!conversationHistory?.[conversationHistory.length - 1]?.response,
+      lastExchangeResponseLength: conversationHistory?.[conversationHistory.length - 1]?.response?.length || 0,
+      lastExchangeResponsePreview: conversationHistory?.[conversationHistory.length - 1]?.response?.substring(0, 100) + '...'
+    });
     
     // Build the comprehensive prompt
     const prompt = this.assemblePrompt({
@@ -85,7 +99,7 @@ export class PromptBuilder {
     const sections = [];
 
     // 1. System Identity and Approach
-    sections.push(`${systemPrompt.identity}. ${systemPrompt.approach} ${systemPrompt.style}`);
+    sections.push(`${systemPrompt.identity}. ${systemPrompt.approach} ${systemPrompt.style}\n\n${systemPrompt.language}`);
 
     // 2. Current Context
     sections.push(`\n**Current Context:**
@@ -97,17 +111,29 @@ export class PromptBuilder {
 
     // 3. Conversation History (if exists)
     if (conversationHistory && conversationHistory.length > 0) {
-      sections.push(`\n**Conversation History:**`);
+      const lastExchange = conversationHistory[conversationHistory.length - 1];
       
-      conversationHistory.forEach((exchange, index) => {
-        sections.push(`\n${index + 1}. User: "${exchange.prompt}"`);
-        if (exchange.response) {
-          sections.push(`   AI: "${this.truncateResponse(exchange.response)}"`);
-        }
-        if (exchange.branch && exchange.branch !== BRANCH_TYPES.EXPLORATION) {
-          sections.push(`   [Branch: ${exchange.branch}]`);
-        }
-      });
+      // For child nodes: emphasize the AI response more
+      if (lastExchange && lastExchange.response && depth > 0) {
+        sections.push(`\n**Previous Context:**`);
+        sections.push(`The user previously asked: "${lastExchange.prompt}"`);
+        sections.push(`\n**Most Recent AI Response (THIS IS THE KEY CONTEXT):**`);
+        sections.push(`"${lastExchange.response}"`);
+        sections.push(`\n**Current User Input:** "${currentPrompt}"`);
+        sections.push(`\nThe user is now asking you to work with/respond to the AI response above, not the original question.`);
+      } else {
+        // For root nodes: show normal history
+        sections.push(`\n**Conversation History:**`);
+        conversationHistory.forEach((exchange, index) => {
+          sections.push(`\n${index + 1}. User: "${exchange.prompt}"`);
+          if (exchange.response) {
+            sections.push(`   AI: "${this.truncateResponse(exchange.response)}"`);
+          }
+          if (exchange.branch && exchange.branch !== BRANCH_TYPES.EXPLORATION) {
+            sections.push(`   [Branch: ${exchange.branch}]`);
+          }
+        });
+      }
     }
 
     // 4. Branch-Specific Instructions

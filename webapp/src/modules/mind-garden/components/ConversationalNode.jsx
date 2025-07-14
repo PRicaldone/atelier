@@ -27,13 +27,145 @@ const ConversationalNode = ({ data, selected, id }) => {
   // Refs for keyboard navigation
   const textareaRef = useRef(null);
   const nodeRef = useRef(null);
-  
-  // Enhanced keyboard navigation
+
+  // ENHANCED v5.1: AI Response Generation with Contextual Intelligence
+  const handleGenerateResponse = useCallback(async () => {
+    if (!prompt.trim()) return;
+    
+    setLocalState('thinking');
+    setIsEditing(false);
+    
+    try {
+      // Get AI Intelligence Engine from unified store
+      const { useUnifiedStore } = await import('../../../store/unifiedStore');
+      const { getIntelligenceEngine } = useUnifiedStore.getState();
+      const intelligenceEngine = await getIntelligenceEngine();
+      
+      if (!intelligenceEngine) {
+        console.warn('🤖 AI Intelligence Engine not available - using fallback');
+        handleFallbackResponse();
+        return;
+      }
+
+      // Get Mind Garden store to build parent chain
+      const { useMindGardenStore } = await import('../store');
+      const mindGardenStore = useMindGardenStore.getState();
+      const parentChain = mindGardenStore.buildParentChain?.(id) || [];
+
+      console.log('🌱 Generating AI response with context:', { 
+        nodeId: id, 
+        prompt, 
+        contextDepth: parentChain.length,
+        parentChain: parentChain.map(p => ({
+          id: p.id,
+          prompt: p.prompt?.substring(0, 50) + '...',
+          hasAiResponse: !!p.aiResponse,
+          aiResponseLength: p.aiResponse?.length || 0
+        }))
+      });
+
+      setLocalState('streaming');
+
+      // Generate contextual AI response with enhanced error handling
+      const result = await intelligenceEngine.generateConversationalResponse(id, prompt, parentChain);
+      
+      if (result.error) {
+        console.error('🤖 AI response generation failed:', result.error);
+        
+        // Enhanced error handling - check if we have a fallback response
+        if (result.response && result.isFallback) {
+          console.log('🤖 Using AI-generated fallback response');
+          setLocalState('complete');
+          
+          if (data.onUpdate) {
+            data.onUpdate(id, {
+              prompt: prompt,
+              aiResponse: result.response,
+              state: 'complete',
+              timestamp: result.timestamp,
+              context: {
+                ...data.context,
+                aiConfidence: result.confidence,
+                errorHandled: true,
+                fallbackUsed: true
+              },
+              suggestedBranches: []
+            });
+          }
+          return;
+        }
+        
+        // If no fallback, use local fallback
+        handleFallbackResponse();
+        return;
+      }
+
+      setLocalState('complete');
+      
+      // Update parent store with enhanced AI response and metadata
+      if (data.onUpdate) {
+        console.log('🌱 Updating node with result:', { response: result.response, fullResult: result });
+        data.onUpdate(id, {
+          prompt: prompt,
+          aiResponse: result.response,
+          state: 'complete',
+          timestamp: result.timestamp,
+          context: {
+            ...data.context,
+            aiConfidence: result.confidence,
+            conversationFocus: result.conversationFocus,
+            branchIntent: result.branchIntent,
+            topics: result.topics,
+            sentiment: result.sentiment,
+            health: result.health,
+            cached: result.cached || false
+          },
+          suggestedBranches: result.suggestedBranches
+        });
+      }
+
+      console.log('🌱 Enhanced AI response generated successfully:', {
+        responseLength: result.response.length,
+        confidence: result.confidence,
+        conversationFocus: result.conversationFocus,
+        branchIntent: result.branchIntent,
+        topics: result.topics?.length || 0,
+        sentiment: result.sentiment,
+        health: result.health,
+        cached: result.cached,
+        suggestions: result.suggestedBranches?.length || 0
+      });
+
+    } catch (error) {
+      console.error('🌱 AI response generation failed:', error);
+      handleFallbackResponse();
+    }
+  }, [prompt, id, data]);
+
+  // Fallback response for when AI is unavailable
+  const handleFallbackResponse = useCallback(() => {
+    setLocalState('complete');
+    if (data.onUpdate) {
+      data.onUpdate(id, {
+        prompt: prompt,
+        aiResponse: `Thank you for your input: "${prompt}"\n\nI'm currently working on processing your request. This is a development placeholder that will be enhanced with full AI intelligence once the system is activated.`,
+        state: 'complete',
+        timestamp: new Date().toISOString(),
+        context: {
+          ...data.context,
+          aiConfidence: 0.6
+        }
+      });
+    }
+  }, [prompt, id, data]);
+
+  // Enhanced keyboard navigation with AI callback
   const { handleAdvancedKeyDown, keyboardState } = useKeyboardNavigation(
     id, 
     isEditing, 
     localState, 
-    data.onUpdate
+    data.onUpdate,
+    handleGenerateResponse // Pass AI function to keyboard handler
   );
 
   // Context depth visual indicators
@@ -93,130 +225,6 @@ const ConversationalNode = ({ data, selected, id }) => {
   };
 
   // Removed old handleKeyDown - now using handleAdvancedKeyDown from KeyboardNavigation
-
-  // ENHANCED v5.1: AI Response Generation with Contextual Intelligence
-  const handleGenerateResponse = useCallback(async () => {
-    if (!prompt.trim()) return;
-    
-    setLocalState('thinking');
-    setIsEditing(false);
-    
-    try {
-      // Get AI Intelligence Engine from unified store
-      const { useUnifiedStore } = await import('../../../store/unifiedStore');
-      const { getIntelligenceEngine } = useUnifiedStore.getState();
-      const intelligenceEngine = await getIntelligenceEngine();
-      
-      if (!intelligenceEngine) {
-        console.warn('🤖 AI Intelligence Engine not available - using fallback');
-        handleFallbackResponse();
-        return;
-      }
-
-      // Get Mind Garden store to build parent chain
-      const { useMindGardenStore } = await import('../store');
-      const mindGardenStore = useMindGardenStore.getState();
-      const parentChain = mindGardenStore.buildParentChain?.(id) || [];
-
-      console.log('🌱 Generating AI response with context:', { 
-        nodeId: id, 
-        prompt, 
-        contextDepth: parentChain.length 
-      });
-
-      setLocalState('streaming');
-
-      // Generate contextual AI response with enhanced error handling
-      const result = await intelligenceEngine.generateConversationalResponse(id, prompt, parentChain);
-      
-      if (result.error) {
-        console.error('🤖 AI response generation failed:', result.error);
-        
-        // Enhanced error handling - check if we have a fallback response
-        if (result.response && result.isFallback) {
-          console.log('🤖 Using AI-generated fallback response');
-          setLocalState('complete');
-          
-          if (data.onUpdate) {
-            data.onUpdate(id, {
-              prompt: prompt,
-              aiResponse: result.response,
-              state: 'complete',
-              timestamp: result.timestamp,
-              context: {
-                ...data.context,
-                aiConfidence: result.confidence,
-                errorHandled: true,
-                fallbackUsed: true
-              },
-              suggestedBranches: []
-            });
-          }
-          return;
-        }
-        
-        // If no fallback, use local fallback
-        handleFallbackResponse();
-        return;
-      }
-
-      setLocalState('complete');
-      
-      // Update parent store with enhanced AI response and metadata
-      if (data.onUpdate) {
-        data.onUpdate(id, {
-          prompt: prompt,
-          aiResponse: result.response,
-          state: 'complete',
-          timestamp: result.timestamp,
-          context: {
-            ...data.context,
-            aiConfidence: result.confidence,
-            conversationFocus: result.conversationFocus,
-            branchIntent: result.branchIntent,
-            topics: result.topics,
-            sentiment: result.sentiment,
-            health: result.health,
-            cached: result.cached || false
-          },
-          suggestedBranches: result.suggestedBranches
-        });
-      }
-
-      console.log('🌱 Enhanced AI response generated successfully:', {
-        responseLength: result.response.length,
-        confidence: result.confidence,
-        conversationFocus: result.conversationFocus,
-        branchIntent: result.branchIntent,
-        topics: result.topics?.length || 0,
-        sentiment: result.sentiment,
-        health: result.health,
-        cached: result.cached,
-        suggestions: result.suggestedBranches?.length || 0
-      });
-
-    } catch (error) {
-      console.error('🌱 AI response generation failed:', error);
-      handleFallbackResponse();
-    }
-  }, [prompt, id, data]);
-
-  // Fallback response for when AI is unavailable
-  const handleFallbackResponse = useCallback(() => {
-    setLocalState('complete');
-    if (data.onUpdate) {
-      data.onUpdate(id, {
-        prompt: prompt,
-        aiResponse: `Thank you for your input: "${prompt}"\n\nI'm currently working on processing your request. This is a development placeholder that will be enhanced with full AI intelligence once the system is activated.`,
-        state: 'complete',
-        timestamp: new Date().toISOString(),
-        context: {
-          ...data.context,
-          aiConfidence: 0.6
-        }
-      });
-    }
-  }, [prompt, id, data]);
 
   // Node creation handlers (placeholder for Day 2)
   const handleCreateChildNode = useCallback(() => {
@@ -420,11 +428,22 @@ const ConversationalNode = ({ data, selected, id }) => {
                     focus:ring-2 focus:ring-blue-700 focus:border-blue-700
                     bg-gray-900 text-white placeholder-gray-500"
                   rows={3}
-                  onKeyDown={handleAdvancedKeyDown}
+                  onKeyDown={(e) => {
+                    console.log('🌱 Key in textarea:', e.key, 'shiftKey:', e.shiftKey);
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      console.log('🌱 Enter without shift, calling AI');
+                      e.preventDefault();
+                      e.stopPropagation(); // Prevent event bubbling
+                      handleGenerateResponse();
+                      return; // Don't call handleAdvancedKeyDown
+                    }
+                    // For other keys, let them through normally
+                    // Don't call handleAdvancedKeyDown for textarea events
+                  }}
                 />
                 <div className="flex justify-between items-center">
                   <div className="text-xs text-gray-500">
-                    Press Enter to generate AI response • Tab for child node • Shift+Tab for sibling
+                    Enter = AI response • Shift+Enter = new line • Tab = child • Shift+Tab = sibling
                   </div>
                   <button
                     onClick={handleGenerateResponse}
@@ -475,12 +494,12 @@ const ConversationalNode = ({ data, selected, id }) => {
                       <motion.span 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className={`text-xs px-2 py-1 rounded-full ${
+                        className={`text-xs px-2 py-1 rounded-full border ${
                           data.context.aiConfidence >= 0.8 
-                            ? 'bg-green-100 text-green-700' 
+                            ? 'border-green-300 text-green-300' 
                             : data.context.aiConfidence >= 0.6 
-                            ? 'bg-blue-100 text-blue-700' 
-                            : 'bg-yellow-100 text-yellow-700'
+                            ? 'border-blue-300 text-blue-300' 
+                            : 'border-yellow-300 text-yellow-300'
                         }`}
                       >
                         {Math.round(data.context.aiConfidence * 100)}% confidence
@@ -499,7 +518,7 @@ const ConversationalNode = ({ data, selected, id }) => {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
                       >
-                        {data.aiResponse}
+                        {typeof data.aiResponse === 'string' ? data.aiResponse : data.aiResponse?.response || 'Error loading response'}
                       </motion.div>
                     )}
                   </div>

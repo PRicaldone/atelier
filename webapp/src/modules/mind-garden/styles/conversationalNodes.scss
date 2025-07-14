@@ -189,6 +189,8 @@
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
+    user-select: text !important; /* Make text selectable */
+    cursor: text; /* Show text cursor */
 
     /* User icon */
     &::before {
@@ -202,11 +204,13 @@
     /* Force white text on all children */
     * {
       color: #ffffff !important;
+      user-select: text !important; /* Make all children selectable */
     }
 
     /* Force white text on specific elements */
     div, span, p {
       color: #ffffff !important;
+      user-select: text !important;
     }
   }
   
@@ -214,6 +218,8 @@
     color: #ffffff !important;
     margin-top: 12px;
     position: relative;
+    user-select: text !important; /* Make text selectable */
+    cursor: text; /* Show text cursor */
 
     /* AI icon */
     &::before {
@@ -227,11 +233,13 @@
     /* Force white text on all children */
     * {
       color: #ffffff !important;
+      user-select: text !important; /* Make all children selectable */
     }
 
     /* Force white text on specific elements */
     div, span, p {
       color: #ffffff !important;
+      user-select: text !important;
     }
   }
   
@@ -326,9 +334,9 @@
   }
   
   &.refinement {
-    background: theme('colors.purple.100');
-    color: theme('colors.purple.700');
-    border: 1px solid theme('colors.purple.200');
+    background: transparent;
+    color: theme('colors.purple.400');
+    border: none;
   }
   
   &.implementation {

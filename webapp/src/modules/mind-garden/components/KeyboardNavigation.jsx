@@ -7,7 +7,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useMindGardenStore } from '../store';
 import { BRANCH_TYPES } from '../types/conversationTypes';
 
-export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) => {
+export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate, generateAIResponse) => {
   const store = useMindGardenStore();
   const keyboardStateRef = useRef({
     selectedNodeId: nodeId,
@@ -169,10 +169,21 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
 
     switch (key) {
       case 'Enter':
-        if (!shiftKey && !ctrlKey && !metaKey) {
-          e.preventDefault();
-          store.generateAIResponse?.(nodeId);
+        // Only handle Enter if it's not from a textarea (let textarea handle its own Enter)
+        if (e.target.tagName !== 'TEXTAREA') {
+          if (!shiftKey && !ctrlKey && !metaKey) {
+            console.log('🌱 Enter pressed in edit mode (non-textarea), calling AI generation');
+            e.preventDefault();
+            if (generateAIResponse) {
+              generateAIResponse();
+            } else {
+              console.warn('🌱 generateAIResponse function not available');
+            }
+          } else {
+            console.log('🌱 Shift+Enter pressed, allowing line break');
+          }
         }
+        // For textarea, let it handle Enter naturally
         break;
       
       case 'Tab':
@@ -205,7 +216,7 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
         }
         break;
     }
-  }, [nodeId, localState, store]);
+  }, [nodeId, localState, store, generateAIResponse]);
 
   // Smart node navigation
   const handleNodeNavigation = useCallback((direction, shiftKey, altKey) => {
@@ -332,24 +343,45 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
   // Create sibling node with enhanced context
   const createSiblingNode = useCallback(() => {
     console.log('🌱 createSiblingNode called for nodeId:', nodeId);
-    const parentNode = store.getNode?.(nodeId);
+    const currentNode = store.getNode?.(nodeId);
     
-    if (parentNode) {
-      const parentChain = parentNode.data.context?.parentChain || [];
-      const parentId = parentChain[parentChain.length - 1] || null;
+    if (currentNode) {
+      const parentChain = currentNode.data.context?.parentChain || [];
+      const directParentId = parentChain.length > 0 ? parentChain[parentChain.length - 1] : null;
       
-      console.log('🌱 Current node:', parentNode);
-      console.log('🌱 Parent ID for sibling:', parentId);
+      console.log('🌱 Current node:', currentNode);
+      console.log('🌱 Current node parent chain:', parentChain);
+      console.log('🌱 Direct parent ID for sibling:', directParentId);
       
-      const siblingPosition = calculateSiblingPosition(parentNode);
+      const siblingPosition = calculateSiblingPosition(currentNode);
       console.log('🌱 Creating sibling at position:', siblingPosition);
       
-      store.createConversationalNode?.(
+      // FIXED: For refinement sibling, we want the same context as the current node
+      // So we pass the current node ID as the "contextual parent" but the actual parent for hierarchy
+      const newSiblingId = store.createConversationalNode?.(
         siblingPosition,
-        parentId,
+        directParentId,
         BRANCH_TYPES.REFINEMENT
       );
-      console.log('🌱 Sibling node creation called');
+      
+      // ENHANCED: Update the sibling to have the same parent context as current node
+      // This ensures refinement sibling gets the same AI response context
+      if (newSiblingId) {
+        const siblingNode = store.getNode?.(newSiblingId);
+        if (siblingNode) {
+          // Update the sibling to include current node in its parent chain for context
+          store.updateConversationalNode?.(newSiblingId, {
+            context: {
+              ...siblingNode.data.context,
+              parentChain: [...parentChain, nodeId], // Include current node for context
+              contextualSibling: nodeId, // Mark this as a contextual sibling
+              depth: parentChain.length + 1 // Same depth as a child would have
+            }
+          });
+        }
+      }
+      
+      console.log('🌱 Sibling node creation and context update called');
     } else {
       console.log('🌱 ERROR: Current node not found!');
     }
