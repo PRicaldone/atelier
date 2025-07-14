@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useCanvasStore } from '../../store.js';
 import { Edit3, Type, Palette, Sparkles } from 'lucide-react';
@@ -26,49 +26,25 @@ export const NoteCard = ({ element }) => {
     }
   }, [isEditing, data.title, data.content]);
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange = useCallback((e) => {
+    console.log('Title change:', e.target.value, 'Focus on:', document.activeElement);
     updateElement(element.id, {
       data: { ...data, title: e.target.value }
     });
-  };
+  }, [element.id, data, updateElement]);
 
-  const handleContentChange = (e) => {
+  const handleContentChange = useCallback((e) => {
     updateElement(element.id, {
       data: { ...data, content: e.target.value }
     });
-  };
+  }, [element.id, data, updateElement]);
 
   const handleTextBlur = () => {
     setIsEditing(false);
     updateElement(element.id, { editing: false });
   };
 
-  const handleTitleKeyDown = (e) => {
-    e.stopPropagation();
-    
-    // Only handle Cmd+Enter and Escape, let Enter work normally in title
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleTextBlur();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleTextBlur();
-    }
-    // Tab naturally moves to next field - no need to handle
-  };
-
-  const handleContentKeyDown = (e) => {
-    e.stopPropagation();
-    
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleTextBlur();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleTextBlur();
-    }
-    // Allow Enter to create new lines in content
-  };
+  // Simplified handlers - only stopPropagation and basic escape
 
   // Use Mind Garden elegant styling with better contrast
   const accentColor = data.backgroundColor || '#f59e0b';
@@ -171,8 +147,16 @@ export const NoteCard = ({ element }) => {
               type="text"
               value={data.title || ''}
               onChange={handleTitleChange}
-              onKeyDown={handleTitleKeyDown}
               onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                console.log('Title KeyDown:', e.key, 'Value before:', e.target.value);
+                e.stopPropagation();
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleTextBlur();
+                }
+                // Let all other keys work normally
+              }}
               className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 font-medium text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
                 color: '#111827'
@@ -184,8 +168,16 @@ export const NoteCard = ({ element }) => {
               ref={textareaRef}
               value={data.content || ''}
               onChange={handleContentChange}
-              onKeyDown={handleContentKeyDown}
               onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                console.log('Content KeyDown:', e.key);
+                e.stopPropagation();
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleTextBlur();
+                }
+                // Let all other keys work normally
+              }}
               className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 resize-none flex-1 min-h-[60px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
                 fontSize: `${data.fontSize || 14}px`,
