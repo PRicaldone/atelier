@@ -319,6 +319,7 @@ cp -R ATELIER-VERSIONS/snapshot_* ./emergency-recovery/
 # ✅ Buoni esempi - Fix e ottimizzazioni
 ./atelier-save.sh "🔧 Refactor: Ottimizzata performance canvas"
 ./atelier-save.sh "🐛 Fix: Risolto crash su iOS Safari"
+./atelier-save.sh "📚 Complete Documentation System v5.1 - Enterprise Architecture"  # Latest real example
 ./atelier-save.sh "✨ Canvas Notes Complete - Mind Garden Parity Achieved"  # Latest real example
 ./atelier-save.sh "✨ Board highlight durante drag&drop - visual feedback come tree view"  # Latest real example
 ./atelier-save.sh "🔧 ANALYSIS: Drag&drop Canvas→Board issues documented - multiple sync problems identified"  # Latest real example

@@ -1,5 +1,12 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { 
+  createConversationalNode, 
+  createConversationThread,
+  NODE_STATES,
+  BRANCH_TYPES,
+  getNextState
+} from './types/conversationTypes';
 
 // Initial demo data
 const initialNodes = [
@@ -68,7 +75,282 @@ export const useMindGardenStore = create(
     exportHistory: [],
     initialized: false,
 
-    // Node management
+    // ENHANCED v5.1: Conversation Threading State
+    conversations: new Map(),           // nodeId → conversation thread
+    nodeRelationships: new Map(),       // nodeId → { parent, children }
+    contextCache: new Map(),            // nodeId → processed context
+    
+    // AI Intelligence State
+    aiResponses: new Map(),             // nodeId → AI response data
+    contextDepth: new Map(),            // nodeId → context depth level
+    aiConfidence: new Map(),            // nodeId → response confidence score
+    
+    // Visual State Management
+    nodeStates: new Map(),              // nodeId → visual state
+    selectedThread: null,               // Currently selected conversation thread
+    focusedNodeId: null,                // Currently focused node for keyboard nav
+
+    // ENHANCED v5.1: Conversation Management Methods
+    
+    // Create a new conversational node
+    createConversationalNode: (position, parentId = null, branchType = BRANCH_TYPES.EXPLORATION) => {
+      const parentNode = parentId ? get().nodes.find(n => n.id === parentId) : null;
+      const parentChain = parentNode ? [...(parentNode.data.context?.parentChain || []), parentId] : [];
+      
+      const newNode = createConversationalNode({
+        position,
+        context: {
+          parentChain,
+          depth: parentChain.length,
+          branch: branchType,
+          focus: 'creative'
+        },
+        onUpdate: (nodeId, updates) => get().updateConversationalNode(nodeId, updates),
+        onCreateChild: (nodeId, config) => get().createChildNode(nodeId, config),
+        onCreateSibling: (nodeId, config) => get().createSiblingNode(nodeId, config)
+      });
+
+      // Add to nodes
+      set((state) => ({
+        nodes: [...state.nodes, newNode]
+      }));
+
+      // Update relationships
+      get().updateNodeRelationships(newNode.id, parentId);
+      
+      // Initialize conversation thread
+      if (!parentId) {
+        get().initializeConversationThread(newNode.id);
+      }
+
+      get().saveToLocalStorage();
+      return newNode.id;
+    },
+
+    // Update conversational node data
+    updateConversationalNode: (nodeId, updates) => {
+      set((state) => ({
+        nodes: state.nodes.map(node => 
+          node.id === nodeId 
+            ? { 
+                ...node, 
+                data: { ...node.data, ...updates },
+                selected: false // Ensure visual state is clean
+              } 
+            : node
+        )
+      }));
+
+      // Update AI-related caches if response was added
+      if (updates.aiResponse) {
+        get().aiResponses.set(nodeId, {
+          response: updates.aiResponse,
+          timestamp: updates.timestamp || new Date().toISOString(),
+          confidence: updates.context?.aiConfidence || 0.8
+        });
+
+        get().aiConfidence.set(nodeId, updates.context?.aiConfidence || 0.8);
+      }
+
+      // Update state tracking
+      if (updates.state) {
+        get().nodeStates.set(nodeId, updates.state);
+      }
+
+      get().saveToLocalStorage();
+    },
+
+    // Create child node (conversation continuation)
+    createChildNode: (parentId, config = {}) => {
+      const parentNode = get().nodes.find(n => n.id === parentId);
+      if (!parentNode) return null;
+
+      // Calculate position below parent
+      const childPosition = {
+        x: parentNode.position.x + (Math.random() - 0.5) * 100, // Small random offset
+        y: parentNode.position.y + 150
+      };
+
+      const childId = get().createConversationalNode(
+        childPosition, 
+        parentId, 
+        config.context?.branch || BRANCH_TYPES.EXPLORATION
+      );
+
+      // Create enhanced conversation edge
+      const newEdge = {
+        id: `edge_${parentId}_${childId}`,
+        source: parentId,
+        target: childId,
+        type: 'conversation',
+        data: { 
+          strength: 'medium',
+          branch: config.context?.branch || BRANCH_TYPES.EXPLORATION,
+          confidence: 0.8,
+          animated: true,
+          contextDepth: (data.context?.depth || 0) + 1
+        }
+      };
+
+      set((state) => ({
+        edges: [...state.edges, newEdge]
+      }));
+
+      // Update parent state to 'branching'
+      get().nodeStates.set(parentId, NODE_STATES.BRANCHING);
+
+      return childId;
+    },
+
+    // Create sibling node (conversation variation)
+    createSiblingNode: (siblingId, config = {}) => {
+      const siblingNode = get().nodes.find(n => n.id === siblingId);
+      if (!siblingNode) return null;
+
+      const parentId = siblingNode.data.context?.parentChain?.slice(-1)[0] || null;
+      
+      // Calculate position next to sibling
+      const siblingPosition = {
+        x: siblingNode.position.x + 250, // Offset to the right
+        y: siblingNode.position.y + (Math.random() - 0.5) * 50
+      };
+
+      const newSiblingId = get().createConversationalNode(
+        siblingPosition,
+        parentId,
+        config.context?.branch || BRANCH_TYPES.REFINEMENT
+      );
+
+      // Create edge connection if there's a parent
+      if (parentId) {
+        const newEdge = {
+          id: `edge_${parentId}_${newSiblingId}`,
+          source: parentId,
+          target: newSiblingId,
+          type: 'conversation',
+          data: { 
+            strength: 'medium',
+            branch: config.context?.branch || BRANCH_TYPES.REFINEMENT,
+            confidence: 0.7,
+            animated: false,
+            contextDepth: data.context?.depth || 0
+          }
+        };
+
+        set((state) => ({
+          edges: [...state.edges, newEdge]
+        }));
+      }
+
+      return newSiblingId;
+    },
+
+    // Update node relationships tracking
+    updateNodeRelationships: (nodeId, parentId) => {
+      const relationships = get().nodeRelationships;
+      
+      // Initialize relationship for this node
+      if (!relationships.has(nodeId)) {
+        relationships.set(nodeId, { parent: parentId, children: [] });
+      }
+
+      // Update parent's children list
+      if (parentId && relationships.has(parentId)) {
+        const parentRel = relationships.get(parentId);
+        if (!parentRel.children.includes(nodeId)) {
+          parentRel.children.push(nodeId);
+          relationships.set(parentId, parentRel);
+        }
+      }
+
+      set({ nodeRelationships: relationships });
+    },
+
+    // Initialize conversation thread
+    initializeConversationThread: (rootNodeId) => {
+      const thread = createConversationThread(rootNodeId, []);
+      get().conversations.set(rootNodeId, thread);
+      return thread.id;
+    },
+
+    // Build parent chain context for AI processing
+    buildParentChain: (nodeId) => {
+      const node = get().nodes.find(n => n.id === nodeId);
+      if (!node || !node.data.context?.parentChain) return [];
+
+      const parentChain = [];
+      for (const parentId of node.data.context.parentChain) {
+        const parentNode = get().nodes.find(n => n.id === parentId);
+        if (parentNode) {
+          parentChain.push({
+            id: parentId,
+            prompt: parentNode.data.prompt,
+            aiResponse: parentNode.data.aiResponse,
+            branch: parentNode.data.context?.branch,
+            timestamp: parentNode.data.timestamp
+          });
+        }
+      }
+
+      return parentChain;
+    },
+
+    // Get conversation thread for export
+    getConversationThread: (nodeId) => {
+      // Find the root of this conversation
+      let currentNode = get().nodes.find(n => n.id === nodeId);
+      if (!currentNode) return null;
+
+      // Traverse up to find root
+      while (currentNode.data.context?.parentChain?.length > 0) {
+        const parentId = currentNode.data.context.parentChain[0];
+        const parentNode = get().nodes.find(n => n.id === parentId);
+        if (!parentNode) break;
+        currentNode = parentNode;
+      }
+
+      const rootId = currentNode.id;
+      
+      // Collect all nodes in this conversation thread
+      const threadNodes = [];
+      const visited = new Set();
+      
+      const collectNodes = (nodeId) => {
+        if (visited.has(nodeId)) return;
+        visited.add(nodeId);
+        
+        const node = get().nodes.find(n => n.id === nodeId);
+        if (node) {
+          threadNodes.push(node);
+          
+          // Find children
+          const relationships = get().nodeRelationships;
+          const nodeRel = relationships.get(nodeId);
+          if (nodeRel?.children) {
+            nodeRel.children.forEach(childId => collectNodes(childId));
+          }
+        }
+      };
+
+      collectNodes(rootId);
+      
+      return {
+        rootId,
+        nodes: threadNodes,
+        metadata: {
+          totalDepth: Math.max(...threadNodes.map(n => n.data.context?.depth || 0)),
+          branchCount: threadNodes.filter(n => n.data.context?.branch !== BRANCH_TYPES.EXPLORATION).length,
+          nodeCount: threadNodes.length
+        }
+      };
+    },
+
+    // Focus management for keyboard navigation
+    setFocusedNode: (nodeId) => {
+      set({ focusedNodeId: nodeId });
+    },
+
+    // Node management (enhanced)
     setNodes: (nodes) => {
       if (typeof nodes === 'function') {
         set((state) => ({ nodes: nodes(state.nodes) }));

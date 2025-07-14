@@ -9,7 +9,9 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import NodeCard from './components/NodeCard';
+import ConversationalNode from './components/ConversationalNode';
 import OrganicEdge from './components/OrganicEdge';
+import ConversationEdge from './components/ConversationEdge';
 import AICommandPalette from './components/AICommandPalette';
 import ExportPreview from './components/ExportPreview';
 import { useUnifiedStore } from '../../store/unifiedStore';
@@ -19,11 +21,13 @@ import { Plus, Download } from 'lucide-react';
 // Custom node types
 const nodeTypes = {
   card: NodeCard,
+  conversational: ConversationalNode,
 };
 
-// Custom edge types  
+// Custom edge types (enhanced for v5.1)
 const edgeTypes = {
   organic: OrganicEdge,
+  conversation: ConversationEdge,
 };
 
 const MindGardenInner = () => {
@@ -56,7 +60,14 @@ const MindGardenInner = () => {
     removeNode,
     exportHistory,
     initializeStore,
-    syncToUnified
+    syncToUnified,
+    // ENHANCED v5.1: Conversation methods
+    createConversationalNode,
+    updateConversationalNode,
+    createChildNode,
+    createSiblingNode,
+    focusedNodeId,
+    setFocusedNode
   } = useMindGardenStore();
 
   // Initialize on mount
@@ -166,21 +177,28 @@ const MindGardenInner = () => {
         y: event.clientY - rect.top,
       });
 
-      const newNode = {
-        id: `node_${Date.now()}`,
-        type: 'card',
-        position,
-        data: {
-          title: 'New Idea',
-          content: '',
-          type: 'text',
-          phase: currentPhase === 'foundation' ? 'narrative' : null,
-        },
-      };
-
-      addNode(newNode);
+      // ENHANCED v5.1: Create conversational node by default
+      if (event.shiftKey) {
+        // Shift+Double click = Old style card node
+        const newNode = {
+          id: `node_${Date.now()}`,
+          type: 'card',
+          position,
+          data: {
+            title: 'New Idea',
+            content: '',
+            type: 'text',
+            phase: currentPhase === 'foundation' ? 'narrative' : null,
+          },
+        };
+        addNode(newNode);
+      } else {
+        // Default: Create conversational node
+        const nodeId = createConversationalNode(position);
+        setFocusedNode(nodeId);
+      }
     }
-  }, [currentPhase, reactFlowInstance, addNode]);
+  }, [currentPhase, reactFlowInstance, addNode, createConversationalNode, setFocusedNode]);
 
   const handleAICommand = useCallback(async (command) => {
     console.log('🌱 AI Command:', command, 'on node:', selectedNodeId);

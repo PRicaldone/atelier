@@ -1,11 +1,16 @@
 /**
- * AI Intelligence Engine - Hybrid Architecture
- * Blueprint v4.1 Implementation
+ * AI Intelligence Engine - Enhanced for Conversational Intelligence
+ * Blueprint v5.1 Implementation - Mind Garden Flora AI Integration
  * 
  * Routing Strategy:
- * - Anthropic: Complex reasoning, context analysis, creative workflows
+ * - Anthropic: Complex reasoning, context analysis, creative workflows, conversational AI
  * - OpenAI: Simple transformations, quick completions, fallback operations
+ * 
+ * NEW v5.1: Contextual conversation threading with parent chain analysis
  */
+
+import ContextAnalyzer from './contextAnalysis.js';
+import PromptBuilder from './promptBuilder.js';
 
 class IntelligenceEngine {
   constructor(config, storeRef) {
@@ -15,19 +20,32 @@ class IntelligenceEngine {
     this.claudeCode = config.claudeCodeSDK     // Future experimentation
     this.store = storeRef
     
-    // AI ROUTING STRATEGY
+    // ENHANCED v5.1: Conversational Intelligence Components
+    this.contextAnalyzer = new ContextAnalyzer(this)
+    this.promptBuilder = new PromptBuilder()
+    this.responseCache = new Map()             // Cache AI responses for performance
+    this.streamingResponses = new Map()        // Track active streaming responses
+    
+    // AI ROUTING STRATEGY (Enhanced for v5.1)
     this.routingStrategy = {
       // ANTHROPIC for complex intelligence
       contextAnalysis: 'anthropic',
       architecturalSuggestions: 'anthropic', 
       creativeWorkflowOptimization: 'anthropic',
       complexTransformations: 'anthropic',
+      // NEW v5.1: Conversational intelligence
+      conversationalResponse: 'anthropic',
+      contextualAnalysis: 'anthropic',
+      conversationSynthesis: 'anthropic',
       
       // OPENAI for reliable simple tasks
       textExpansions: 'openai',
       quickCompletions: 'openai',
       formatConversions: 'openai',
-      fallbackOperations: 'openai'
+      fallbackOperations: 'openai',
+      // NEW v5.1: Simple conversational tasks
+      basicResponses: 'openai',
+      confidenceScoring: 'openai'
     }
     
     this.initialized = false
@@ -680,6 +698,318 @@ Be extremely specific with node names, parameters, and technical details.`
     }))
     
     console.log('🤖 AI suggestions cleared')
+  }
+
+  // ============================================================================
+  // ENHANCED v5.1: CONVERSATIONAL INTELLIGENCE METHODS
+  // ============================================================================
+
+  /**
+   * Generate contextual AI response for conversational node
+   * Core method for Mind Garden v5.1 conversational threading
+   */
+  async generateConversationalResponse(nodeId, prompt, parentChain = []) {
+    if (!this.initialized) {
+      console.warn('🤖 Conversational response skipped - AI not initialized')
+      return this.mockConversationalResponse(prompt)
+    }
+
+    console.log('🤖 Generating conversational response:', { nodeId, prompt, contextDepth: parentChain.length })
+
+    try {
+      // 1. Analyze conversation context
+      const conversationFocus = this.contextAnalyzer.analyzeConversationFocus(parentChain)
+      const primaryTopic = this.contextAnalyzer.extractPrimaryTopic(parentChain)
+      const conversationFlow = this.contextAnalyzer.analyzeFlow(parentChain)
+
+      // 2. Build intelligent prompt
+      const contextualPrompt = this.promptBuilder.buildContextualPrompt({
+        currentPrompt: prompt,
+        conversationHistory: parentChain,
+        conversationType: conversationFocus,
+        branchIntent: 'exploration', // Default, will be enhanced in Day 3
+        depth: parentChain.length,
+        primaryTopic,
+        conversationFlow
+      })
+
+      // 3. Check cache for similar prompts
+      const cacheKey = this.generateCacheKey(prompt, parentChain)
+      if (this.responseCache.has(cacheKey)) {
+        console.log('🤖 Using cached response')
+        return this.responseCache.get(cacheKey)
+      }
+
+      // 4. Route to appropriate AI client
+      const { client, fallback } = await this.routeRequest('conversationalResponse', 'high')
+      
+      // 5. Generate response
+      let response, confidence
+      if (this.anthropic && !this.mockMode) {
+        const result = await this.generateAnthropicResponse(contextualPrompt)
+        response = result.response
+        confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+      } else if (this.openai && !this.mockMode) {
+        const result = await this.generateOpenAIResponse(contextualPrompt)
+        response = result.response
+        confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+      } else {
+        // Mock mode
+        response = this.mockConversationalResponse(prompt, parentChain)
+        confidence = 0.8
+      }
+
+      // 6. Cache the response
+      const responseData = {
+        response,
+        confidence,
+        conversationFocus,
+        primaryTopic,
+        timestamp: new Date().toISOString(),
+        contextDepth: parentChain.length
+      }
+
+      this.responseCache.set(cacheKey, responseData)
+
+      // 7. Generate suggested follow-up prompts
+      const suggestedBranches = this.promptBuilder.buildSuggestionPrompts(parentChain, response)
+
+      console.log('🤖 Conversational response generated:', { 
+        responseLength: response.length, 
+        confidence, 
+        conversationFocus,
+        suggestions: suggestedBranches.length 
+      })
+
+      return {
+        ...responseData,
+        suggestedBranches
+      }
+
+    } catch (error) {
+      console.error('🤖 Conversational response generation failed:', error)
+      return {
+        response: this.mockConversationalResponse(prompt, parentChain),
+        confidence: 0.6,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      }
+    }
+  }
+
+  /**
+   * Generate response using Anthropic Claude
+   */
+  async generateAnthropicResponse(prompt) {
+    const response = await this.anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    return {
+      response: response.content[0].text,
+      usage: response.usage
+    }
+  }
+
+  /**
+   * Generate response using OpenAI
+   */
+  async generateOpenAIResponse(prompt) {
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    return {
+      response: response.choices[0].message.content,
+      usage: response.usage
+    }
+  }
+
+  /**
+   * Score AI response confidence based on context
+   */
+  async scoreResponseConfidence(response, prompt, parentChain) {
+    try {
+      // Simple heuristic-based confidence scoring
+      let confidence = 0.7 // Base confidence
+
+      // Higher confidence for longer, detailed responses
+      if (response.length > 200) confidence += 0.1
+      if (response.length > 400) confidence += 0.1
+
+      // Higher confidence if response references conversation history
+      if (parentChain.length > 0) {
+        const historyWords = parentChain.map(node => node.prompt + ' ' + (node.aiResponse || '')).join(' ').toLowerCase()
+        const responseWords = response.toLowerCase()
+        const overlap = historyWords.split(' ').some(word => 
+          word.length > 4 && responseWords.includes(word)
+        )
+        if (overlap) confidence += 0.1
+      }
+
+      // Confidence based on response structure
+      const hasBulletPoints = response.includes('•') || response.includes('-') || response.includes('1.')
+      const hasQuestions = response.includes('?')
+      const hasSpecificExamples = response.includes('example') || response.includes('for instance')
+      
+      if (hasBulletPoints) confidence += 0.05
+      if (hasQuestions) confidence += 0.05
+      if (hasSpecificExamples) confidence += 0.05
+
+      return Math.min(confidence, 1.0)
+
+    } catch (error) {
+      console.warn('🤖 Confidence scoring failed:', error)
+      return 0.7 // Default confidence
+    }
+  }
+
+  /**
+   * Stream AI response in real-time (placeholder for future enhancement)
+   */
+  async streamConversationalResponse(nodeId, prompt, parentChain = [], onChunk) {
+    if (!this.initialized || this.mockMode) {
+      // Mock streaming for development
+      return this.mockStreamResponse(prompt, onChunk)
+    }
+
+    // Real streaming implementation will be added in Day 3
+    console.log('🤖 Streaming response (placeholder):', nodeId)
+    
+    try {
+      // For now, just generate full response and simulate streaming
+      const result = await this.generateConversationalResponse(nodeId, prompt, parentChain)
+      
+      if (onChunk) {
+        const words = result.response.split(' ')
+        for (let i = 0; i < words.length; i += 3) {
+          const chunk = words.slice(i, i + 3).join(' ') + ' '
+          onChunk(chunk)
+          await new Promise(resolve => setTimeout(resolve, 100)) // Simulate streaming delay
+        }
+      }
+
+      return result
+
+    } catch (error) {
+      console.error('🤖 Streaming response failed:', error)
+      if (onChunk) {
+        onChunk('Error generating response. Please try again.')
+      }
+      return { error: error.message }
+    }
+  }
+
+  /**
+   * Mock streaming for development/demo
+   */
+  async mockStreamResponse(prompt, onChunk) {
+    const mockResponse = this.mockConversationalResponse(prompt)
+    
+    if (onChunk) {
+      const words = mockResponse.split(' ')
+      for (let i = 0; i < words.length; i += 2) {
+        const chunk = words.slice(i, i + 2).join(' ') + ' '
+        onChunk(chunk)
+        await new Promise(resolve => setTimeout(resolve, 150))
+      }
+    }
+
+    return {
+      response: mockResponse,
+      confidence: 0.8,
+      timestamp: new Date().toISOString()
+    }
+  }
+
+  /**
+   * Generate cache key for responses
+   */
+  generateCacheKey(prompt, parentChain) {
+    const contextStr = parentChain.map(node => node.prompt).join('|')
+    const hash = this.simpleHash(prompt + contextStr)
+    return `conv_${hash}`
+  }
+
+  /**
+   * Simple hash function for cache keys
+   */
+  simpleHash(str) {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i)
+      hash = ((hash << 5) - hash) + char
+      hash = hash & hash // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(36)
+  }
+
+  /**
+   * Mock conversational response for development
+   */
+  mockConversationalResponse(prompt, parentChain = []) {
+    const responses = [
+      `That's a fascinating perspective on "${prompt}". Let me build on that idea...`,
+      `I find your question about "${prompt}" particularly intriguing. Here's how I see it developing...`,
+      `Your insight into "${prompt}" opens up several interesting directions. Consider this approach...`,
+      `The way you've framed "${prompt}" suggests some creative possibilities. Let me explore...`,
+      `Building on our conversation${parentChain.length > 0 ? ` about ${this.contextAnalyzer.extractPrimaryTopic(parentChain)}` : ''}, your question about "${prompt}" leads me to think...`
+    ]
+
+    const selectedResponse = responses[Math.floor(Math.random() * responses.length)]
+    
+    const additionalContent = [
+      'This concept could be explored through multiple lenses - creative, technical, and strategic.',
+      'What makes this particularly interesting is how it connects to broader themes in your project.',
+      'I see potential for this to evolve in several directions, each with its own unique characteristics.',
+      'The intersection of these ideas suggests some innovative approaches worth considering.',
+      'This foundation provides a solid starting point for deeper exploration and development.'
+    ]
+
+    const selectedAdditional = additionalContent[Math.floor(Math.random() * additionalContent.length)]
+
+    return `${selectedResponse}\n\n${selectedAdditional}\n\nWhat specific aspect of this resonates most with your vision?`
+  }
+
+  /**
+   * Analyze conversation for export (enhanced method)
+   */
+  async analyzeConversationForExport(conversationThread) {
+    if (!conversationThread || !conversationThread.nodes) {
+      return null
+    }
+
+    try {
+      const parentChain = conversationThread.nodes
+        .filter(node => node.data.prompt && node.data.aiResponse)
+        .map(node => ({
+          id: node.id,
+          prompt: node.data.prompt,
+          aiResponse: node.data.aiResponse,
+          branch: node.data.context?.branch
+        }))
+
+      const analysis = {
+        mainTopic: this.contextAnalyzer.extractPrimaryTopic(parentChain),
+        keyInsights: this.contextAnalyzer.extractKeyInsights(parentChain),
+        actionItems: this.contextAnalyzer.extractActionItems(parentChain),
+        relationships: this.contextAnalyzer.analyzeRelationships(parentChain),
+        exportReadiness: this.contextAnalyzer.analyzeExportReadiness(conversationThread),
+        conversationFocus: this.contextAnalyzer.analyzeConversationFocus(parentChain),
+        flowPattern: this.contextAnalyzer.analyzeFlow(parentChain)
+      }
+
+      console.log('🤖 Conversation analysis completed:', analysis)
+      return analysis
+
+    } catch (error) {
+      console.error('🤖 Conversation analysis failed:', error)
+      return null
+    }
   }
   
   // FUTURE: Claude Code SDK Integration

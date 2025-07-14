@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mind Garden v5.1 Conversational Styles */
+@import './modules/mind-garden/styles/conversationalNodes.scss';
+
 @layer base {
   html {
     @apply antialiased;
