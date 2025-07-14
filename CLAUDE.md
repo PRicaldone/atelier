@@ -373,11 +373,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 14/07/2025 02:37
-**Ultimo commit:** bd25aa7 ✨ Canvas Notes Complete - Mind Garden Parity Achieved
+**Data:** 14/07/2025 03:22
+**Ultimo commit:** 3f8449d 📋 Blueprint v5.1 - Mind Garden Flora Revolution
 **Branch:** main
-**Commit totali:** 112
-**Snapshots:** 55 | **Backups:** 0
+**Commit totali:** 115
+**Snapshots:** 56 | **Backups:** 0
 
-**Ultima modifica:** ✨ Canvas Notes Complete - Mind Garden Parity Achieved
+**Ultima modifica:** 📋 Blueprint v5.1 - Mind Garden Flora Revolution
 
