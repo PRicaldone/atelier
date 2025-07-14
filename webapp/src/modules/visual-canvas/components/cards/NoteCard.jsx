@@ -152,12 +152,20 @@ export const NoteCard = ({ element }) => {
               value={element.data.title || ''}
               onChange={handleTitleChange}
               onClick={(e) => e.stopPropagation()}
-              onBlur={handleTextBlur}
+              onBlur={(e) => {
+                // Only close if not moving to content field
+                if (!e.relatedTarget || e.relatedTarget !== textareaRef.current) {
+                  handleTextBlur();
+                }
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   handleTextBlur();
+                } else if (e.key === 'Tab') {
+                  e.preventDefault();
+                  textareaRef.current?.focus();
                 }
               }}
               className="w-full bg-transparent border-none outline-none font-medium text-base text-gray-900 dark:text-white"
@@ -168,7 +176,12 @@ export const NoteCard = ({ element }) => {
               value={element.data.content || ''}
               onChange={handleContentChange}
               onClick={(e) => e.stopPropagation()}
-              onBlur={handleTextBlur}
+              onBlur={(e) => {
+                // Only close if not moving to title field
+                if (!e.relatedTarget || e.relatedTarget !== titleInputRef.current) {
+                  handleTextBlur();
+                }
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 // Allow Enter for new lines in content
