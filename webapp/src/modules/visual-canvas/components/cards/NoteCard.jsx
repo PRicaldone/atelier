@@ -13,23 +13,14 @@ export const NoteCard = ({ element }) => {
 
   useEffect(() => {
     if (isEditing) {
-      // Focus title first for new notes, content for existing notes with title
-      if (!data.title && !data.content && titleInputRef.current) {
-        titleInputRef.current.focus();
-      } else if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
-      
-      // Add global click listener to close editing when clicking outside
-      const handleClickOutside = (e) => {
-        const noteCard = e.target.closest('.note-editing-area');
-        if (!noteCard || !noteCard.contains(titleInputRef.current)) {
-          handleTextBlur();
+      // Small delay to ensure DOM is updated before focusing
+      setTimeout(() => {
+        if (!data.title && !data.content && titleInputRef.current) {
+          titleInputRef.current.focus();
+        } else if (textareaRef.current) {
+          textareaRef.current.focus();
         }
-      };
-      
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, 50);
     }
   }, [isEditing, data.title, data.content]);
 
@@ -94,18 +85,33 @@ export const NoteCard = ({ element }) => {
         relative
         ${getAdaptiveWidth()}
         ${getAdaptiveHeight()}
-        bg-white/[0.02] dark:bg-gray-900/50
-        border rounded-xl
+        ${isEditing 
+          ? 'bg-white dark:bg-gray-800 border-blue-400 shadow-blue-200/50' 
+          : 'bg-white/[0.02] dark:bg-gray-900/50 border-white/10 hover:border-white/20'
+        }
+        border-2 rounded-xl
         backdrop-blur-md
         transition-all duration-200
-        border-white/10 hover:border-white/20
         shadow-lg hover:shadow-xl
       `}
       style={{
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        borderColor: `${accentColor}20`
+        boxShadow: isEditing 
+          ? '0 0 0 3px rgba(59, 130, 246, 0.1), 0 8px 32px rgba(0, 0, 0, 0.15)'
+          : '0 8px 32px rgba(0, 0, 0, 0.1)',
+        borderColor: isEditing ? '#60a5fa' : `${accentColor}20`
       }}
-      whileHover={{ scale: 1.02, y: -2 }}
+      whileHover={isEditing ? {} : { scale: 1.02, y: -2 }}
+      onClick={(e) => {
+        if (isEditing) {
+          e.stopPropagation();
+        }
+      }}
+      onBlur={(e) => {
+        if (isEditing && !e.currentTarget.contains(e.relatedTarget)) {
+          handleTextBlur();
+        }
+      }}
+      tabIndex={isEditing ? 0 : -1}
     >
       {/* Accent Line */}
       <div 
@@ -146,9 +152,9 @@ export const NoteCard = ({ element }) => {
       </div>
 
       {/* Content */}
-      <div className="p-3 flex-1 overflow-hidden note-editing-area">
+      <div className={`${isEditing ? 'p-4' : 'p-3'} flex-1 overflow-hidden note-editing-area`}>
         {isEditing ? (
-          <div className="space-y-2 h-full flex flex-col border-2 border-blue-300 rounded p-2 bg-blue-50/20">
+          <div className="space-y-3 h-full flex flex-col">
             {/* Title Input */}
             <input
               ref={titleInputRef}
@@ -157,9 +163,9 @@ export const NoteCard = ({ element }) => {
               onChange={handleTitleChange}
               onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-transparent border-none outline-none font-medium text-base"
+              className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 font-medium text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
-                color: '#111827' // Dark gray for editing mode
+                color: '#111827'
               }}
               placeholder="Note title..."
             />
@@ -170,18 +176,19 @@ export const NoteCard = ({ element }) => {
               onChange={handleContentChange}
               onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-transparent border-none outline-none resize-none flex-1 min-h-[40px]"
+              className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 resize-none flex-1 min-h-[60px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
                 fontSize: `${data.fontSize || 14}px`,
                 fontWeight: data.fontWeight || 'normal',
                 textAlign: data.textAlign || 'left',
-                color: '#374151' // Dark gray for editing mode
+                color: '#374151'
               }}
               placeholder="Note content..."
             />
             {/* Editing instructions */}
-            <div className="text-xs text-blue-600 pt-2 border-t border-blue-200 mt-2">
-              Enter: next field • Cmd+Enter: save • Esc: cancel
+            <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center pt-1 border-t border-gray-200 dark:border-gray-600">
+              <span>Enter: next field</span>
+              <span>⌘+Enter: save • Esc: cancel</span>
             </div>
           </div>
         ) : (
