@@ -19,6 +19,17 @@ export const NoteCard = ({ element }) => {
       } else if (textareaRef.current) {
         textareaRef.current.focus();
       }
+      
+      // Add global click listener to close editing when clicking outside
+      const handleClickOutside = (e) => {
+        const noteCard = e.target.closest('.note-editing-area');
+        if (!noteCard || !noteCard.contains(titleInputRef.current)) {
+          handleTextBlur();
+        }
+      };
+      
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isEditing, data.title, data.content]);
 
@@ -137,19 +148,13 @@ export const NoteCard = ({ element }) => {
       {/* Content */}
       <div className="p-3 flex-1 overflow-hidden note-editing-area">
         {isEditing ? (
-          <div className="space-y-2 h-full flex flex-col">
+          <div className="space-y-2 h-full flex flex-col border-2 border-blue-300 rounded p-2 bg-blue-50/20">
             {/* Title Input */}
             <input
               ref={titleInputRef}
               type="text"
               value={data.title || ''}
               onChange={handleTitleChange}
-              onBlur={(e) => {
-                // Don't close editing if clicking between title and content
-                if (!e.relatedTarget || !e.relatedTarget.closest('.note-editing-area')) {
-                  handleTextBlur();
-                }
-              }}
               onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
               className="w-full bg-transparent border-none outline-none font-medium text-base"
@@ -163,12 +168,6 @@ export const NoteCard = ({ element }) => {
               ref={textareaRef}
               value={data.content || ''}
               onChange={handleContentChange}
-              onBlur={(e) => {
-                // Don't close editing if clicking between title and content
-                if (!e.relatedTarget || !e.relatedTarget.closest('.note-editing-area')) {
-                  handleTextBlur();
-                }
-              }}
               onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
               className="w-full bg-transparent border-none outline-none resize-none flex-1 min-h-[40px]"
@@ -180,6 +179,10 @@ export const NoteCard = ({ element }) => {
               }}
               placeholder="Note content..."
             />
+            {/* Editing instructions */}
+            <div className="text-xs text-blue-600 pt-2 border-t border-blue-200 mt-2">
+              Enter: next field • Cmd+Enter: save • Esc: cancel
+            </div>
           </div>
         ) : (
           <div
