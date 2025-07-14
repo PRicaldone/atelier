@@ -21,6 +21,16 @@ export const NoteCard = ({ element }) => {
           textareaRef.current.focus();
         }
       }, 50);
+      
+      // Add escape key listener for the whole document
+      const handleEscapeKey = (e) => {
+        if (e.key === 'Escape') {
+          handleTextBlur();
+        }
+      };
+      
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
     }
   }, [isEditing, data.title, data.content]);
 
@@ -41,17 +51,29 @@ export const NoteCard = ({ element }) => {
     updateElement(element.id, { editing: false });
   };
 
-  const handleKeyDown = (e) => {
-    // Stop propagation for all key events when editing to prevent Canvas shortcuts
+  const handleTitleKeyDown = (e) => {
+    e.stopPropagation();
+    
+    if (e.key === 'Enter') {
+      if (e.metaKey || e.ctrlKey) {
+        handleTextBlur();
+      } else {
+        e.preventDefault();
+        textareaRef.current?.focus();
+      }
+    } else if (e.key === 'Escape') {
+      handleTextBlur();
+    }
+  };
+
+  const handleContentKeyDown = (e) => {
     e.stopPropagation();
     
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       handleTextBlur();
-    }
-    if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       handleTextBlur();
     }
-    // Allow all other keys (including spacebar) to work normally in textarea
   };
 
   // Use Mind Garden elegant styling with better contrast
@@ -106,12 +128,6 @@ export const NoteCard = ({ element }) => {
           e.stopPropagation();
         }
       }}
-      onBlur={(e) => {
-        if (isEditing && !e.currentTarget.contains(e.relatedTarget)) {
-          handleTextBlur();
-        }
-      }}
-      tabIndex={isEditing ? 0 : -1}
     >
       {/* Accent Line */}
       <div 
@@ -161,7 +177,7 @@ export const NoteCard = ({ element }) => {
               type="text"
               value={data.title || ''}
               onChange={handleTitleChange}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleTitleKeyDown}
               onClick={(e) => e.stopPropagation()}
               className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 font-medium text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
@@ -174,7 +190,7 @@ export const NoteCard = ({ element }) => {
               ref={textareaRef}
               value={data.content || ''}
               onChange={handleContentChange}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleContentKeyDown}
               onClick={(e) => e.stopPropagation()}
               className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 resize-none flex-1 min-h-[60px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               style={{
