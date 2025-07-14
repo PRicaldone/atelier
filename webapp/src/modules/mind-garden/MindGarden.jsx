@@ -12,11 +12,15 @@ import NodeCard from './components/NodeCard';
 import ConversationalNode from './components/ConversationalNode';
 import OrganicEdge from './components/OrganicEdge';
 import ConversationEdge from './components/ConversationEdge';
+import EnhancedConversationEdge from './components/EnhancedConversationEdge';
 import AICommandPalette from './components/AICommandPalette';
 import ExportPreview from './components/ExportPreview';
+import ConversationThreadVisualization from './components/ConversationThreadVisualization';
+import MiniMap from './components/MiniMap';
+import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import { useUnifiedStore } from '../../store/unifiedStore';
 import { useMindGardenStore } from './store';
-import { Plus, Download } from 'lucide-react';
+import { Plus, Download, Map, Keyboard, Layers, MessageSquare } from 'lucide-react';
 
 // Custom node types
 const nodeTypes = {
@@ -28,6 +32,7 @@ const nodeTypes = {
 const edgeTypes = {
   organic: OrganicEdge,
   conversation: ConversationEdge,
+  enhanced: EnhancedConversationEdge,
 };
 
 const MindGardenInner = () => {
@@ -40,6 +45,14 @@ const MindGardenInner = () => {
   const [isRightDragging, setIsRightDragging] = useState(false);
   const [zoomStart, setZoomStart] = useState(null);
   const [initialZoom, setInitialZoom] = useState(1);
+  
+  // Day 5: Enhanced UI State
+  const [threadVisualizationOpen, setThreadVisualizationOpen] = useState(false);
+  const [miniMapVisible, setMiniMapVisible] = useState(true);
+  const [keyboardHelpOpen, setKeyboardHelpOpen] = useState(false);
+  const [quickActionMode, setQuickActionMode] = useState(false);
+  const [selectedThread, setSelectedThread] = useState(null);
+  
   const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
 
@@ -561,22 +574,51 @@ const MindGardenInner = () => {
         />
       </ReactFlow>
 
-      {/* Add Button - Top Left (like Canvas toolbar) */}
+      {/* Enhanced Toolbar - Top Left */}
       <div className="absolute top-4 left-4 z-50">
-        <button
-          onClick={(e) => {
-            const rect = reactFlowWrapper.current.getBoundingClientRect();
-            setCommandPosition({
-              x: e.clientX - rect.left - 160,
-              y: e.clientY - rect.top + 20
-            });
-            setCommandPaletteOpen(true);
-          }}
-          className="w-12 h-12 bg-purple-500 hover:bg-purple-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-          title="Add new node"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={(e) => {
+              const rect = reactFlowWrapper.current.getBoundingClientRect();
+              setCommandPosition({
+                x: e.clientX - rect.left - 160,
+                y: e.clientY - rect.top + 20
+              });
+              setCommandPaletteOpen(true);
+            }}
+            className="w-12 h-12 bg-purple-500 hover:bg-purple-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+            title="Add new node"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
+          
+          <button
+            onClick={() => setThreadVisualizationOpen(!threadVisualizationOpen)}
+            className={`w-12 h-12 bg-white hover:bg-gray-50 text-gray-600 rounded-full flex items-center justify-center shadow-lg transition-colors ${
+              threadVisualizationOpen ? 'ring-2 ring-purple-500' : ''
+            }`}
+            title="Toggle thread visualization (T)"
+          >
+            <MessageSquare className="w-6 h-6" />
+          </button>
+          
+          <button
+            onClick={() => setKeyboardHelpOpen(true)}
+            className="w-12 h-12 bg-white hover:bg-gray-50 text-gray-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
+            title="Keyboard shortcuts (H)"
+          >
+            <Keyboard className="w-6 h-6" />
+          </button>
+          
+          {quickActionMode && (
+            <div className="bg-blue-100 rounded-lg shadow-lg border border-blue-200 px-3 py-2">
+              <div className="flex items-center space-x-2">
+                <Layers className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-600">Quick Actions</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Export Button - Top Right (always visible) */}
@@ -627,13 +669,48 @@ const MindGardenInner = () => {
 
       {/* Instructions Panel - Bottom Right (like Canvas) */}
       <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
-        <div className="font-medium mb-1">🌱 Mind Garden</div>
+        <div className="font-medium mb-1">🌱 Mind Garden v5.1</div>
         <div>• Double-click canvas to add node</div>
         <div>• Double-click node to edit content</div>
-        <div>• Click connection line → Del to remove</div>
-        <div>• Shift+click to multi-select nodes</div>
-        <div>• Right-click+drag OR scroll to zoom</div>
+        <div>• Tab/Shift+Tab for child/sibling nodes</div>
+        <div>• Arrow keys for navigation</div>
+        <div>• Press H for keyboard shortcuts</div>
       </div>
+
+      {/* Day 5: Thread Visualization Sidebar */}
+      {threadVisualizationOpen && (
+        <div className="absolute top-16 left-4 w-80 max-h-[calc(100vh-8rem)] bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-40">
+          <ConversationThreadVisualization
+            nodes={nodes}
+            edges={edges}
+            selectedNodeId={selectedNodeId}
+            onNodeSelect={setSelectedNodeId}
+            onThreadSelect={setSelectedThread}
+            showHealthIndicators={true}
+            showFlowIndicators={true}
+            compactMode={false}
+          />
+        </div>
+      )}
+
+      {/* Day 5: Mini-Map */}
+      {miniMapVisible && (
+        <MiniMap
+          nodes={nodes}
+          edges={edges}
+          viewport={reactFlowInstance.getViewport()}
+          onViewportChange={reactFlowInstance.setViewport}
+          selectedNodeId={selectedNodeId}
+          onNodeSelect={setSelectedNodeId}
+          position="bottom-right"
+        />
+      )}
+
+      {/* Day 5: Keyboard Shortcuts Help */}
+      <KeyboardShortcutsHelp
+        isOpen={keyboardHelpOpen}
+        onClose={() => setKeyboardHelpOpen(false)}
+      />
     </div>
   );
 };

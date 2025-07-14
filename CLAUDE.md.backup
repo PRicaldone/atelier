@@ -233,16 +233,40 @@ npm run typecheck
 - 🕐 **Time-based**: >20 minuti di sviluppo attivo
 - 🎯 **Feature completion**: Route, componente o modulo completato
 
-## 🚨 Blueprint Roadmap Adherence (MANDATORY)
+## 🚨 Roadmap Adherence System (CRITICAL)
 
-**CRITICAL INSTRUCTION**: Se user richieste deviano dal programma Blueprint v4.1, fornisci un WARNING e chiedi conferma prima di procedere.
+**MANDATORY BEHAVIOR**: Quando l'utente fa richieste che deviano dalla roadmap corrente, DEVI fornire un WARNING e chiedere conferma.
 
-**Current Blueprint Priority**: Sprint 1 - AI Intelligence Core (PRIORITY #1)
-- ⚠️ **Se richieste UI/UX senza AI Intelligence**: "WARNING: Questo devia da Blueprint v4.1 Sprint 1 (AI Intelligence Core). Vuoi continuare o seguire il roadmap?"
-- ⚠️ **Se richieste nuove feature senza Intelligence**: "WARNING: Blueprint v4.1 richiede AI Intelligence come fondazione. Procedere senza?"
-- ⚠️ **Se richieste non-intelligence**: "WARNING: Sprint 1 attuale è AI Intelligence Core. Saltare per questa richiesta?"
+**Current Active Roadmap**: Mind Garden v5.1 - 10-Day Sprint (Flora AI Revolution)
+**Documentation Reference**: `/docs/modules/mind-garden-roadmap-v5.1.md`
 
-**Memorizza sempre**: Ogni deviazione deve essere esplicitamente approvata dall'utente.
+### ⚠️ **Deviation Warning Protocol**
+Quando l'utente chiede modifiche che non sono nel piano corrente:
+
+1. **IMMEDIATE WARNING**: 
+   ```
+   ⚠️ WARNING: Questa richiesta devia dal roadmap Mind Garden v5.1, Day X.
+   
+   Roadmap prevede: [cosa dovremmo fare secondo il piano]
+   Tu chiedi: [cosa sta chiedendo l'utente]
+   
+   Vuoi:
+   A) Continuare con la deviazione (possiamo vedere dopo)
+   B) Tornare al roadmap Day X
+   C) Aggiornare il roadmap con questa priorità
+   ```
+
+2. **Se richieste estetiche durante sviluppo core**: "⚠️ WARNING: Roadmap suggerisce completare [feature core] prima di polish visuale. Procedere comunque?"
+
+3. **Se nuove feature non pianificate**: "⚠️ WARNING: Questa feature non è nel 10-day sprint. Meglio completare Day X prima?"
+
+### 📋 **Current Sprint Status Tracking**
+- **Day 1**: Enhanced Node Foundation ← CURRENTLY HERE
+- **Day 2**: Contextual AI Integration  
+- **Day 3**: Visual Cues System
+- **Day 4-10**: [Come da roadmap]
+
+**REMEMBER**: Ogni deviazione rallenta il completamento. Mantieni focus sul piano concordato.
 
 ## 🎯 Focus Areas per Nuova Sessione
 
@@ -373,11 +397,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 14/07/2025 03:22
-**Ultimo commit:** 3f8449d 📋 Blueprint v5.1 - Mind Garden Flora Revolution
+**Data:** 14/07/2025 03:44
+**Ultimo commit:** fc17746 📚 Complete Documentation System v5.1 - Enterprise Architecture
 **Branch:** main
-**Commit totali:** 115
-**Snapshots:** 56 | **Backups:** 0
+**Commit totali:** 117
+**Snapshots:** 57 | **Backups:** 0
 
-**Ultima modifica:** 📋 Blueprint v5.1 - Mind Garden Flora Revolution
+**Ultima modifica:** 📚 Complete Documentation System v5.1 - Enterprise Architecture
 

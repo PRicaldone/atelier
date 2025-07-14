@@ -11,6 +11,10 @@
 
 import ContextAnalyzer from './contextAnalysis.js';
 import PromptBuilder from './promptBuilder.js';
+import ConversationAnalyzer from './conversationAnalysis.js';
+import ResponseCache from './responseCache.js';
+import ConversationErrorHandler from './errorHandling.js';
+import TopicExtractor from './topicExtraction.js';
 
 class IntelligenceEngine {
   constructor(config, storeRef) {
@@ -23,7 +27,10 @@ class IntelligenceEngine {
     // ENHANCED v5.1: Conversational Intelligence Components
     this.contextAnalyzer = new ContextAnalyzer(this)
     this.promptBuilder = new PromptBuilder()
-    this.responseCache = new Map()             // Cache AI responses for performance
+    this.conversationAnalyzer = new ConversationAnalyzer()
+    this.responseCache = new ResponseCache(100, 60 * 60 * 1000)  // 100 entries, 1 hour TTL
+    this.errorHandler = new ConversationErrorHandler()
+    this.topicExtractor = new TopicExtractor()
     this.streamingResponses = new Map()        // Track active streaming responses
     
     // AI ROUTING STRATEGY (Enhanced for v5.1)
@@ -717,59 +724,105 @@ Be extremely specific with node names, parameters, and technical details.`
     console.log('🤖 Generating conversational response:', { nodeId, prompt, contextDepth: parentChain.length })
 
     try {
-      // 1. Analyze conversation context
-      const conversationFocus = this.contextAnalyzer.analyzeConversationFocus(parentChain)
-      const primaryTopic = this.contextAnalyzer.extractPrimaryTopic(parentChain)
-      const conversationFlow = this.contextAnalyzer.analyzeFlow(parentChain)
+      // 1. Check cache for similar prompts
+      const conversationFocus = this.conversationAnalyzer.analyzeAdvancedConversationFocus(parentChain, prompt)
+      const cachedResponse = this.responseCache.get(prompt, parentChain, conversationFocus.primaryFocus)
+      
+      if (cachedResponse) {
+        console.log('🤖 Using cached response with confidence:', cachedResponse.confidence)
+        return {
+          response: cachedResponse.response,
+          confidence: cachedResponse.confidence,
+          conversationFocus: conversationFocus.primaryFocus,
+          cached: true,
+          timestamp: new Date().toISOString()
+        }
+      }
 
-      // 2. Build intelligent prompt
+      // 2. Analyze conversation context with advanced systems
+      const branchIntent = this.conversationAnalyzer.detectBranchIntent(prompt, parentChain)
+      const conversationTopics = this.topicExtractor.extractTopics(parentChain, { maxTopics: 5 })
+      const conversationSentiment = this.conversationAnalyzer.analyzeSentiment(parentChain)
+      const conversationHealth = this.conversationAnalyzer.generateHealthMetrics(parentChain)
+
+      // 3. Build intelligent prompt with enhanced context
       const contextualPrompt = this.promptBuilder.buildContextualPrompt({
         currentPrompt: prompt,
         conversationHistory: parentChain,
-        conversationType: conversationFocus,
-        branchIntent: 'exploration', // Default, will be enhanced in Day 3
+        conversationType: conversationFocus.primaryFocus,
+        branchIntent: branchIntent.suggestedBranch,
         depth: parentChain.length,
-        primaryTopic,
-        conversationFlow
+        conversationTopics,
+        conversationSentiment,
+        conversationHealth
       })
-
-      // 3. Check cache for similar prompts
-      const cacheKey = this.generateCacheKey(prompt, parentChain)
-      if (this.responseCache.has(cacheKey)) {
-        console.log('🤖 Using cached response')
-        return this.responseCache.get(cacheKey)
-      }
 
       // 4. Route to appropriate AI client
       const { client, fallback } = await this.routeRequest('conversationalResponse', 'high')
       
-      // 5. Generate response
+      // 5. Generate response with error handling
       let response, confidence
+      const responseContext = {
+        nodeId,
+        prompt,
+        parentChain,
+        conversationFocus: conversationFocus.primaryFocus
+      }
+
       if (this.anthropic && !this.mockMode) {
-        const result = await this.generateAnthropicResponse(contextualPrompt)
-        response = result.response
-        confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+        try {
+          const result = await this.generateAnthropicResponse(contextualPrompt)
+          response = result.response
+          confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+        } catch (error) {
+          console.warn('🤖 Anthropic response failed, handling error:', error.message)
+          const errorResult = await this.errorHandler.handleConversationError(error, responseContext)
+          if (errorResult.success) {
+            response = errorResult.response
+            confidence = errorResult.confidence
+          } else {
+            throw error
+          }
+        }
       } else if (this.openai && !this.mockMode) {
-        const result = await this.generateOpenAIResponse(contextualPrompt)
-        response = result.response
-        confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+        try {
+          const result = await this.generateOpenAIResponse(contextualPrompt)
+          response = result.response
+          confidence = await this.scoreResponseConfidence(response, prompt, parentChain)
+        } catch (error) {
+          console.warn('🤖 OpenAI response failed, handling error:', error.message)
+          const errorResult = await this.errorHandler.handleConversationError(error, responseContext)
+          if (errorResult.success) {
+            response = errorResult.response
+            confidence = errorResult.confidence
+          } else {
+            throw error
+          }
+        }
       } else {
         // Mock mode
         response = this.mockConversationalResponse(prompt, parentChain)
         confidence = 0.8
       }
 
-      // 6. Cache the response
+      // 6. Cache the response with advanced metadata
       const responseData = {
         response,
         confidence,
-        conversationFocus,
-        primaryTopic,
+        conversationFocus: conversationFocus.primaryFocus,
+        branchIntent: branchIntent.suggestedBranch,
+        topics: conversationTopics,
+        sentiment: conversationSentiment.overall,
+        health: conversationHealth.health,
         timestamp: new Date().toISOString(),
         contextDepth: parentChain.length
       }
 
-      this.responseCache.set(cacheKey, responseData)
+      this.responseCache.set(prompt, parentChain, conversationFocus.primaryFocus, responseData, {
+        branchIntent: branchIntent.suggestedBranch,
+        topics: conversationTopics,
+        sentiment: conversationSentiment.overall
+      })
 
       // 7. Generate suggested follow-up prompts
       const suggestedBranches = this.promptBuilder.buildSuggestionPrompts(parentChain, response)
@@ -777,7 +830,9 @@ Be extremely specific with node names, parameters, and technical details.`
       console.log('🤖 Conversational response generated:', { 
         responseLength: response.length, 
         confidence, 
-        conversationFocus,
+        conversationFocus: conversationFocus.primaryFocus,
+        branchIntent: branchIntent.suggestedBranch,
+        topics: conversationTopics.length,
         suggestions: suggestedBranches.length 
       })
 
@@ -788,10 +843,19 @@ Be extremely specific with node names, parameters, and technical details.`
 
     } catch (error) {
       console.error('🤖 Conversational response generation failed:', error)
+      
+      // Final fallback with error handling
+      const errorResult = await this.errorHandler.handleConversationError(error, {
+        nodeId,
+        prompt,
+        parentChain
+      })
+
       return {
-        response: this.mockConversationalResponse(prompt, parentChain),
-        confidence: 0.6,
+        response: errorResult.response || this.mockConversationalResponse(prompt, parentChain),
+        confidence: errorResult.confidence || 0.6,
         error: error.message,
+        isFallback: true,
         timestamp: new Date().toISOString()
       }
     }
@@ -993,17 +1057,29 @@ Be extremely specific with node names, parameters, and technical details.`
           branch: node.data.context?.branch
         }))
 
+      // Enhanced analysis with new systems
+      const conversationFocus = this.conversationAnalyzer.analyzeAdvancedConversationFocus(parentChain, '')
+      const extractedTopics = this.topicExtractor.extractTopics(parentChain, { maxTopics: 10 })
+      const conversationSentiment = this.conversationAnalyzer.analyzeSentiment(parentChain)
+      const conversationHealth = this.conversationAnalyzer.generateHealthMetrics(parentChain)
+
       const analysis = {
-        mainTopic: this.contextAnalyzer.extractPrimaryTopic(parentChain),
+        mainTopic: extractedTopics.length > 0 ? extractedTopics[0].topic : 'General Discussion',
         keyInsights: this.contextAnalyzer.extractKeyInsights(parentChain),
         actionItems: this.contextAnalyzer.extractActionItems(parentChain),
         relationships: this.contextAnalyzer.analyzeRelationships(parentChain),
         exportReadiness: this.contextAnalyzer.analyzeExportReadiness(conversationThread),
-        conversationFocus: this.contextAnalyzer.analyzeConversationFocus(parentChain),
-        flowPattern: this.contextAnalyzer.analyzeFlow(parentChain)
+        conversationFocus: conversationFocus.primaryFocus,
+        flowPattern: this.contextAnalyzer.analyzeFlow(parentChain),
+        // Enhanced with new analysis systems
+        topics: extractedTopics,
+        sentiment: conversationSentiment,
+        health: conversationHealth,
+        focusBreakdown: conversationFocus.breakdown,
+        recommendations: conversationHealth.recommendations
       }
 
-      console.log('🤖 Conversation analysis completed:', analysis)
+      console.log('🤖 Enhanced conversation analysis completed:', analysis)
       return analysis
 
     } catch (error) {

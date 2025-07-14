@@ -14,6 +14,7 @@ import {
   User,
   Bot
 } from 'lucide-react';
+import { useKeyboardNavigation } from './KeyboardNavigation';
 import '../styles/conversationalNodes.scss';
 
 const ConversationalNode = ({ data, selected, id }) => {
@@ -25,6 +26,14 @@ const ConversationalNode = ({ data, selected, id }) => {
   // Refs for keyboard navigation
   const textareaRef = useRef(null);
   const nodeRef = useRef(null);
+  
+  // Enhanced keyboard navigation
+  const { handleAdvancedKeyDown, keyboardState } = useKeyboardNavigation(
+    id, 
+    isEditing, 
+    localState, 
+    data.onUpdate
+  );
 
   // Context depth visual indicators
   const getContextIndicator = (depth = 0) => {
@@ -126,18 +135,43 @@ const ConversationalNode = ({ data, selected, id }) => {
 
       setLocalState('streaming');
 
-      // Generate contextual AI response
+      // Generate contextual AI response with enhanced error handling
       const result = await intelligenceEngine.generateConversationalResponse(id, prompt, parentChain);
       
       if (result.error) {
         console.error('🤖 AI response generation failed:', result.error);
+        
+        // Enhanced error handling - check if we have a fallback response
+        if (result.response && result.isFallback) {
+          console.log('🤖 Using AI-generated fallback response');
+          setLocalState('complete');
+          
+          if (data.onUpdate) {
+            data.onUpdate(id, {
+              prompt: prompt,
+              aiResponse: result.response,
+              state: 'complete',
+              timestamp: result.timestamp,
+              context: {
+                ...data.context,
+                aiConfidence: result.confidence,
+                errorHandled: true,
+                fallbackUsed: true
+              },
+              suggestedBranches: []
+            });
+          }
+          return;
+        }
+        
+        // If no fallback, use local fallback
         handleFallbackResponse();
         return;
       }
 
       setLocalState('complete');
       
-      // Update parent store with AI response and metadata
+      // Update parent store with enhanced AI response and metadata
       if (data.onUpdate) {
         data.onUpdate(id, {
           prompt: prompt,
@@ -148,15 +182,25 @@ const ConversationalNode = ({ data, selected, id }) => {
             ...data.context,
             aiConfidence: result.confidence,
             conversationFocus: result.conversationFocus,
-            primaryTopic: result.primaryTopic
+            branchIntent: result.branchIntent,
+            topics: result.topics,
+            sentiment: result.sentiment,
+            health: result.health,
+            cached: result.cached || false
           },
           suggestedBranches: result.suggestedBranches
         });
       }
 
-      console.log('🌱 AI response generated successfully:', {
+      console.log('🌱 Enhanced AI response generated successfully:', {
         responseLength: result.response.length,
         confidence: result.confidence,
+        conversationFocus: result.conversationFocus,
+        branchIntent: result.branchIntent,
+        topics: result.topics?.length || 0,
+        sentiment: result.sentiment,
+        health: result.health,
+        cached: result.cached,
         suggestions: result.suggestedBranches?.length || 0
       });
 
@@ -238,7 +282,7 @@ const ConversationalNode = ({ data, selected, id }) => {
         animate={{ scale: 1, opacity: 1 }}
         whileHover={{ scale: selected ? 1.05 : 1.02 }}
         className={getNodeClasses()}
-        onKeyDown={handleKeyDown}
+        onKeyDown={handleAdvancedKeyDown}
         tabIndex={0}
         data-confidence={getConfidenceLevel(data.context?.aiConfidence || 0.7)}
         style={{
@@ -344,7 +388,7 @@ const ConversationalNode = ({ data, selected, id }) => {
                     focus:ring-2 focus:ring-blue-500 focus:border-transparent
                     text-gray-900 placeholder-gray-400"
                   rows={3}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={handleAdvancedKeyDown}
                 />
                 <div className="flex justify-between items-center">
                   <div className="text-xs text-gray-500">
