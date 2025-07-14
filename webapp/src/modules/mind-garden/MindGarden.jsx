@@ -22,13 +22,13 @@ import { useUnifiedStore } from '../../store/unifiedStore';
 import { useMindGardenStore } from './store';
 import { Plus, Download, Map, Keyboard, Layers, MessageSquare } from 'lucide-react';
 
-// Custom node types
+// Custom node types - OUTSIDE component to prevent ReactFlow warnings
 const nodeTypes = {
   card: NodeCard,
   conversational: ConversationalNode,
 };
 
-// Custom edge types (enhanced for v5.1)
+// Custom edge types - OUTSIDE component to prevent ReactFlow warnings
 const edgeTypes = {
   organic: OrganicEdge,
   conversation: ConversationEdge,
