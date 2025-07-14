@@ -22,15 +22,7 @@ export const NoteCard = ({ element }) => {
         }
       }, 50);
       
-      // Add escape key listener for the whole document
-      const handleEscapeKey = (e) => {
-        if (e.key === 'Escape') {
-          handleTextBlur();
-        }
-      };
-      
-      document.addEventListener('keydown', handleEscapeKey);
-      return () => document.removeEventListener('keydown', handleEscapeKey);
+      // Escape is handled by individual input handlers
     }
   }, [isEditing, data.title, data.content]);
 
@@ -54,26 +46,28 @@ export const NoteCard = ({ element }) => {
   const handleTitleKeyDown = (e) => {
     e.stopPropagation();
     
-    if (e.key === 'Enter') {
-      if (e.metaKey || e.ctrlKey) {
-        handleTextBlur();
-      } else {
-        e.preventDefault();
-        textareaRef.current?.focus();
-      }
+    // Only handle Cmd+Enter and Escape, let Enter work normally in title
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleTextBlur();
     } else if (e.key === 'Escape') {
+      e.preventDefault();
       handleTextBlur();
     }
+    // Tab naturally moves to next field - no need to handle
   };
 
   const handleContentKeyDown = (e) => {
     e.stopPropagation();
     
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
       handleTextBlur();
     } else if (e.key === 'Escape') {
+      e.preventDefault();
       handleTextBlur();
     }
+    // Allow Enter to create new lines in content
   };
 
   // Use Mind Garden elegant styling with better contrast
@@ -203,7 +197,7 @@ export const NoteCard = ({ element }) => {
             />
             {/* Editing instructions */}
             <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center pt-1 border-t border-gray-200 dark:border-gray-600">
-              <span>Enter: next field</span>
+              <span>Tab: next field</span>
               <span>⌘+Enter: save • Esc: cancel</span>
             </div>
           </div>
