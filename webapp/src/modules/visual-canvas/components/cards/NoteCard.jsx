@@ -28,14 +28,12 @@ export const NoteCard = ({ element }) => {
   }, [isEditing]); // Remove data dependencies that cause re-renders
 
   const handleTitleChange = useCallback((e) => {
-    console.log('Title change:', e.target.value, 'Focus on:', document.activeElement);
     updateElement(element.id, {
       data: { ...data, title: e.target.value }
     });
   }, [element.id, updateElement, data]);
 
   const handleContentChange = useCallback((e) => {
-    console.log('Content change:', e.target.value, 'Current data:', data);
     updateElement(element.id, {
       data: { ...data, content: e.target.value }
     });
@@ -46,7 +44,7 @@ export const NoteCard = ({ element }) => {
     updateElement(element.id, { editing: false });
   };
 
-  // Simplified handlers - only stopPropagation and basic escape
+  // Clean handlers for auto-save editing
 
   // Use Mind Garden elegant styling with better contrast
   const accentColor = data.backgroundColor || '#f59e0b';
@@ -146,58 +144,38 @@ export const NoteCard = ({ element }) => {
       {/* Content */}
       <div className={`${isEditing ? 'p-4' : 'p-3'} flex-1 overflow-hidden note-editing-area`}>
         {isEditing ? (
-          <div className="space-y-3 h-full flex flex-col">
-            {/* Title Input */}
+          <div className="space-y-2 h-full">
+            {/* Mind Garden style editing - no borders, transparent */}
             <input
               ref={titleInputRef}
               type="text"
               value={element.data.title || ''}
               onChange={handleTitleChange}
               onClick={(e) => e.stopPropagation()}
+              onBlur={handleTextBlur}
               onKeyDown={(e) => {
-                console.log('Title KeyDown:', e.key, 'Value before:', e.target.value);
                 e.stopPropagation();
-                if (e.key === 'Escape') {
+                if (e.key === 'Enter') {
                   e.preventDefault();
                   handleTextBlur();
                 }
-                // Let all other keys work normally
               }}
-              className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 font-medium text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              style={{
-                color: '#111827'
-              }}
+              className="w-full bg-transparent border-none outline-none font-medium text-base text-gray-900 dark:text-white"
               placeholder="Note title..."
             />
-            {/* Content Textarea */}
             <textarea
               ref={textareaRef}
               value={element.data.content || ''}
               onChange={handleContentChange}
               onClick={(e) => e.stopPropagation()}
+              onBlur={handleTextBlur}
               onKeyDown={(e) => {
-                console.log('Content KeyDown:', e.key);
                 e.stopPropagation();
-                if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleTextBlur();
-                }
-                // Let all other keys work normally
+                // Allow Enter for new lines in content
               }}
-              className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 resize-none flex-1 min-h-[60px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              style={{
-                fontSize: `${data.fontSize || 14}px`,
-                fontWeight: data.fontWeight || 'normal',
-                textAlign: data.textAlign || 'left',
-                color: '#111827' // Same dark color as title for visibility
-              }}
+              className="w-full bg-transparent border-none outline-none resize-none flex-1 text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
               placeholder="Note content..."
             />
-            {/* Editing instructions */}
-            <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center pt-1 border-t border-gray-200 dark:border-gray-600">
-              <span>Tab: next field</span>
-              <span>⌘+Enter: save • Esc: cancel</span>
-            </div>
           </div>
         ) : (
           <div
