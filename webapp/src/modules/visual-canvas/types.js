@@ -81,7 +81,10 @@ const getDefaultElementData = (type) => {
       
     case ELEMENT_TYPES.NOTE:
       return {
-        text: 'Double-click to edit',
+        title: '',
+        content: '',
+        // Legacy support for text field
+        text: '',
         fontSize: 14,
         fontWeight: 'normal',
         textAlign: 'left',

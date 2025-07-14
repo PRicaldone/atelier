@@ -6,20 +6,31 @@ import { Edit3, Type, Palette, Sparkles } from 'lucide-react';
 export const NoteCard = ({ element }) => {
   const { updateElement } = useCanvasStore();
   const [isEditing, setIsEditing] = useState(element.editing || false);
+  const titleInputRef = useRef(null);
   const textareaRef = useRef(null);
   
   const { data } = element;
 
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.select();
+    if (isEditing) {
+      // Focus title first for new notes, content for existing notes with title
+      if (!data.title && !data.content && titleInputRef.current) {
+        titleInputRef.current.focus();
+      } else if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }
-  }, [isEditing]);
+  }, [isEditing, data.title, data.content]);
 
-  const handleTextChange = (e) => {
+  const handleTitleChange = (e) => {
     updateElement(element.id, {
-      data: { ...data, text: e.target.value }
+      data: { ...data, title: e.target.value }
+    });
+  };
+
+  const handleContentChange = (e) => {
+    updateElement(element.id, {
+      data: { ...data, content: e.target.value }
     });
   };
 
@@ -124,24 +135,52 @@ export const NoteCard = ({ element }) => {
       </div>
 
       {/* Content */}
-      <div className="p-3 flex-1 overflow-hidden">
+      <div className="p-3 flex-1 overflow-hidden note-editing-area">
         {isEditing ? (
-          <textarea
-            ref={textareaRef}
-            value={data.text}
-            onChange={handleTextChange}
-            onBlur={handleTextBlur}
-            onKeyDown={handleKeyDown}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full h-full bg-transparent border-none outline-none resize-none min-h-[60px]"
-            style={{
-              fontSize: `${data.fontSize || 14}px`,
-              fontWeight: data.fontWeight || 'normal',
-              textAlign: data.textAlign || 'left',
-              color: '#374151' // Dark gray for editing mode
-            }}
-            placeholder="Start typing..."
-          />
+          <div className="space-y-2 h-full flex flex-col">
+            {/* Title Input */}
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={data.title || ''}
+              onChange={handleTitleChange}
+              onBlur={(e) => {
+                // Don't close editing if clicking between title and content
+                if (!e.relatedTarget || !e.relatedTarget.closest('.note-editing-area')) {
+                  handleTextBlur();
+                }
+              }}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full bg-transparent border-none outline-none font-medium text-base"
+              style={{
+                color: '#111827' // Dark gray for editing mode
+              }}
+              placeholder="Note title..."
+            />
+            {/* Content Textarea */}
+            <textarea
+              ref={textareaRef}
+              value={data.content || ''}
+              onChange={handleContentChange}
+              onBlur={(e) => {
+                // Don't close editing if clicking between title and content
+                if (!e.relatedTarget || !e.relatedTarget.closest('.note-editing-area')) {
+                  handleTextBlur();
+                }
+              }}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full bg-transparent border-none outline-none resize-none flex-1 min-h-[40px]"
+              style={{
+                fontSize: `${data.fontSize || 14}px`,
+                fontWeight: data.fontWeight || 'normal',
+                textAlign: data.textAlign || 'left',
+                color: '#374151' // Dark gray for editing mode
+              }}
+              placeholder="Note content..."
+            />
+          </div>
         ) : (
           <div
             className="w-full whitespace-pre-wrap cursor-text space-y-1 overflow-y-auto"
@@ -152,15 +191,25 @@ export const NoteCard = ({ element }) => {
             }}
             onDoubleClick={() => setIsEditing(true)}
           >
-            {/* Support both formats: legacy (data.text) and new (data.title + data.content) */}
-            {data.title && (
-              <div className="font-medium text-base mb-3 text-gray-900 dark:text-white">
-                {data.title}
+            {/* Title and Content Display */}
+            {(data.title || data.content) ? (
+              <div className="space-y-2">
+                {data.title && (
+                  <div className="font-medium text-base text-gray-900 dark:text-white line-clamp-2">
+                    {data.title}
+                  </div>
+                )}
+                {data.content && (
+                  <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-4">
+                    {data.content}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500 dark:text-gray-400 italic">
+                Double-click to add title and content
               </div>
             )}
-            <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-              {data.content || data.text || 'Double-click to edit'}
-            </div>
           </div>
         )}
       </div>
