@@ -345,3 +345,22 @@ Canvas ora ha parità completa con Mind Garden per l'editing note.
 [2025-07-14 02:37:26] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-14_02-37-22.txt
 [2025-07-14 02:37:27] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-14 02:37:27] [INFO] Cleaning up temporary files...
+[2025-07-14 03:22:32] [INFO] Starting atelier-save.sh v2.1
+[2025-07-14 03:22:32] [INFO] Custom commit message: 📋 Blueprint v5.1 - Mind Garden Flora Revolution
+
+Creato blueprint completo per Mind Garden 2.0 transformation:
+- 🎯 Conversational Intelligence Canvas philosophy
+- 🌱 Flora AI-inspired workflow architecture  
+- 🏗️ Technical specifications per contextual AI nodes
+- 🎨 Visual cues system (○◐◑●) per context depth
+- 🚀 10-day implementation sprint roadmap
+- 📊 Success metrics e KPIs definition
+- 💡 Migration strategy da v4.2 con backward compatibility
+
+Mind Garden evolve da static nodes a conversational AI threading system.
+Foundation pronta per rivoluzione workflow creativo.
+[2025-07-14 03:22:32] [STEP] Checking prerequisites...
+[2025-07-14 03:22:32] [SUCCESS] Prerequisites check passed
+[2025-07-14 03:22:32] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-14 03:22:32] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-14 03:22:33] [INFO] 📝 Found 4 modified files
