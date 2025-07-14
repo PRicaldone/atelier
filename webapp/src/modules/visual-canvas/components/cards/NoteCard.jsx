@@ -9,13 +9,14 @@ export const NoteCard = ({ element }) => {
   const titleInputRef = useRef(null);
   const textareaRef = useRef(null);
   
-  const { data } = element;
+  // Use element.data directly to avoid stale closures
+  const data = element.data;
 
   useEffect(() => {
     if (isEditing) {
       // Small delay to ensure DOM is updated before focusing
       setTimeout(() => {
-        if (!data.title && !data.content && titleInputRef.current) {
+        if (!element.data.title && !element.data.content && titleInputRef.current) {
           titleInputRef.current.focus();
         } else if (textareaRef.current) {
           textareaRef.current.focus();
@@ -34,6 +35,7 @@ export const NoteCard = ({ element }) => {
   }, [element.id, updateElement]); // Remove 'data' dependency!
 
   const handleContentChange = useCallback((e) => {
+    console.log('Content change:', e.target.value, 'Current element.data:', element.data);
     updateElement(element.id, {
       data: { ...element.data, content: e.target.value }
     });
@@ -145,7 +147,7 @@ export const NoteCard = ({ element }) => {
             <input
               ref={titleInputRef}
               type="text"
-              value={data.title || ''}
+              value={element.data.title || ''}
               onChange={handleTitleChange}
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
@@ -166,7 +168,7 @@ export const NoteCard = ({ element }) => {
             {/* Content Textarea */}
             <textarea
               ref={textareaRef}
-              value={data.content || ''}
+              value={element.data.content || ''}
               onChange={handleContentChange}
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
@@ -183,7 +185,7 @@ export const NoteCard = ({ element }) => {
                 fontSize: `${data.fontSize || 14}px`,
                 fontWeight: data.fontWeight || 'normal',
                 textAlign: data.textAlign || 'left',
-                color: '#374151'
+                color: '#111827' // Same dark color as title for visibility
               }}
               placeholder="Note content..."
             />
