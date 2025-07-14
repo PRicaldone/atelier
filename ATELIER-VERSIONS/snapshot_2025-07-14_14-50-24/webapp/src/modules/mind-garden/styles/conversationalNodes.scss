@@ -1,0 +1,569 @@
+/**
+ * Mind Garden v5.1 - Conversational Nodes Styling
+ * Flora AI-inspired visual cues system
+ */
+
+/* ============================================================================ */
+/* CONVERSATIONAL NODE BASE STYLES */
+/* ============================================================================ */
+
+.conversational-node {
+  position: relative;
+  min-width: 280px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Responsive scaling based on zoom level */
+  font-size: 14px;
+  line-height: 1.5;
+
+  /* Base hover state */
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Selection state */
+  &.selected {
+    ring: 4px solid theme('colors.blue.300');
+    box-shadow: 0 0 0 4px theme('colors.blue.300'),
+                0 8px 32px rgba(59, 130, 246, 0.25);
+    transform: scale(1.05);
+    z-index: 1000;
+  }
+}
+
+/* ============================================================================ */
+/* CONTEXT DEPTH INDICATORS */
+/* ============================================================================ */
+
+.context-indicator {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 10;
+  transition: all 0.2s ease;
+
+  /* Depth-based colors and symbols */
+  &[data-depth="0"] {
+    color: theme('colors.gray.400');
+    border-color: theme('colors.gray.400');
+    
+    &::before {
+      content: "○";
+    }
+  }
+
+  &[data-depth="1"] {
+    color: theme('colors.blue.400');
+    border-color: theme('colors.blue.400');
+    
+    &::before {
+      content: "◐";
+    }
+  }
+
+  &[data-depth="2"], &[data-depth="3"] {
+    color: theme('colors.blue.600');
+    border-color: theme('colors.blue.600');
+    
+    &::before {
+      content: "◑";
+    }
+  }
+
+  &[data-depth="4"], &[data-depth="5"], &[data-depth="6"] {
+    color: theme('colors.blue.800');
+    border-color: theme('colors.blue.800');
+    
+    &::before {
+      content: "●";
+    }
+  }
+
+  /* Deep context (7+) gets special styling */
+  &[data-depth="7"], &[data-depth="8"], &[data-depth="9"] {
+    color: theme('colors.indigo.900');
+    border-color: theme('colors.indigo.900');
+    background: linear-gradient(135deg, white 0%, theme('colors.indigo.50') 100%);
+    
+    &::before {
+      content: "●";
+    }
+  }
+
+  /* Very deep context (10+) gets premium styling */
+  &[data-depth="10"] {
+    color: theme('colors.purple.900');
+    border-color: theme('colors.purple.900');
+    background: linear-gradient(135deg, theme('colors.purple.50') 0%, theme('colors.indigo.50') 100%);
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+    
+    &::before {
+      content: "◉";
+    }
+  }
+
+  /* Hover state for context indicators */
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ============================================================================ */
+/* NODE STATE STYLING */
+/* ============================================================================ */
+
+/* Empty State - Ready for input */
+.conversational-node.empty {
+  border: 2px dashed theme('colors.gray.300');
+  background: theme('colors.gray.50');
+  opacity: 0.8;
+  
+  .placeholder-text {
+    color: theme('colors.gray.500');
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  /* Gentle pulse to draw attention */
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+/* Thinking State - AI processing */
+.conversational-node.thinking {
+  border: 2px solid theme('colors.blue.400');
+  background: linear-gradient(135deg, white 0%, theme('colors.blue.50') 100%);
+  
+  .ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: theme('colors.blue.600');
+    font-weight: 500;
+    
+    .thinking-dots {
+      animation: thinking-pulse 1.4s ease-in-out infinite;
+    }
+  }
+
+  /* Subtle processing animation */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      theme('colors.blue.400') 50%, 
+      transparent 100%);
+    animation: processing-bar 2s ease-in-out infinite;
+  }
+}
+
+/* Streaming State - AI responding */
+.conversational-node.streaming {
+  border: 2px solid theme('colors.purple.500');
+  background: linear-gradient(135deg, white 0%, theme('colors.purple.50') 100%);
+  
+  .ai-response {
+    position: relative;
+    
+    /* Typing cursor effect */
+    &::after {
+      content: "▊";
+      color: theme('colors.purple.500');
+      animation: cursor-blink 1s infinite;
+      margin-left: 2px;
+    }
+  }
+
+  /* Streaming glow effect */
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+/* Complete State - Has prompt + response */
+.conversational-node.complete {
+  border: 2px solid theme('colors.green.200');
+  background: white;
+  
+  .prompt-section {
+    font-weight: 600;
+    color: theme('colors.gray.800');
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid theme('colors.gray.100');
+    position: relative;
+
+    /* User icon */
+    &::before {
+      content: "👤";
+      font-size: 12px;
+      position: absolute;
+      left: -20px;
+      top: 0;
+    }
+  }
+  
+  .response-section {
+    color: theme('colors.gray.700');
+    margin-top: 12px;
+    position: relative;
+
+    /* AI icon */
+    &::before {
+      content: "🤖";
+      font-size: 12px;
+      position: absolute;
+      left: -20px;
+      top: 0;
+    }
+  }
+  
+  /* Branch suggestions */
+  .branch-suggestions {
+    margin-top: 16px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    
+    .suggestion-tag {
+      padding: 6px 12px;
+      background: theme('colors.gray.100');
+      border-radius: 16px;
+      font-size: 12px;
+      color: theme('colors.gray.600');
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      
+      &:hover {
+        background: theme('colors.blue.100');
+        color: theme('colors.blue.700');
+        border-color: theme('colors.blue.200');
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* Editing State - User editing content */
+.conversational-node.editing {
+  border: 2px solid theme('colors.green.400');
+  background: theme('colors.green.50');
+  ring: 2px solid theme('colors.green.200');
+  
+  textarea {
+    background: white;
+    border: 1px solid theme('colors.green.300');
+    border-radius: 8px;
+    
+    &:focus {
+      ring: 2px solid theme('colors.green.500');
+      border-color: transparent;
+    }
+  }
+}
+
+/* Branching State - Creating child/sibling nodes */
+.conversational-node.branching {
+  border: 2px solid theme('colors.orange.400');
+  background: linear-gradient(135deg, white 0%, theme('colors.orange.50') 100%);
+  box-shadow: 0 8px 24px rgba(251, 146, 60, 0.2);
+  
+  /* Branching glow effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+      theme('colors.orange.400'),
+      theme('colors.yellow.400'),
+      theme('colors.orange.400'));
+    border-radius: 14px;
+    z-index: -1;
+    animation: branching-glow 2s ease-in-out infinite;
+  }
+}
+
+/* ============================================================================ */
+/* BRANCH TYPE COLOR CODING */
+/* ============================================================================ */
+
+.branch-type-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.exploration {
+    background: theme('colors.blue.100');
+    color: theme('colors.blue.700');
+    border: 1px solid theme('colors.blue.200');
+  }
+  
+  &.refinement {
+    background: theme('colors.purple.100');
+    color: theme('colors.purple.700');
+    border: 1px solid theme('colors.purple.200');
+  }
+  
+  &.implementation {
+    background: theme('colors.green.100');
+    color: theme('colors.green.700');
+    border: 1px solid theme('colors.green.200');
+  }
+  
+  &.critique {
+    background: theme('colors.red.100');
+    color: theme('colors.red.700');
+    border: 1px solid theme('colors.red.200');
+  }
+}
+
+/* ============================================================================ */
+/* CONFIDENCE OPACITY SYSTEM */
+/* ============================================================================ */
+
+.conversational-node {
+  /* Confidence-based opacity */
+  &[data-confidence="low"] {
+    opacity: 0.75;
+    
+    .ai-response {
+      background: theme('colors.yellow.50');
+      border-left: 3px solid theme('colors.yellow.400');
+      padding-left: 8px;
+    }
+  }
+  
+  &[data-confidence="medium"] {
+    opacity: 0.9;
+    
+    .ai-response {
+      background: theme('colors.blue.50');
+      border-left: 3px solid theme('colors.blue.400');
+      padding-left: 8px;
+    }
+  }
+  
+  &[data-confidence="high"] {
+    opacity: 1.0;
+    
+    .ai-response {
+      background: theme('colors.green.50');
+      border-left: 3px solid theme('colors.green.400');
+      padding-left: 8px;
+    }
+  }
+}
+
+/* ============================================================================ */
+/* CONNECTION EDGE STYLING */
+/* ============================================================================ */
+
+.conversation-edge {
+  transition: all 0.3s ease;
+  
+  /* Connection strength visualization */
+  &[data-strength="weak"] {
+    stroke-width: 1px;
+    stroke-opacity: 0.4;
+  }
+  
+  &[data-strength="medium"] {
+    stroke-width: 2px;
+    stroke-opacity: 0.7;
+  }
+  
+  &[data-strength="strong"] {
+    stroke-width: 3px;
+    stroke-opacity: 1.0;
+  }
+  
+  /* Branch type colors */
+  &[data-branch="exploration"] {
+    stroke: theme('colors.blue.500');
+  }
+  
+  &[data-branch="refinement"] {
+    stroke: theme('colors.purple.500');
+  }
+  
+  &[data-branch="implementation"] {
+    stroke: theme('colors.green.500');
+  }
+  
+  &[data-branch="critique"] {
+    stroke: theme('colors.red.500');
+  }
+  
+  /* Hover states */
+  &:hover {
+    stroke-width: 4px;
+    stroke-opacity: 1.0;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+}
+
+/* ============================================================================ */
+/* ANIMATIONS */
+/* ============================================================================ */
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.05);
+  }
+}
+
+@keyframes thinking-pulse {
+  0%, 20% { opacity: 0.3; }
+  50% { opacity: 1; }
+  80%, 100% { opacity: 0.3; }
+}
+
+@keyframes processing-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes branching-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* ============================================================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================================================ */
+
+@media (max-width: 768px) {
+  .conversational-node {
+    min-width: 260px;
+    max-width: 90vw;
+    font-size: 13px;
+    padding: 12px;
+  }
+  
+  .context-indicator {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+}
+
+/* ============================================================================ */
+/* DARK MODE SUPPORT */
+/* ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .conversational-node {
+    background: theme('colors.gray.800');
+    color: theme('colors.gray.100');
+    border-color: theme('colors.gray.600');
+    
+    &.empty {
+      background: theme('colors.gray.900');
+      border-color: theme('colors.gray.600');
+    }
+    
+    &.thinking {
+      background: linear-gradient(135deg, theme('colors.gray.800') 0%, theme('colors.blue.900') 100%);
+    }
+    
+    &.streaming {
+      background: linear-gradient(135deg, theme('colors.gray.800') 0%, theme('colors.purple.900') 100%);
+    }
+    
+    &.complete {
+      background: theme('colors.gray.800');
+      border-color: theme('colors.green.600');
+    }
+    
+    .prompt-section {
+      color: theme('colors.gray.200');
+      border-bottom-color: theme('colors.gray.600');
+    }
+    
+    .response-section {
+      color: theme('colors.gray.300');
+    }
+    
+    .branch-suggestions .suggestion-tag {
+      background: theme('colors.gray.700');
+      color: theme('colors.gray.300');
+      
+      &:hover {
+        background: theme('colors.blue.800');
+        color: theme('colors.blue.200');
+      }
+    }
+  }
+  
+  .context-indicator {
+    background: theme('colors.gray.800');
+    border-color: currentColor;
+  }
+}
+
+/* ============================================================================ */
+/* ACCESSIBILITY */
+/* ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .conversational-node,
+  .context-indicator,
+  .conversation-edge {
+    animation: none;
+    transition: none;
+  }
+}
+
+.conversational-node:focus-visible {
+  outline: 2px solid theme('colors.blue.500');
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .conversational-node {
+    border-width: 3px;
+  }
+  
+  .context-indicator {
+    border-width: 4px;
+  }
+}
