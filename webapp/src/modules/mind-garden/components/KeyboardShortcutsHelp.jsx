@@ -14,7 +14,7 @@ import {
   ArrowDown,
   CornerDownLeft,
   Command,
-  Shift,
+  ChevronUp,
   Target,
   Copy,
   Trash2,
@@ -57,7 +57,7 @@ const KeyboardShortcutsHelp = memo(({ isOpen, onClose }) => {
       case 'Backspace':
         return <Trash2 className="w-3 h-3" />;
       case 'Shift + Enter':
-        return <Edit3 className="w-3 h-3" />;
+        return <ChevronUp className="w-3 h-3" />;
       default:
         return null;
     }

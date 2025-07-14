@@ -397,11 +397,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 14/07/2025 14:50
-**Ultimo commit:** c346dfd 🌱 Day 5 Complete: Mind Garden Workflow Navigation System - Advanced keyboard navigation, thread visualization, mini-map, enhanced edges, and comprehensive help system
+**Data:** 14/07/2025 15:01
+**Ultimo commit:** 83baca1 🌱 Mind Garden v5.1 Day 6 Complete - Export Intelligence System
 **Branch:** main
-**Commit totali:** 121
-**Snapshots:** 59 | **Backups:** 0
+**Commit totali:** 123
+**Snapshots:** 60 | **Backups:** 0
 
-**Ultima modifica:** 🌱 Day 5 Complete: Mind Garden Workflow Navigation System - Advanced keyboard navigation, thread visualization, mini-map, enhanced edges, and comprehensive help system
+**Ultima modifica:** 🌱 Mind Garden v5.1 Day 6 Complete - Export Intelligence System
 
