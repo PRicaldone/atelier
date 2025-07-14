@@ -66,50 +66,55 @@ export const KEYBOARD_ACTIONS = {
 };
 
 // Default Node Structure for Conversational Nodes
-export const createConversationalNode = (overrides = {}) => ({
-  id: `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  type: 'conversational',
+export const createConversationalNode = (overrides = {}) => {
+  const { position, context, ...dataOverrides } = overrides;
   
-  // Core content
-  data: {
-    prompt: '',
-    aiResponse: '',
-    combinedText: '',
-    timestamp: new Date().toISOString(),
+  return {
+    id: `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    type: 'conversational',
     
-    // Conversation context
-    context: {
-      parentChain: [],                    // Array of parent node IDs
-      depth: 0,                          // Context depth level
-      branch: BRANCH_TYPES.EXPLORATION,  // Branch type
-      focus: CONVERSATION_FOCUS.CREATIVE, // Conversation focus
-      aiConfidence: null                 // AI response confidence (0-1)
+    // Core content
+    data: {
+      prompt: '',
+      aiResponse: '',
+      combinedText: '',
+      timestamp: new Date().toISOString(),
+      
+      // Conversation context - merge with overrides
+      context: {
+        parentChain: [],                    // Array of parent node IDs
+        depth: 0,                          // Context depth level
+        branch: BRANCH_TYPES.EXPLORATION,  // Branch type
+        focus: CONVERSATION_FOCUS.CREATIVE, // Conversation focus
+        aiConfidence: null,                // AI response confidence (0-1)
+        ...context  // Merge context overrides
+      },
+      
+      // Visual state
+      state: NODE_STATES.EMPTY,
+      
+      // Metadata
+      aiGenerated: false,
+      sourceNode: null,
+      relationship: null,
+      tags: [],
+      
+      // Callbacks for parent communication
+      onUpdate: null,
+      onCreateChild: null,
+      onCreateSibling: null,
+      
+      ...dataOverrides  // Apply any additional data overrides
     },
     
-    // Visual state
-    state: NODE_STATES.EMPTY,
+    // ReactFlow positioning (will be calculated)
+    position: position || { x: 0, y: 0 },
     
-    // Metadata
-    aiGenerated: false,
-    sourceNode: null,
-    relationship: null,
-    tags: [],
-    
-    // Callbacks for parent communication
-    onUpdate: null,
-    onCreateChild: null,
-    onCreateSibling: null,
-    
-    ...overrides
-  },
-  
-  // ReactFlow positioning (will be calculated)
-  position: { x: 0, y: 0 },
-  
-  // Default styling
-  selected: false,
-  dragging: false
-});
+    // Default styling
+    selected: false,
+    dragging: false
+  };
+};
 
 // Conversation Thread Structure
 export const createConversationThread = (rootNodeId, nodes = []) => ({

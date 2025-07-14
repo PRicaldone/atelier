@@ -16,6 +16,7 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
     quickActionMode: false
   });
 
+
   // Advanced keyboard workflow handler
   const handleAdvancedKeyDown = useCallback((e) => {
     const { key, ctrlKey, metaKey, shiftKey, altKey } = e;
@@ -88,9 +89,12 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
       
       case 'Tab':
         e.preventDefault();
+        console.log('🌱 Tab pressed in navigation mode:', { shiftKey, nodeId });
         if (shiftKey) {
+          console.log('🌱 Creating sibling node...');
           createSiblingNode();
         } else {
+          console.log('🌱 Creating child node...');
           createChildNode();
         }
         break;
@@ -174,11 +178,16 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
       case 'Tab':
         if (localState === 'complete') {
           e.preventDefault();
+          console.log('🌱 Tab pressed in edit mode (complete state):', { shiftKey, nodeId, localState });
           if (shiftKey) {
+            console.log('🌱 Creating sibling node from edit mode...');
             createSiblingNode();
           } else {
+            console.log('🌱 Creating child node from edit mode...');
             createChildNode();
           }
+        } else {
+          console.log('🌱 Tab pressed but localState is not complete:', { localState, nodeId });
         }
         break;
       
@@ -298,61 +307,70 @@ export const useKeyboardNavigation = (nodeId, isEditing, localState, onUpdate) =
 
   // Create child node with enhanced context
   const createChildNode = useCallback(() => {
+    console.log('🌱 createChildNode called for nodeId:', nodeId);
     const parentChain = store.buildParentChain?.(nodeId) || [];
     const parentNode = store.getNode?.(nodeId);
     
+    console.log('🌱 Parent node:', parentNode);
+    console.log('🌱 Parent chain:', parentChain);
+    
     if (parentNode) {
-      store.createConversationalNode?.({
-        parentId: nodeId,
-        context: {
-          parentChain: [...parentChain, nodeId],
-          depth: (parentNode.data.context?.depth || 0) + 1,
-          branch: BRANCH_TYPES.EXPLORATION,
-          conversationFocus: parentNode.data.context?.conversationFocus || 'creative'
-        },
-        position: calculateChildPosition(parentNode)
-      });
+      const childPosition = calculateChildPosition(parentNode);
+      console.log('🌱 Creating child at position:', childPosition);
+      
+      store.createConversationalNode?.(
+        childPosition,
+        nodeId,
+        BRANCH_TYPES.EXPLORATION
+      );
+      console.log('🌱 Child node creation called');
+    } else {
+      console.log('🌱 ERROR: Parent node not found!');
     }
   }, [nodeId, store]);
 
   // Create sibling node with enhanced context
   const createSiblingNode = useCallback(() => {
+    console.log('🌱 createSiblingNode called for nodeId:', nodeId);
     const parentNode = store.getNode?.(nodeId);
+    
     if (parentNode) {
       const parentChain = parentNode.data.context?.parentChain || [];
       const parentId = parentChain[parentChain.length - 1] || null;
       
-      store.createConversationalNode?.({
+      console.log('🌱 Current node:', parentNode);
+      console.log('🌱 Parent ID for sibling:', parentId);
+      
+      const siblingPosition = calculateSiblingPosition(parentNode);
+      console.log('🌱 Creating sibling at position:', siblingPosition);
+      
+      store.createConversationalNode?.(
+        siblingPosition,
         parentId,
-        context: {
-          parentChain: parentChain,
-          depth: parentNode.data.context?.depth || 0,
-          branch: BRANCH_TYPES.REFINEMENT,
-          conversationFocus: parentNode.data.context?.conversationFocus || 'creative'
-        },
-        position: calculateSiblingPosition(parentNode)
-      });
+        BRANCH_TYPES.REFINEMENT
+      );
+      console.log('🌱 Sibling node creation called');
+    } else {
+      console.log('🌱 ERROR: Current node not found!');
     }
   }, [nodeId, store]);
 
   // Calculate optimal child position
   const calculateChildPosition = useCallback((parentNode) => {
     const siblings = store.getNodeChildren?.(parentNode.id) || [];
-    const baseX = parentNode.position.x;
-    const baseY = parentNode.position.y + 200;
+    const baseX = parentNode.position.x + 450; // Create to the right of parent
+    const baseY = parentNode.position.y; // Same vertical level as parent
     
     if (siblings.length === 0) {
       return { x: baseX, y: baseY };
     }
     
-    // Arrange children in a fan pattern
-    const angleStep = Math.PI / Math.max(siblings.length + 1, 3);
-    const angle = -Math.PI / 2 + (angleStep * siblings.length);
-    const radius = 250;
+    // Stack multiple children vertically to the right
+    const verticalSpacing = 180; // Space between multiple children
     
     return {
-      x: baseX + Math.cos(angle) * radius,
-      y: baseY + Math.sin(angle) * radius
+      x: baseX,
+      y: baseY + (siblings.length * verticalSpacing)
     };
   }, [store]);
 

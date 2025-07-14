@@ -94,8 +94,12 @@ export const useMindGardenStore = create(
     
     // Create a new conversational node
     createConversationalNode: (position, parentId = null, branchType = BRANCH_TYPES.EXPLORATION) => {
+      console.log('🌱 Store: createConversationalNode called', { position, parentId, branchType });
+      
       const parentNode = parentId ? get().nodes.find(n => n.id === parentId) : null;
       const parentChain = parentNode ? [...(parentNode.data.context?.parentChain || []), parentId] : [];
+      
+      console.log('🌱 Store: Parent chain built:', parentChain);
       
       const newNode = createConversationalNode({
         position,
@@ -110,10 +114,14 @@ export const useMindGardenStore = create(
         onCreateSibling: (nodeId, config) => get().createSiblingNode(nodeId, config)
       });
 
+      console.log('🌱 Store: New node created:', newNode);
+      
       // Add to nodes
       set((state) => ({
         nodes: [...state.nodes, newNode]
       }));
+
+      console.log('🌱 Store: Node added to state, total nodes:', get().nodes.length);
 
       // Update relationships
       get().updateNodeRelationships(newNode.id, parentId);
@@ -124,6 +132,7 @@ export const useMindGardenStore = create(
       }
 
       get().saveToLocalStorage();
+      console.log('🌱 Store: Node creation complete, returning ID:', newNode.id);
       return newNode.id;
     },
 
@@ -188,7 +197,7 @@ export const useMindGardenStore = create(
           branch: config.context?.branch || BRANCH_TYPES.EXPLORATION,
           confidence: 0.8,
           animated: true,
-          contextDepth: (data.context?.depth || 0) + 1
+          contextDepth: (config.context?.depth || 0) + 1
         }
       };
 
@@ -233,7 +242,7 @@ export const useMindGardenStore = create(
             branch: config.context?.branch || BRANCH_TYPES.REFINEMENT,
             confidence: 0.7,
             animated: false,
-            contextDepth: data.context?.depth || 0
+            contextDepth: config.context?.depth || 0
           }
         };
 
@@ -637,6 +646,59 @@ export const useMindGardenStore = create(
         exportHistory: []
       });
       get().saveToLocalStorage();
+    },
+
+    // Helper methods for keyboard navigation
+    getNode: (nodeId) => {
+      return get().nodes.find(n => n.id === nodeId);
+    },
+
+    getNodes: () => {
+      return get().nodes;
+    },
+
+    getEdges: () => {
+      return get().edges;
+    },
+
+    getNodeChildren: (nodeId) => {
+      const edges = get().edges.filter(e => e.source === nodeId);
+      const childIds = edges.map(e => e.target);
+      return get().nodes.filter(n => childIds.includes(n.id));
+    },
+
+    getNodeSiblings: (nodeId) => {
+      const node = get().getNode(nodeId);
+      if (!node) return [];
+      
+      // Get parent ID from context
+      const parentChain = node.data.context?.parentChain || [];
+      const parentId = parentChain[parentChain.length - 1] || null;
+      
+      if (!parentId) return [];
+      
+      // Get all children of the parent
+      const siblings = get().getNodeChildren(parentId);
+      
+      // Filter out the current node
+      return siblings.filter(n => n.id !== nodeId);
+    },
+
+    selectNode: (nodeId) => {
+      set((state) => ({
+        nodes: state.nodes.map(n => ({
+          ...n,
+          selected: n.id === nodeId
+        }))
+      }));
+    },
+
+    getViewport: () => {
+      return get().viewport;
+    },
+
+    setViewport: (newViewport, options = {}) => {
+      set({ viewport: newViewport });
     }
   }))
 );

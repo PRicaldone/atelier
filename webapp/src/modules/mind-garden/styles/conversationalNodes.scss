@@ -3,38 +3,15 @@
  * Flora AI-inspired visual cues system
  */
 
+
 /* ============================================================================ */
 /* CONVERSATIONAL NODE BASE STYLES */
 /* ============================================================================ */
 
 .conversational-node {
-  position: relative;
-  min-width: 280px;
-  max-width: 400px;
-  background: white;
-  border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive scaling based on zoom level */
   font-size: 14px;
   line-height: 1.5;
-
-  /* Base hover state */
-  &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-
-  /* Selection state */
-  &.selected {
-    ring: 4px solid theme('colors.blue.300');
-    box-shadow: 0 0 0 4px theme('colors.blue.300'),
-                0 8px 32px rgba(59, 130, 246, 0.25);
-    transform: scale(1.05);
-    z-index: 1000;
-  }
 }
 
 /* ============================================================================ */
@@ -131,12 +108,12 @@
 
 /* Empty State - Ready for input */
 .conversational-node.empty {
-  border: 2px dashed theme('colors.gray.300');
-  background: theme('colors.gray.50');
-  opacity: 0.8;
+  border: 2px dashed rgba(255, 255, 255, 0.3) !important;
+  /* Remove background override - use Tailwind classes */
+  opacity: 0.9;
   
   .placeholder-text {
-    color: theme('colors.gray.500');
+    color: theme('colors.gray.400');
     font-style: italic;
     text-align: center;
     padding: 20px 0;
@@ -202,15 +179,15 @@
 
 /* Complete State - Has prompt + response */
 .conversational-node.complete {
-  border: 2px solid theme('colors.green.200');
-  background: white;
+  border: 2px solid rgba(34, 197, 94, 0.3) !important;
+  background: theme('colors.gray.900') !important;
   
   .prompt-section {
     font-weight: 600;
-    color: theme('colors.gray.800');
+    color: #ffffff !important;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid theme('colors.gray.100');
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
 
     /* User icon */
@@ -221,10 +198,20 @@
       left: -20px;
       top: 0;
     }
+
+    /* Force white text on all children */
+    * {
+      color: #ffffff !important;
+    }
+
+    /* Force white text on specific elements */
+    div, span, p {
+      color: #ffffff !important;
+    }
   }
   
   .response-section {
-    color: theme('colors.gray.800');
+    color: #ffffff !important;
     margin-top: 12px;
     position: relative;
 
@@ -235,6 +222,16 @@
       position: absolute;
       left: -20px;
       top: 0;
+    }
+
+    /* Force white text on all children */
+    * {
+      color: #ffffff !important;
+    }
+
+    /* Force white text on specific elements */
+    div, span, p {
+      color: #ffffff !important;
     }
   }
   
@@ -323,9 +320,9 @@
   letter-spacing: 0.5px;
   
   &.exploration {
-    background: theme('colors.blue.100');
-    color: theme('colors.blue.700');
-    border: 1px solid theme('colors.blue.200');
+    background: transparent;
+    color: theme('colors.blue.400');
+    border: none;
   }
   
   &.refinement {

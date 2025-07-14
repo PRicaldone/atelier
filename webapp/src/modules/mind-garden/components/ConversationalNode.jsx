@@ -22,6 +22,7 @@ const ConversationalNode = ({ data, selected, id }) => {
   const [prompt, setPrompt] = useState(data.prompt || '');
   const [isEditing, setIsEditing] = useState(data.state === 'empty');
   const [localState, setLocalState] = useState(data.state || 'empty');
+  const [handlesExtended, setHandlesExtended] = useState(false);
   
   // Refs for keyboard navigation
   const textareaRef = useRef(null);
@@ -61,8 +62,28 @@ const ConversationalNode = ({ data, selected, id }) => {
 
   // Enhanced state styling with SCSS classes
   const getNodeClasses = () => {
-    return `conversational-node ${localState} ${selected ? 'selected' : ''}`;
+    return `conversational-node ${localState} ${selected ? 'selected' : ''} ${handlesExtended ? 'handles-extended' : ''}`;
   };
+
+  // Handle mouse events for elegant handle management
+  const handleNodeMouseEnter = useCallback(() => {
+    setHandlesExtended(true);
+  }, []);
+
+  const handleNodeMouseLeave = useCallback(() => {
+    // Keep handles extended for a moment to allow grabbing
+    setTimeout(() => setHandlesExtended(false), 500);
+  }, []);
+
+  const handleHandleMouseDown = useCallback(() => {
+    // Keep handles extended during connection drag
+    setHandlesExtended(true);
+  }, []);
+
+  const handlePaneClick = useCallback(() => {
+    // Retract handles when clicking elsewhere
+    setHandlesExtended(false);
+  }, []);
 
   // Get confidence level for visual feedback
   const getConfidenceLevel = (confidence) => {
@@ -71,37 +92,7 @@ const ConversationalNode = ({ data, selected, id }) => {
     return 'low';
   };
 
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback((e) => {
-    switch (e.key) {
-      case 'Enter':
-        if (!e.shiftKey && prompt.trim()) {
-          e.preventDefault();
-          handleGenerateResponse();
-        }
-        break;
-      case 'Tab':
-        if (localState === 'complete') {
-          e.preventDefault();
-          if (e.shiftKey) {
-            handleCreateSiblingNode();
-          } else {
-            handleCreateChildNode();
-          }
-        }
-        break;
-      case 'Escape':
-        if (isEditing) {
-          e.preventDefault();
-          setIsEditing(false);
-        }
-        break;
-      case 'F2':
-        e.preventDefault();
-        setIsEditing(true);
-        break;
-    }
-  }, [prompt, localState, isEditing]);
+  // Removed old handleKeyDown - now using handleAdvancedKeyDown from KeyboardNavigation
 
   // ENHANCED v5.1: AI Response Generation with Contextual Intelligence
   const handleGenerateResponse = useCallback(async () => {
@@ -267,12 +258,19 @@ const ConversationalNode = ({ data, selected, id }) => {
 
   return (
     <>
-      {/* Connection Handles */}
+      {/* Connection Handles - Flora-style extending on hover */}
       <Handle
         type="target"
-        position={Position.Top}
-        className="!bg-blue-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all"
-        style={{ width: 24, height: 24, borderRadius: '50%', top: -8 }}
+        position={Position.Left}
+        className="!bg-blue-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all hover:scale-125"
+        style={{ 
+          width: 28, 
+          height: 28, 
+          borderRadius: '50%',
+          cursor: 'crosshair',
+          left: -14  // Sporge oltre il bordo
+        }}
+        onMouseDown={handleHandleMouseDown}
         isConnectable={true}
       />
 
@@ -281,14 +279,48 @@ const ConversationalNode = ({ data, selected, id }) => {
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         whileHover={{ scale: selected ? 1.05 : 1.02 }}
-        className={getNodeClasses()}
+        className={`
+          ${getNodeClasses()}
+          relative min-w-[280px] max-w-[400px] 
+          bg-white/[0.02] dark:bg-gray-900/50
+          border rounded-xl
+          backdrop-blur-md
+          transition-all duration-200
+          ${selected 
+            ? 'ring-4 ring-blue-300 border-blue-300 bg-blue-400/12 scale-106 shadow-lg' 
+            : 'border-white/10 hover:border-white/20'
+          }
+        `}
         onKeyDown={handleAdvancedKeyDown}
+        onMouseEnter={handleNodeMouseEnter}
+        onMouseLeave={handleNodeMouseLeave}
         tabIndex={0}
         data-confidence={getConfidenceLevel(data.context?.aiConfidence || 0.7)}
         style={{
+          boxShadow: selected 
+            ? `0 0 51px rgba(59, 130, 246, 0.51), 0 0 25px rgba(59, 130, 246, 0.38), 0 0 12px rgba(59, 130, 246, 0.25), 0 8px 32px rgba(0, 0, 0, 0.2)`
+            : '0 8px 32px rgba(0, 0, 0, 0.1)',
+          transform: selected ? 'scale(1.06)' : 'scale(1)',
           zIndex: selected ? 1000 : 1
         }}
       >
+        {/* Accent Line - copied from NodeCard */}
+        <div 
+          className={`absolute top-0 left-4 right-4 rounded-full ${selected ? 'h-1' : 'h-0.5'}`}
+          style={{ 
+            backgroundColor: selected ? '#3B82F6' : '#6B7280', 
+            opacity: selected ? 1 : 0.6,
+            boxShadow: selected ? '0 0 6px rgba(59, 130, 246, 0.51)' : 'none'
+          }}
+        />
+        
+        {/* Selection Badge - copied from NodeCard */}
+        {selected && (
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+            ✓
+          </div>
+        )}
+
         {/* Enhanced Context Depth Indicator */}
         <motion.div 
           className="context-indicator"
@@ -384,9 +416,9 @@ const ConversationalNode = ({ data, selected, id }) => {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Type your idea, question, or prompt..."
-                  className="w-full p-3 border border-gray-200 rounded-lg resize-none
-                    focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                    text-gray-900 placeholder-gray-400"
+                  className="w-full p-3 border border-gray-700 rounded-lg resize-none
+                    focus:ring-2 focus:ring-blue-700 focus:border-blue-700
+                    bg-gray-900 text-white placeholder-gray-500"
                   rows={3}
                   onKeyDown={handleAdvancedKeyDown}
                 />
@@ -540,9 +572,16 @@ const ConversationalNode = ({ data, selected, id }) => {
 
       <Handle
         type="source"
-        position={Position.Bottom}
-        className="!bg-green-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all"
-        style={{ width: 24, height: 24, borderRadius: '50%', bottom: -8 }}
+        position={Position.Right}
+        className="!bg-green-500 !border-2 !border-white opacity-60 hover:opacity-100 transition-all hover:scale-125"
+        style={{ 
+          width: 28, 
+          height: 28, 
+          borderRadius: '50%',
+          cursor: 'crosshair',
+          right: -14  // Sporge oltre il bordo
+        }}
+        onMouseDown={handleHandleMouseDown}
         isConnectable={true}
       />
     </>

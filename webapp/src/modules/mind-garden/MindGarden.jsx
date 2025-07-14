@@ -18,6 +18,7 @@ import EnhancedExportPreview from './components/EnhancedExportPreview';
 import ConversationThreadVisualization from './components/ConversationThreadVisualization';
 import MiniMap from './components/MiniMap';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
+import DebugPanel from './components/DebugPanel';
 import { useUnifiedStore } from '../../store/unifiedStore';
 import { useMindGardenStore } from './store';
 import { Plus, Download, Map, Keyboard, Layers, MessageSquare } from 'lucide-react';
@@ -116,7 +117,12 @@ const MindGardenInner = () => {
         
         // Track selections - get all currently selected nodes
         const allSelected = updatedNodes.filter(node => node.selected);
+        console.log('🌱 ReactFlow selection changed:', allSelected.map(n => n.id));
         setSelectedNodes(allSelected);
+        
+        // Update selectedNodeId for single selection
+        const singleSelected = allSelected.length === 1 ? allSelected[0].id : null;
+        setSelectedNodeId(singleSelected);
         
         return updatedNodes;
       });
@@ -139,6 +145,7 @@ const MindGardenInner = () => {
   );
 
   const onNodeClick = useCallback((event, node) => {
+    console.log('🌱 Node clicked:', node.id);
     setSelectedNodeId(node.id);
     setSelectedEdgeId(null); // Deselect any selected edge
   }, []);
@@ -481,20 +488,33 @@ const MindGardenInner = () => {
     }
   }, []);
 
-  // Keyboard event handler for deletion
+  // Keyboard event handler for deletion with debug
   useEffect(() => {
     const handleKeyDown = (event) => {
+      console.log('🌱 Key pressed:', event.key, 'selectedNodes:', selectedNodes.length, 'selectedEdgeId:', selectedEdgeId);
+      
       if (event.key === 'Delete' || event.key === 'Backspace') {
+        // Don't prevent default if we're in an input field, UNLESS it's Cmd+Delete (force delete)
+        if ((event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT') && !event.metaKey && !event.ctrlKey) {
+          console.log('🌱 Ignoring delete - in input field (use Cmd/Ctrl+Delete to force)');
+          return;
+        }
+        
+        event.preventDefault();
+        
         if (selectedEdgeId) {
-          // Delete selected edge
+          console.log('🌱 Deleting edge:', selectedEdgeId);
           setEdges((eds) => eds.filter((edge) => edge.id !== selectedEdgeId));
           setSelectedEdgeId(null);
-          event.preventDefault();
-        } else if (selectedNodeId) {
-          // Delete selected node
-          removeNode(selectedNodeId);
+        } else if (selectedNodes.length > 0) {
+          console.log('🌱 Deleting nodes:', selectedNodes.map(n => n.id));
+          selectedNodes.forEach(node => {
+            removeNode(node.id);
+          });
           setSelectedNodeId(null);
-          event.preventDefault();
+          setSelectedNodes([]);
+        } else {
+          console.log('🌱 Nothing to delete');
         }
       }
     };
@@ -504,7 +524,7 @@ const MindGardenInner = () => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedEdgeId, selectedNodeId, setEdges, removeNode]);
+  }, [selectedEdgeId, selectedNodes, setEdges, removeNode]);
 
   // Add global mouse event listeners
   useEffect(() => {
@@ -566,6 +586,15 @@ const MindGardenInner = () => {
         minZoom={0.1}
         maxZoom={1}
         proOptions={{ hideAttribution: true }}
+        deleteKeyCode="Delete"
+        onNodesDelete={(nodesToDelete) => {
+          console.log('🌱 ReactFlow onNodesDelete:', nodesToDelete.map(n => n.id));
+          nodesToDelete.forEach(node => removeNode(node.id));
+        }}
+        onEdgesDelete={(edgesToDelete) => {
+          console.log('🌱 ReactFlow onEdgesDelete:', edgesToDelete.map(e => e.id));
+          setEdges(edges => edges.filter(edge => !edgesToDelete.find(del => del.id === edge.id)));
+        }}
       >
         <Background 
           color="rgba(255, 255, 255, 0.02)" 
@@ -701,6 +730,8 @@ const MindGardenInner = () => {
         <div>• Double-click node to edit content</div>
         <div>• Tab/Shift+Tab for child/sibling nodes</div>
         <div>• Arrow keys for navigation</div>
+        <div>• <strong>Delete key</strong> to remove selected node</div>
+        <div>• <strong>Cmd+Delete</strong> to force delete while editing</div>
         <div>• Press H for keyboard shortcuts</div>
       </div>
 
@@ -738,6 +769,9 @@ const MindGardenInner = () => {
         isOpen={keyboardHelpOpen}
         onClose={() => setKeyboardHelpOpen(false)}
       />
+      
+      {/* Debug Panel - Shows node count in real-time */}
+      <DebugPanel />
     </div>
   );
 };
