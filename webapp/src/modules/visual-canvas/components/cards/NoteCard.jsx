@@ -30,16 +30,16 @@ export const NoteCard = ({ element }) => {
   const handleTitleChange = useCallback((e) => {
     console.log('Title change:', e.target.value, 'Focus on:', document.activeElement);
     updateElement(element.id, {
-      data: { ...element.data, title: e.target.value }
+      data: { ...data, title: e.target.value }
     });
-  }, [element.id, updateElement]); // Remove 'data' dependency!
+  }, [element.id, updateElement, data]);
 
   const handleContentChange = useCallback((e) => {
-    console.log('Content change:', e.target.value, 'Current element.data:', element.data);
+    console.log('Content change:', e.target.value, 'Current data:', data);
     updateElement(element.id, {
-      data: { ...element.data, content: e.target.value }
+      data: { ...data, content: e.target.value }
     });
-  }, [element.id, updateElement]); // Remove 'data' dependency!
+  }, [element.id, updateElement, data]);
 
   const handleTextBlur = () => {
     setIsEditing(false);
@@ -80,23 +80,27 @@ export const NoteCard = ({ element }) => {
         ${getAdaptiveWidth()}
         ${getAdaptiveHeight()}
         ${isEditing 
-          ? 'bg-white dark:bg-gray-800 border-blue-400 shadow-blue-200/50' 
+          ? 'bg-white/[0.05] dark:bg-gray-900/60 border-white/30' 
           : 'bg-white/[0.02] dark:bg-gray-900/50 border-white/10 hover:border-white/20'
         }
-        border-2 rounded-xl
+        border rounded-xl
         backdrop-blur-md
         transition-all duration-200
         shadow-lg hover:shadow-xl
       `}
       style={{
         boxShadow: isEditing 
-          ? '0 0 0 3px rgba(59, 130, 246, 0.1), 0 8px 32px rgba(0, 0, 0, 0.15)'
+          ? '0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)'
           : '0 8px 32px rgba(0, 0, 0, 0.1)',
-        borderColor: isEditing ? '#60a5fa' : `${accentColor}20`
+        borderColor: isEditing ? `${accentColor}40` : `${accentColor}20`
       }}
       whileHover={isEditing ? {} : { scale: 1.02, y: -2 }}
       onClick={(e) => {
-        if (isEditing) {
+        if (!isEditing) {
+          // Allow normal element selection when not editing
+          // DraggableElement will handle the click
+        } else {
+          // In editing mode, still allow selection but stop propagation to canvas
           e.stopPropagation();
         }
       }}
