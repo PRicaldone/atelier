@@ -14,7 +14,7 @@ import OrganicEdge from './components/OrganicEdge';
 import ConversationEdge from './components/ConversationEdge';
 import EnhancedConversationEdge from './components/EnhancedConversationEdge';
 import AICommandPalette from './components/AICommandPalette';
-import ExportPreview from './components/ExportPreview';
+import EnhancedExportPreview from './components/EnhancedExportPreview';
 import ConversationThreadVisualization from './components/ConversationThreadVisualization';
 import MiniMap from './components/MiniMap';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
@@ -646,15 +646,42 @@ const MindGardenInner = () => {
         position={commandPosition}
       />
 
-      {/* Export Preview Modal */}
-      <ExportPreview
+      {/* Enhanced Export Preview Modal */}
+      <EnhancedExportPreview
         isOpen={exportPreviewOpen}
         onClose={() => setExportPreviewOpen(false)}
-        selectedNodes={selectedNodes}
-        onExport={() => {
-          console.log('🌱 Exporting nodes to Canvas:', selectedNodes);
+        conversationNodes={selectedNodes}
+        onExport={async (exportResult) => {
+          console.log('🌱 Exporting conversation to Canvas:', exportResult);
+          
+          try {
+            // Get Canvas store from unified store
+            const { getCanvasStore } = useUnifiedStore.getState();
+            const canvasStore = getCanvasStore();
+            
+            if (canvasStore && exportResult.elements) {
+              // Add each exported element to Canvas
+              exportResult.elements.forEach(element => {
+                canvasStore.addElement(element);
+              });
+              
+              // Navigate to Canvas to show results
+              navigateToModule('canvas', { 
+                showExportedElements: true,
+                exportMetadata: exportResult.metadata 
+              });
+              
+              console.log('✅ Successfully exported', exportResult.elements.length, 'elements to Canvas');
+            } else {
+              console.warn('⚠️ Canvas store not available or no elements to export');
+            }
+          } catch (error) {
+            console.error('❌ Export to Canvas failed:', error);
+          }
+          
           setExportPreviewOpen(false);
         }}
+        topicExtractor={useUnifiedStore.getState().getTopicExtractor?.()}
       />
 
       {/* Export History - Bottom Left */}
