@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mind Garden Keyboard Navigation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .shortcut {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .issue {
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .fix {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>🌱 Mind Garden v5.1 - Keyboard Navigation Test</h1>
+        
+        <h2>Test Instructions:</h2>
+        <ol>
+            <li>Go to <a href="http://localhost:5174" target="_blank">http://localhost:5174</a></li>
+            <li>Navigate to Mind Garden module</li>
+            <li>Click on a conversational node to select it</li>
+            <li>Test the following keyboard shortcuts:</li>
+        </ol>
+
+        <h3>Expected Behavior:</h3>
+        <ul>
+            <li><span class="shortcut">Tab</span> - Should create a child node below the current node</li>
+            <li><span class="shortcut">Shift + Tab</span> - Should create a sibling node to the right</li>
+            <li><span class="shortcut">Enter</span> - Should generate AI response (when in textarea)</li>
+            <li><span class="shortcut">Escape</span> - Should exit edit mode</li>
+        </ul>
+
+        <div class="issue">
+            <h3>❌ Reported Issue:</h3>
+            <p>"tab e shift+tab non creano nodi" (Tab and Shift+Tab don't create nodes)</p>
+        </div>
+
+        <div class="fix">
+            <h3>✅ Fixed Issues:</h3>
+            <ol>
+                <li><strong>Store Syntax Error:</strong> Fixed undefined 'data' variable in edge creation (lines 191, 236)</li>
+                <li><strong>Node Creation:</strong> Fixed position handling in createConversationalNode function</li>
+                <li><strong>Missing Store Methods:</strong> Added getNode, getNodeChildren, getNodeSiblings, selectNode</li>
+                <li><strong>Viewport Methods:</strong> Added getViewport and setViewport for navigation</li>
+            </ol>
+        </div>
+
+        <h3>Debug Steps:</h3>
+        <p>Open browser console and check for:</p>
+        <ol>
+            <li>Any JavaScript errors when pressing Tab/Shift+Tab</li>
+            <li>Console logs showing node creation attempts</li>
+            <li>Check if new nodes appear in the React Flow canvas</li>
+        </ol>
+
+        <h3>Console Commands for Testing:</h3>
+        <pre>
+// Check store state
+useMindGardenStore.getState()
+
+// Check if methods exist
+useMindGardenStore.getState().createChildNode
+useMindGardenStore.getState().createSiblingNode
+useMindGardenStore.getState().createConversationalNode
+
+// Manually test node creation
+const store = useMindGardenStore.getState();
+const testNodeId = store.nodes[0]?.id;
+if (testNodeId) {
+    store.createChildNode(testNodeId);
+}
+        </pre>
+    </div>
+</body>
+</html>
