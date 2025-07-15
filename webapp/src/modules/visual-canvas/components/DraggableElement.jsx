@@ -10,9 +10,10 @@ import { AICard } from './cards/AICard.jsx';
 import FileOpenerNode from './FileOpenerNode.jsx';
 import URLLauncherNode from './URLLauncherNode.jsx';
 import { ELEMENT_TYPES } from '../types.js';
+import { generateContextualNodes, createNodesFromSuggestions } from '../utils/contextAwareCreation.js';
 
 export const DraggableElement = ({ element }) => {
-  const { selectElement, updateElement, navigateToBoard } = useCanvasStore();
+  const { selectElement, updateElement, navigateToBoard, addElement, elements } = useCanvasStore();
   
   const {
     attributes,
@@ -75,6 +76,104 @@ export const DraggableElement = ({ element }) => {
     }
   };
 
+  // Handle intelligent agentic actions
+  const handleAgenticAction = (action, data) => {
+    console.log('🤖 Agentic action received:', action, data);
+    
+    switch (action) {
+      case 'file-analyzed':
+        console.log('📁 File analyzed:', data.fileName, data.analysis);
+        
+        // Generate contextual node suggestions
+        if (data.analysis && data.analysis.confidence > 0.7) {
+          const suggestions = generateContextualNodes(
+            data.analysis, 
+            element.position, 
+            elements
+          );
+          
+          console.log('💡 Generated suggestions:', suggestions);
+          
+          // Auto-create high-confidence suggestions
+          if (suggestions.length > 0) {
+            setTimeout(() => {
+              const createdNodes = createNodesFromSuggestions(suggestions.slice(0, 2), addElement);
+              console.log('✨ Auto-created nodes:', createdNodes);
+            }, 1000);
+          }
+        }
+        break;
+        
+      case 'execute-suggestion':
+        console.log('💡 Executing suggestion:', data.suggestion);
+        
+        // Handle specific suggestion types
+        switch (data.suggestion.type) {
+          case 'PROJECT_SETUP':
+            // Create project board structure
+            const projectBoard = addElement(ELEMENT_TYPES.BOARD, {
+              x: element.position.x + 320,
+              y: element.position.y
+            }, {
+              title: 'Project Overview',
+              backgroundColor: '#E3F2FD',
+              description: `Auto-generated from ${data.fileName}`
+            });
+            break;
+            
+          case 'COLOR_PALETTE':
+            // Create color palette note
+            const colorNote = addElement(ELEMENT_TYPES.NOTE, {
+              x: element.position.x + 320,
+              y: element.position.y + 160
+            }, {
+              title: 'Color Palette',
+              content: 'Auto-extracted colors from design...',
+              backgroundColor: '#F3E5F5'
+            });
+            break;
+            
+          case 'TIMELINE':
+            // Create timeline note
+            const timelineNote = addElement(ELEMENT_TYPES.NOTE, {
+              x: element.position.x,
+              y: element.position.y + 200
+            }, {
+              title: 'Project Timeline',
+              content: 'Auto-generated timeline from brief...',
+              backgroundColor: '#E8F5E9'
+            });
+            break;
+        }
+        break;
+        
+      case 'execute-automation':
+        console.log('⚡ Executing automation:', data.automation);
+        
+        // Handle automation workflows
+        switch (data.automation.id) {
+          case 'auto-project-setup':
+            // Create complete project structure
+            setTimeout(() => {
+              const suggestions = generateContextualNodes(
+                data.analysis, 
+                element.position, 
+                elements
+              );
+              
+              if (suggestions.length > 0) {
+                createNodesFromSuggestions(suggestions, addElement);
+              }
+            }, 500);
+            break;
+        }
+        break;
+        
+      default:
+        console.log('🤖 Unknown agentic action:', action);
+    }
+  };
+
   const renderCard = () => {
     switch (element.type) {
       case ELEMENT_TYPES.BOARD:
@@ -91,13 +190,13 @@ export const DraggableElement = ({ element }) => {
         return <FileOpenerNode 
           element={element} 
           onUpdate={updateElement}
-          onExecute={(action, data) => console.log('🤖 Agentic action:', action, data)}
+          onExecute={handleAgenticAction}
         />;
       case ELEMENT_TYPES.URL_LAUNCHER:
         return <URLLauncherNode 
           element={element} 
           onUpdate={updateElement}
-          onExecute={(action, data) => console.log('🤖 Agentic action:', action, data)}
+          onExecute={handleAgenticAction}
         />;
       default:
         return <div>Unknown element type</div>;
