@@ -26,6 +26,7 @@ import {
   Film,
   Zap,
   Sparkles,
+  Lightbulb,
   ChevronRight,
   Clock,
   Users,
@@ -63,6 +64,13 @@ const PROJECT_TYPE_CONFIG = {
     description: 'Flexible creative workspace for any project type',
     color: 'from-orange-500 to-red-500',
     features: ['Creative Ideation', 'Project Planning', 'Problem Solving', 'Adaptive Support']
+  },
+  [PROJECT_TYPES.TEMPORARY]: {
+    icon: Lightbulb,
+    name: 'Temporary Session',
+    description: 'Quick brainstorming session (should not appear in selector)',
+    color: 'from-gray-500 to-gray-600',
+    features: ['Quick Brainstorm', 'Temporary Storage', 'Fast Ideation']
   }
 };
 
@@ -97,10 +105,12 @@ const ProjectSelector = ({ isOpen, onClose, selectedPhase = null, mode = 'select
   const stats = getProjectStats();
   const projectList = Object.values(projects);
   
-  // Filter projects based on search
+  // Filter projects based on search (exclude temporary projects)
   const filteredProjects = projectList.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.type.toLowerCase().includes(searchTerm.toLowerCase())
+    project.type !== PROJECT_TYPES.TEMPORARY && (
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.type.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
   
   // Handle project creation
@@ -379,7 +389,9 @@ const ProjectSelector = ({ isOpen, onClose, selectedPhase = null, mode = 'select
                     Project Type
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(PROJECT_TYPE_CONFIG).map(([type, config]) => {
+                    {Object.entries(PROJECT_TYPE_CONFIG)
+                      .filter(([type]) => type !== PROJECT_TYPES.TEMPORARY)
+                      .map(([type, config]) => {
                       const IconComponent = config.icon;
                       
                       return (

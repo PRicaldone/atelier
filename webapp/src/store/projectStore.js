@@ -498,16 +498,14 @@ export const useProjectStore = create(
         initialize: () => {
           const { projects, currentProjectId } = get();
           
-          // If no projects exist, create a default one
-          if (Object.keys(projects).length === 0) {
-            const defaultProjectId = get().createProject('My First Project', PROJECT_TYPES.GENERAL);
-            console.log('📁 Created default project:', defaultProjectId);
-          }
+          // Don't create default project - let user choose their workflow
           
-          // If no current project, select the first available
+          // If no current project, select the first available (excluding temporary)
           if (!currentProjectId && Object.keys(projects).length > 0) {
-            const firstProjectId = Object.keys(projects)[0];
-            get().selectProject(firstProjectId);
+            const permanentProjects = Object.values(projects).filter(p => p.type !== PROJECT_TYPES.TEMPORARY);
+            if (permanentProjects.length > 0) {
+              get().selectProject(permanentProjects[0].id);
+            }
           }
           
           set({ initialized: true });
@@ -518,17 +516,20 @@ export const useProjectStore = create(
         getProjectStats: () => {
           const { projects } = get();
           
+          // Filter out temporary projects from stats
+          const permanentProjects = Object.values(projects).filter(p => p.type !== PROJECT_TYPES.TEMPORARY);
+          
           return {
-            totalProjects: Object.keys(projects).length,
-            projectsByType: Object.values(projects).reduce((acc, project) => {
+            totalProjects: permanentProjects.length,
+            projectsByType: permanentProjects.reduce((acc, project) => {
               acc[project.type] = (acc[project.type] || 0) + 1;
               return acc;
             }, {}),
-            projectsByPhase: Object.values(projects).reduce((acc, project) => {
+            projectsByPhase: permanentProjects.reduce((acc, project) => {
               acc[project.phase] = (acc[project.phase] || 0) + 1;
               return acc;
             }, {}),
-            recentProjects: Object.values(projects)
+            recentProjects: permanentProjects
               .sort((a, b) => new Date(b.modified) - new Date(a.modified))
               .slice(0, 5)
           };
