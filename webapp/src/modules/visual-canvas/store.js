@@ -6,6 +6,7 @@ import {
   canvasHelpers,
   STORAGE_KEYS 
 } from './types.js';
+import { useProjectStore } from '../../store/projectStore.js';
 
 // Canvas store with drag & drop and persistence
 export const useCanvasStore = create(

@@ -945,19 +945,6 @@ export class SmartGroupingSystem {
     return intersection.size / union.size;
   }
 
-  calculateTopicOverlap(topics1, topics2) {
-    const topicSet1 = new Set(topics1.map(t => t.topic || t));
-    const topicSet2 = new Set(topics2.map(t => t.topic || t));
-    
-    const intersection = new Set([...topicSet1].filter(topic => topicSet2.has(topic)));
-    const union = new Set([...topicSet1, ...topicSet2]);
-    
-    return {
-      score: intersection.size / union.size,
-      commonTopics: Array.from(intersection)
-    };
-  }
-
   calculateNodeQuality(node, qualityWeight) {
     let quality = 0;
     
