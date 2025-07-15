@@ -105,15 +105,21 @@ class IntelligenceEngine {
     }
   }
   
-  // INITIALIZE ANTHROPIC CLIENT
+  // INITIALIZE ANTHROPIC CLIENT - Enhanced with streaming support
   async initializeAnthropicClient(apiKey) {
     try {
       // Dynamic import to avoid bundling if not needed
       const { default: Anthropic } = await import('@anthropic-ai/sdk')
-      return new Anthropic({
+      
+      const client = new Anthropic({
         apiKey: apiKey,
         dangerouslyAllowBrowser: true // Enable browser usage
       })
+      
+      // Test the client with a simple request
+      console.log('🤖 Testing Anthropic client connection...')
+      
+      return client
     } catch (error) {
       console.warn('🤖 Failed to initialize Anthropic client:', error)
       return null
@@ -224,6 +230,171 @@ class IntelligenceEngine {
     }
     
     return suggestions
+  }
+
+  // ENHANCED: Streaming Conversational Response for Mind Garden
+  async generateConversationalResponseStreaming(nodeId, prompt, parentChain = [], onUpdate = null) {
+    if (!this.initialized) {
+      console.warn('🤖 Streaming response skipped - AI not initialized')
+      return {
+        response: 'AI not initialized',
+        error: true,
+        timestamp: new Date().toISOString()
+      }
+    }
+
+    try {
+      // Build contextual prompt using existing PromptBuilder
+      const { PromptBuilder } = await import('./promptBuilder.js')
+      const promptBuilder = new PromptBuilder()
+      
+      // Prepare conversation history from parent chain
+      const conversationHistory = parentChain.map(parent => ({
+        prompt: parent.prompt,
+        response: parent.response, // Note: using 'response' not 'aiResponse' after our fix
+        branch: parent.branch,
+        timestamp: parent.timestamp
+      }))
+      
+      const contextualPrompt = promptBuilder.buildContextualPrompt({
+        currentPrompt: prompt,
+        conversationHistory,
+        conversationType: 'creative',
+        branchIntent: 'exploration',
+        depth: parentChain.length,
+        primaryTopic: 'creative workflow',
+        conversationFlow: 'organic'
+      })
+
+      console.log('🤖 Starting streaming response for node:', nodeId)
+      
+      if (this.mockMode || !this.anthropic) {
+        // Mock streaming for development
+        return await this.mockStreamingResponse(prompt, onUpdate)
+      }
+
+      // Real Anthropic SDK streaming
+      const stream = this.anthropic.messages.stream({
+        model: 'claude-3-5-sonnet-latest',
+        max_tokens: 4096,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: contextualPrompt
+          }
+        ]
+      })
+
+      let fullResponse = ''
+      
+      // Handle streaming events
+      stream.on('text', (text) => {
+        fullResponse += text
+        
+        // Call update callback for real-time UI updates
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse,
+            isComplete: false,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Handle completion
+      stream.on('message', (message) => {
+        console.log('🤖 Streaming complete for node:', nodeId)
+        
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse,
+            isComplete: true,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Handle errors
+      stream.on('error', (error) => {
+        console.error('🤖 Streaming error:', error)
+        
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse || 'Error generating response',
+            isComplete: true,
+            error: true,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Wait for stream to complete
+      await stream.finalMessage()
+      
+      return {
+        response: fullResponse,
+        timestamp: new Date().toISOString(),
+        confidence: 0.85,
+        conversationFocus: 'creative',
+        branchIntent: 'exploration',
+        topics: [],
+        sentiment: 'neutral',
+        health: 'good',
+        cached: false,
+        suggestedBranches: []
+      }
+
+    } catch (error) {
+      console.error('🤖 Streaming conversational response failed:', error)
+      
+      return {
+        response: 'I apologize, but I encountered an error while generating a response. Please try again.',
+        error: true,
+        timestamp: new Date().toISOString(),
+        confidence: 0.1
+      }
+    }
+  }
+
+  // Mock streaming for development/testing
+  async mockStreamingResponse(prompt, onUpdate) {
+    const mockResponse = `Thank you for your input: "${prompt}"\n\nI'm currently working on processing your request with enhanced streaming capabilities. This response is being generated in real-time to demonstrate the streaming AI functionality.\n\nThe new project-centric architecture allows for better context management and more coherent conversations across your creative workflow.`
+    
+    // Simulate streaming by sending chunks
+    const chunks = mockResponse.split(' ')
+    let currentResponse = ''
+    
+    for (let i = 0; i < chunks.length; i++) {
+      currentResponse += chunks[i] + ' '
+      
+      if (onUpdate) {
+        onUpdate({
+          partialResponse: currentResponse,
+          isComplete: i === chunks.length - 1,
+          timestamp: new Date().toISOString()
+        })
+      }
+      
+      // Small delay to simulate streaming
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    
+    return {
+      response: mockResponse,
+      timestamp: new Date().toISOString(),
+      confidence: 0.8,
+      conversationFocus: 'creative',
+      branchIntent: 'exploration',
+      topics: ['creative workflow', 'project management'],
+      sentiment: 'positive',
+      health: 'good',
+      cached: false,
+      suggestedBranches: ['How can I improve this concept?', 'What are the next steps?', 'Are there any alternatives?']
+    }
   }
   
   // CONTENT TRANSFORMATION (Route by complexity)

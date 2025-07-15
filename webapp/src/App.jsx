@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Layout } from './components/layout'
 import { useUnifiedStore } from './store/unifiedStore'
+import { useProjectStore } from './store/projectStore'
+import ProjectSelector from './components/ProjectSelector'
 import { 
   VisualCanvas, 
   ProjectStart, 
@@ -77,9 +79,48 @@ function NavigationSync() {
 }
 
 function App() {
+  const [showProjectSelector, setShowProjectSelector] = useState(false);
+  const { initialized, currentProjectId, initialize, projects } = useProjectStore();
+  
+  // Initialize project store on app load
+  useEffect(() => {
+    if (!initialized) {
+      initialize();
+    }
+  }, [initialized, initialize]);
+  
+  // Show project selector if no current project or if explicitly requested
+  useEffect(() => {
+    if (initialized && !currentProjectId) {
+      setShowProjectSelector(true);
+    }
+  }, [initialized, currentProjectId]);
+  
+  // Global keyboard shortcut for project selector
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + P to open project selector
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        setShowProjectSelector(true);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  
   return (
     <Layout>
       <NavigationSync />
+      
+      {/* Project Selector Modal */}
+      <ProjectSelector
+        isOpen={showProjectSelector}
+        onClose={() => setShowProjectSelector(false)}
+      />
+      
+      {/* Main Routes */}
       <Routes>
         <Route path="/" element={<Navigate to="/canvas" replace />} />
         <Route path="/canvas" element={<VisualCanvas />} />
@@ -89,6 +130,26 @@ function App() {
         <Route path="/business" element={<BusinessSwitcher />} />
         <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
       </Routes>
+      
+      {/* Project Context Display */}
+      {currentProjectId && (
+        <div className="fixed bottom-4 right-4 z-40">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {projects[currentProjectId]?.name || 'Current Project'}
+              </span>
+              <button
+                onClick={() => setShowProjectSelector(true)}
+                className="text-xs text-blue-500 hover:text-blue-600 ml-2"
+              >
+                Switch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }
