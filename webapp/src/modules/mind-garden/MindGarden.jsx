@@ -75,6 +75,7 @@ const MindGardenInner = () => {
     exportHistory,
     initializeStore,
     syncToUnified,
+    exportToCanvas,
     // ENHANCED v5.1: Conversation methods
     createConversationalNode,
     updateConversationalNode,
@@ -684,25 +685,23 @@ const MindGardenInner = () => {
           console.log('🌱 Exporting conversation to Canvas:', exportResult);
           
           try {
-            // Get Canvas store from unified store
-            const { getCanvasStore } = useUnifiedStore.getState();
-            const canvasStore = getCanvasStore();
+            // Use the Mind Garden store export function we already implemented
+            const nodeIds = selectedNodes.map(node => node.id);
+            console.log('🌱 Calling exportToCanvas with nodeIds:', nodeIds);
             
-            if (canvasStore && exportResult.elements) {
-              // Add each exported element to Canvas
-              exportResult.elements.forEach(element => {
-                canvasStore.addElement(element);
-              });
-              
+            const success = await exportToCanvas(nodeIds);
+            
+            if (success) {
               // Navigate to Canvas to show results
               navigateToModule('canvas', { 
                 showExportedElements: true,
-                exportMetadata: exportResult.metadata 
+                source: 'mind-garden-export'
               });
               
-              console.log('✅ Successfully exported', exportResult.elements.length, 'elements to Canvas');
+              console.log('✅ Successfully exported', nodeIds.length, 'nodes to Canvas');
+              setExportPreviewOpen(false);
             } else {
-              console.warn('⚠️ Canvas store not available or no elements to export');
+              console.warn('⚠️ Export to Canvas failed');
             }
           } catch (error) {
             console.error('❌ Export to Canvas failed:', error);

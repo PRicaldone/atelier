@@ -449,6 +449,119 @@ export class SmartGroupingSystem {
   // Grouping Algorithm Implementations
 
   /**
+   * Build similarity graph for semantic clustering
+   */
+  buildSimilarityGraph(nodes, relationships, threshold = 0.5) {
+    const graph = new Map();
+    
+    // Initialize graph nodes
+    nodes.forEach(node => {
+      graph.set(node.id, { node, connections: [] });
+    });
+    
+    // Calculate similarities between all node pairs
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const nodeA = nodes[i];
+        const nodeB = nodes[j];
+        
+        // Calculate semantic similarity based on content
+        const similarity = this.calculateSemanticSimilarity(nodeA, nodeB);
+        
+        if (similarity >= threshold) {
+          graph.get(nodeA.id).connections.push({ nodeId: nodeB.id, weight: similarity });
+          graph.get(nodeB.id).connections.push({ nodeId: nodeA.id, weight: similarity });
+        }
+      }
+    }
+    
+    return graph;
+  }
+
+  /**
+   * Calculate semantic similarity between two nodes
+   */
+  calculateSemanticSimilarity(nodeA, nodeB) {
+    // Simple similarity based on prompt and response content
+    const textA = `${nodeA.data.prompt || ''} ${nodeA.data.aiResponse || ''}`.toLowerCase();
+    const textB = `${nodeB.data.prompt || ''} ${nodeB.data.aiResponse || ''}`.toLowerCase();
+    
+    if (!textA.trim() || !textB.trim()) return 0;
+    
+    // Simple word overlap similarity
+    const wordsA = textA.split(/\s+/).filter(w => w.length > 3);
+    const wordsB = textB.split(/\s+/).filter(w => w.length > 3);
+    
+    const intersection = wordsA.filter(word => wordsB.includes(word)).length;
+    const union = new Set([...wordsA, ...wordsB]).size;
+    
+    return union > 0 ? intersection / union : 0;
+  }
+
+  /**
+   * Apply community detection for clustering
+   */
+  applyCommunityDetection(graph, maxClusterSize = 5, minClusterSize = 1) {
+    const visited = new Set();
+    const clusters = [];
+    
+    // Simple connected components detection
+    for (const [nodeId, nodeData] of graph) {
+      if (!visited.has(nodeId)) {
+        const cluster = [];
+        const queue = [nodeId];
+        
+        while (queue.length > 0 && cluster.length < maxClusterSize) {
+          const currentId = queue.shift();
+          if (!visited.has(currentId)) {
+            visited.add(currentId);
+            cluster.push(currentId);
+            
+            // Add connected nodes to queue
+            const connections = graph.get(currentId)?.connections || [];
+            connections.forEach(conn => {
+              if (!visited.has(conn.nodeId)) {
+                queue.push(conn.nodeId);
+              }
+            });
+          }
+        }
+        
+        if (cluster.length >= minClusterSize) {
+          clusters.push(cluster);
+        }
+      }
+    }
+    
+    return clusters;
+  }
+
+  /**
+   * Calculate cluster cohesion
+   */
+  calculateClusterCohesion(cluster, relationships) {
+    if (cluster.length <= 1) return 1.0;
+    
+    // Simple cohesion based on internal connections
+    let internalConnections = 0;
+    let totalPossible = (cluster.length * (cluster.length - 1)) / 2;
+    
+    for (let i = 0; i < cluster.length; i++) {
+      for (let j = i + 1; j < cluster.length; j++) {
+        // Check if nodes are connected (simplified)
+        if (relationships && relationships.some(r => 
+          (r.source === cluster[i] && r.target === cluster[j]) ||
+          (r.source === cluster[j] && r.target === cluster[i])
+        )) {
+          internalConnections++;
+        }
+      }
+    }
+    
+    return totalPossible > 0 ? internalConnections / totalPossible : 0.8;
+  }
+
+  /**
    * Semantic clustering algorithm
    */
   async semanticClustering(nodes, relationships, parameters) {
@@ -470,6 +583,53 @@ export class SmartGroupingSystem {
     }));
     
     return groups.filter(group => group.nodes.length >= minClusterSize);
+  }
+
+  /**
+   * Aggregate topics from a group of nodes
+   */
+  aggregateGroupTopics(groupNodes, nodeTopics) {
+    const allTopics = [];
+    groupNodes.forEach(node => {
+      const topics = nodeTopics.get(node.id) || [];
+      allTopics.push(...topics);
+    });
+    
+    // Count topic frequency and return weighted list
+    const topicCount = new Map();
+    allTopics.forEach(topic => {
+      topicCount.set(topic, (topicCount.get(topic) || 0) + 1);
+    });
+    
+    // Return topics sorted by frequency
+    return Array.from(topicCount.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([topic, count]) => ({ topic, weight: count / allTopics.length }));
+  }
+
+  /**
+   * Calculate topic overlap between two topic lists
+   */
+  calculateTopicOverlap(topicsA, topicsB) {
+    if (!topicsA.length || !topicsB.length) return { score: 0, overlap: [] };
+    
+    const setA = new Set(Array.isArray(topicsA[0]) ? topicsA.map(t => t[0] || t.topic) : topicsA);
+    const setBWeighted = Array.isArray(topicsB[0]) ? topicsB : topicsB.map(t => ({ topic: t, weight: 1 }));
+    
+    const overlap = [];
+    let totalWeight = 0;
+    
+    setBWeighted.forEach(({ topic, weight }) => {
+      if (setA.has(topic)) {
+        overlap.push({ topic, weight });
+        totalWeight += weight;
+      }
+    });
+    
+    const maxPossibleWeight = Math.min(setA.size, setBWeighted.length);
+    const score = maxPossibleWeight > 0 ? totalWeight / maxPossibleWeight : 0;
+    
+    return { score, overlap };
   }
 
   /**

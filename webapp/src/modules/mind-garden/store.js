@@ -418,8 +418,11 @@ export const useMindGardenStore = create(
 
     // Export functionality
     exportToCanvas: async (nodeIds) => {
+      console.log('🌱 EXPORT DEBUG: exportToCanvas called with nodeIds:', nodeIds);
       const { nodes } = get();
+      console.log('🌱 EXPORT DEBUG: Total nodes in store:', nodes.length);
       const selectedNodes = nodes.filter(node => nodeIds.includes(node.id));
+      console.log('🌱 EXPORT DEBUG: Selected nodes:', selectedNodes.length, selectedNodes);
       
       if (selectedNodes.length === 0) {
         console.warn('🌱 No nodes selected for export');
@@ -450,13 +453,22 @@ export const useMindGardenStore = create(
             rotation: 0,
             visible: true,
             data: {
-              title: node.data.title || 'Untitled',
-              content: node.data.content || '',
-              backgroundColor: getPhaseColor(node.data.phase),
+              title: node.data.prompt ? `💭 ${node.data.prompt.substring(0, 50)}...` : 'Mind Garden Node',
+              content: node.data.prompt && node.data.aiResponse 
+                ? `🧠 Question: ${node.data.prompt}\n\n🤖 AI Response: ${node.data.aiResponse}`
+                : node.data.prompt || node.data.content || 'Empty conversation node',
+              backgroundColor: getPhaseColor(node.data.phase || 'narrative'),
               sourceModule: 'mind-garden',
               sourceId: node.id,
-              tags: node.data.tags || [],
-              mindGardenPhase: node.data.phase
+              tags: [...(node.data.tags || []), 'mind-garden', `depth-${node.data.context?.depth || 0}`, node.data.context?.branch || 'exploration'],
+              mindGardenPhase: node.data.phase || 'narrative',
+              conversationData: {
+                prompt: node.data.prompt,
+                aiResponse: node.data.aiResponse,
+                branch: node.data.context?.branch,
+                depth: node.data.context?.depth,
+                timestamp: node.data.timestamp
+              }
             }
           };
         });
@@ -485,13 +497,17 @@ export const useMindGardenStore = create(
         
         // Force save to localStorage immediately
         const canvasStore = useCanvasStore.getState();
+        console.log('🌱 EXPORT DEBUG: Canvas store before save:', canvasStore.elements.length, 'elements');
         canvasStore.saveCurrentLevelToHierarchy();
+        console.log('🌱 EXPORT DEBUG: Canvas store after save');
         
         // Also update Unified Store for coordination
         useUnifiedStore.setState((state) => ({
           lastActivity: new Date().toISOString(),
           currentModule: 'canvas'
         }));
+        
+        console.log('🌱 EXPORT DEBUG: Export completed successfully, added', properCanvasElements.length, 'elements to canvas');
 
         // Record export history
         const exportRecord = {

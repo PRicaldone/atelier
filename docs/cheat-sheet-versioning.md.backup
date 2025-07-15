@@ -319,6 +319,7 @@ cp -R ATELIER-VERSIONS/snapshot_* ./emergency-recovery/
 # ✅ Buoni esempi - Fix e ottimizzazioni
 ./atelier-save.sh "🔧 Refactor: Ottimizzata performance canvas"
 ./atelier-save.sh "🐛 Fix: Risolto crash su iOS Safari"
+./atelier-save.sh "🧪 WIP: Manual UI Testing - Mind Garden v5.1 Functional + Text Readability Fix"  # Latest real example
 ./atelier-save.sh "🧪 Mind Garden v5.1 Testing Complete - Days 1-6 Full System Verification"  # Latest real example
 ./atelier-save.sh "📚 Complete Documentation System v5.1 - Enterprise Architecture"  # Latest real example
 ./atelier-save.sh "✨ Canvas Notes Complete - Mind Garden Parity Achieved"  # Latest real example

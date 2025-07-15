@@ -9,15 +9,26 @@ const ExportPreview = ({ isOpen, onClose, selectedNodes, onExport }) => {
   if (!isOpen) return null;
 
   const handleExport = async () => {
+    console.log('🌱 EXPORT PREVIEW: handleExport called');
+    console.log('🌱 EXPORT PREVIEW: selectedNodes:', selectedNodes);
     const nodeIds = selectedNodes.map(node => node.id);
-    const success = await exportToCanvas(nodeIds);
+    console.log('🌱 EXPORT PREVIEW: nodeIds to export:', nodeIds);
     
-    if (success) {
-      // Navigate to canvas to see results
-      const { useUnifiedStore } = await import('../../../store/unifiedStore');
-      const unifiedStore = useUnifiedStore.getState();
-      unifiedStore.navigateToModule('canvas', { source: 'mind-garden-export' });
-      onClose();
+    try {
+      const success = await exportToCanvas(nodeIds);
+      console.log('🌱 EXPORT PREVIEW: exportToCanvas result:', success);
+      
+      if (success) {
+        // Navigate to canvas to see results
+        const { useUnifiedStore } = await import('../../../store/unifiedStore');
+        const unifiedStore = useUnifiedStore.getState();
+        unifiedStore.navigateToModule('canvas', { source: 'mind-garden-export' });
+        onClose();
+      } else {
+        console.error('🌱 EXPORT PREVIEW: Export failed');
+      }
+    } catch (error) {
+      console.error('🌱 EXPORT PREVIEW: Export error:', error);
     }
   };
 
@@ -212,7 +223,10 @@ const ExportPreview = ({ isOpen, onClose, selectedNodes, onExport }) => {
               Cancel
             </button>
             <button
-              onClick={handleExport}
+              onClick={(e) => {
+                console.log('🌱 EXPORT PREVIEW: Button clicked!', e);
+                handleExport();
+              }}
               className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
             >
               <Download className="w-4 h-4" />

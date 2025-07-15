@@ -397,11 +397,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 14/07/2025 15:56
-**Ultimo commit:** 528ccbd 🧪 WIP: Manual UI Testing - Mind Garden v5.1 Functional + Text Readability Fix
+**Data:** 15/07/2025 01:45
+**Ultimo commit:** 79d809d 🌱 Mind Garden v5.1 Context Fix - Parent Chain for Child & Sibling Nodes
 **Branch:** main
-**Commit totali:** 127
-**Snapshots:** 62 | **Backups:** 0
+**Commit totali:** 130
+**Snapshots:** 63 | **Backups:** 0
 
-**Ultima modifica:** 🧪 WIP: Manual UI Testing - Mind Garden v5.1 Functional + Text Readability Fix
+**Ultima modifica:** 🌱 Mind Garden v5.1 Context Fix - Parent Chain for Child & Sibling Nodes
 
