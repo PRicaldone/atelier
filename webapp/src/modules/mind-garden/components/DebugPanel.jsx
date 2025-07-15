@@ -8,7 +8,7 @@ const DebugPanel = () => {
     <div style={{
       position: 'fixed',
       bottom: 20,
-      right: 20,
+      left: 20,
       background: 'white',
       border: '2px solid #ddd',
       borderRadius: 8,

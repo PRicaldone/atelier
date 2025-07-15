@@ -1612,3 +1612,35 @@ and the repository exists.
 [2025-07-15 12:01:14] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-15_12-01-09.txt
 [2025-07-15 12:01:14] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-15 12:01:14] [INFO] Cleaning up temporary files...
+[2025-07-15 17:44:01] [INFO] Starting atelier-save.sh v2.1
+[2025-07-15 17:44:01] [INFO] Custom commit message: 🎯 Major UX Overhaul Complete: Simplified Start Page + Canvas→Atelier Terminology
+
+✅ NEW START PAGE WORKFLOW:
+- 2 clear options: Brain Freestyle & Brain with Purpose  
+- Eliminated complexity: No project lists in start phase
+- QuickProjectForm: Streamlined project creation
+- Clear separation: Brain phase → Atelier phase → Project
+
+✅ TERMINOLOGY REVOLUTION:
+- Canvas → Creative Atelier (brand coherent)
+- CreativeAtelier component with backward compatibility
+- Updated routing: /atelier as primary route
+- Consistent messaging across all UI
+
+✅ NAVIGATION ENHANCEMENT:
+- ProjectQuickAccess in top bar with smart dropdown
+- Recent projects, quick switching, project status
+- Removed redundant bottom-right context display
+- Keyboard shortcuts (Cmd+P) preserved
+
+✅ WORKFLOW LOGIC REDESIGN:
+- Start → Brain (freestyle/purpose) → Atelier → Project
+- Intuitive for new users, maintains power user features
+- Mind Garden = thinking, Atelier = producing, Project = organizing
+
+Major user experience improvement - ready for production testing!
+[2025-07-15 17:44:01] [STEP] Checking prerequisites...
+[2025-07-15 17:44:01] [SUCCESS] Prerequisites check passed
+[2025-07-15 17:44:01] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-15 17:44:01] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-15 17:44:01] [INFO] 📝 Found 12 modified files

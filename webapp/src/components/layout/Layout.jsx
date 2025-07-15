@@ -3,7 +3,7 @@ import { useStore } from '../../store';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, onOpenProjectSelector }) => {
   const isSidebarCollapsed = useStore((state) => state.isSidebarCollapsed);
   
   const sidebarWidth = useMemo(() => {
@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
   
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <Navbar />
+      <Navbar onOpenProjectSelector={onOpenProjectSelector} />
       <Sidebar />
       <main 
         className="pt-16 transition-all duration-300 relative"

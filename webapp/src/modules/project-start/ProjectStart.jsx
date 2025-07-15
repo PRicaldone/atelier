@@ -1,68 +1,53 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../../components/ui';
-import { Brain, FolderPlus, FolderOpen } from 'lucide-react';
+import { Brain, Target, Lightbulb, Zap } from 'lucide-react';
 import { useUnifiedStore } from '../../store/unifiedStore';
 import { useProjectStore } from '../../store/projectStore';
 import { useState } from 'react';
-import ProjectSelector from '../../components/ProjectSelector';
+import BrainFreestyleCard from './components/BrainFreestyleCard';
+import BrainPurposeCard from './components/BrainPurposeCard';
+import QuickProjectForm from './components/QuickProjectForm';
 
 const startOptions = [
   {
-    id: 'quick-brainstorm',
-    title: 'Quick Brainstorm',
-    description: 'Start mind mapping immediately without project setup',
+    id: 'brain-freestyle',
+    title: '🧠 Brain Freestyle',
+    description: 'Start brainstorming freely - you can always create a project later',
     icon: Brain,
     color: 'text-purple-500',
     gradient: 'from-purple-500 to-pink-500',
-    action: 'brainstorm'
+    action: 'freestyle'
   },
   {
-    id: 'new-project',
-    title: 'New Project',
-    description: 'Create a structured project with templates and organization',
-    icon: FolderPlus,
+    id: 'brain-purpose',
+    title: '🎯 Brain with Purpose',
+    description: 'Start with a clear project idea in mind',
+    icon: Target,
     color: 'text-blue-500',
     gradient: 'from-blue-500 to-cyan-500',
-    action: 'create'
-  },
-  {
-    id: 'open-project',
-    title: 'Open Project',
-    description: 'Continue working on an existing project',
-    icon: FolderOpen,
-    color: 'text-green-500',
-    gradient: 'from-green-500 to-teal-500',
-    action: 'open'
+    action: 'purpose'
   }
 ];
 
 const ProjectStart = () => {
   const { navigateToModule } = useUnifiedStore();
   const { createTemporaryProject } = useProjectStore();
-  const [showProjectSelector, setShowProjectSelector] = useState(false);
-  const [selectorMode, setSelectorMode] = useState('select'); // 'select' | 'create'
+  const [showQuickProjectForm, setShowQuickProjectForm] = useState(false);
   
   const handleStartOption = (option) => {
     console.log('🚀 Starting option:', option.title);
     
     switch (option.action) {
-      case 'brainstorm':
+      case 'freestyle':
         // Create temporary project and go to Mind Garden
-        console.log('🧠 Starting quick brainstorm session');
+        console.log('🧠 Starting free thinking session');
         createTemporaryProject();
         navigateToModule('mind-garden');
         break;
         
-      case 'create':
-        // Show project selector in creation mode
-        setSelectorMode('create');
-        setShowProjectSelector(true);
-        break;
-        
-      case 'open':
-        // Show project selector in selection mode
-        setSelectorMode('select');
-        setShowProjectSelector(true);
+      case 'purpose':
+        // Show quick project form
+        setShowQuickProjectForm(true);
         break;
         
       default:
@@ -70,9 +55,14 @@ const ProjectStart = () => {
     }
   };
   
-  const handleProjectSelectorClose = () => {
-    setShowProjectSelector(false);
-    setSelectorMode('select');
+  const handleQuickProjectClose = () => {
+    setShowQuickProjectForm(false);
+  };
+  
+  const handleProjectCreated = (projectId) => {
+    console.log('✅ Project created:', projectId);
+    setShowQuickProjectForm(false);
+    navigateToModule('mind-garden');
   };
   
   return (
@@ -83,11 +73,16 @@ const ProjectStart = () => {
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Start Creative Session</h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300">How would you like to begin your creative work today?</p>
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <Brain className="w-8 h-8 text-purple-500" />
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Mind Garden</h2>
+        </div>
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          Your creative ideas start here. Choose how you want to begin thinking:
+        </p>
       </motion.div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {startOptions.map((option, index) => {
           const Icon = option.icon;
           
@@ -109,7 +104,7 @@ const ProjectStart = () => {
                   <button 
                     className="w-full py-3 px-6 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                   >
-                    {option.title} →
+                    {option.action === 'freestyle' ? 'Start Free Thinking' : 'Create Project'} →
                   </button>
                 </div>
               </Card>
@@ -118,13 +113,13 @@ const ProjectStart = () => {
         })}
       </div>
       
-      {/* Project Selector Modal */}
+      {/* Quick Project Form Modal */}
       <AnimatePresence>
-        {showProjectSelector && (
-          <ProjectSelector
-            isOpen={showProjectSelector}
-            onClose={handleProjectSelectorClose}
-            mode={selectorMode}
+        {showQuickProjectForm && (
+          <QuickProjectForm
+            isOpen={showQuickProjectForm}
+            onClose={handleQuickProjectClose}
+            onProjectCreated={handleProjectCreated}
           />
         )}
       </AnimatePresence>

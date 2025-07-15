@@ -6,7 +6,7 @@ import { useProjectStore } from './store/projectStore'
 import ProjectSelector from './components/ProjectSelector'
 import MigrationManager from './components/MigrationManager'
 import { 
-  VisualCanvas, 
+  CreativeAtelier, 
   ProjectStart, 
   ProjectTracker, 
   BusinessSwitcher,
@@ -26,7 +26,8 @@ function NavigationSync() {
   
   // Route mapping
   const routeToModule = {
-    '/canvas': 'canvas',
+    '/atelier': 'canvas',
+    '/canvas': 'canvas', // Backward compatibility
     '/unified-store': 'unified-store-test',
     '/start': 'project-start',
     '/mind-garden': 'mind-garden',
@@ -34,7 +35,7 @@ function NavigationSync() {
   };
   
   const moduleToRoute = {
-    'canvas': '/canvas',
+    'canvas': '/atelier',
     'unified-store-test': '/unified-store',
     'project-start': '/start',
     'mind-garden': '/mind-garden',
@@ -114,7 +115,7 @@ function App() {
   
   return (
     <MigrationManager>
-      <Layout>
+      <Layout onOpenProjectSelector={() => setShowProjectSelector(true)}>
         <NavigationSync />
         
         {/* Project Selector Modal */}
@@ -125,34 +126,15 @@ function App() {
         
         {/* Main Routes */}
         <Routes>
-          <Route path="/" element={<Navigate to="/canvas" replace />} />
-          <Route path="/canvas" element={<VisualCanvas />} />
+          <Route path="/" element={<Navigate to="/atelier" replace />} />
+          <Route path="/atelier" element={<CreativeAtelier />} />
+          <Route path="/canvas" element={<CreativeAtelier />} />
           <Route path="/start" element={<ProjectStart />} />
           <Route path="/mind-garden" element={<MindGarden />} />
           <Route path="/tracker" element={<ProjectTracker />} />
           <Route path="/business" element={<BusinessSwitcher />} />
           <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
         </Routes>
-        
-        {/* Project Context Display */}
-        {currentProjectId && (
-          <div className="fixed bottom-4 right-4 z-40">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {projects[currentProjectId]?.name || 'Current Project'}
-                </span>
-                <button
-                  onClick={() => setShowProjectSelector(true)}
-                  className="text-xs text-blue-500 hover:text-blue-600 ml-2"
-                >
-                  Switch
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </Layout>
     </MigrationManager>
   )

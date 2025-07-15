@@ -11,6 +11,7 @@ import {
 } from '@dnd-kit/core';
 import { useCanvasStore } from './store.js';
 import { useUnifiedStore, useCanvasState } from '../../store/unifiedStore.js';
+import { useProjectStore } from '../../store/projectStore.js';
 import { CanvasToolbar } from './components/CanvasToolbar.jsx';
 import { PropertiesPanel } from './components/PropertiesPanel.jsx';
 import { AISuggestions } from './components/AISuggestions.jsx';
@@ -19,9 +20,10 @@ import TreeViewSidebar from './components/TreeViewSidebar.jsx';
 import HoudiniTreeView from './components/HoudiniTreeView.jsx';
 import PathBreadcrumb from './components/PathBreadcrumb.jsx';
 import { GRID_SIZE } from './types.js';
+import { Lightbulb, Brain } from 'lucide-react';
 
-const VisualCanvas = () => {
-  console.log('VisualCanvas rendering - full functionality without gestures');
+const CreativeAtelier = () => {
+  console.log('CreativeAtelier rendering - full functionality without gestures');
   
   const canvasRef = useRef(null);
   const [draggedElement, setDraggedElement] = useState(null);
@@ -40,6 +42,9 @@ const VisualCanvas = () => {
     navigateToModule,
     analyzeCanvasContext
   } = useUnifiedStore();
+  
+  // Project Store integration
+  const { getCurrentProject } = useProjectStore();
   
   const unifiedCanvas = useCanvasState();
   
@@ -65,14 +70,18 @@ const VisualCanvas = () => {
     addCompleteElement
   } = useCanvasStore();
 
-  // Initialize canvas on mount
+  // Initialize atelier on mount
   useEffect(() => {
     initialize();
     // Set current module in unified store
-    navigateToModule('canvas', { source: 'visual-canvas-init' });
+    navigateToModule('canvas', { source: 'creative-atelier-init' });
   }, [initialize, navigateToModule]);
   
   // Trigger AI analysis when elements change
+  // Check if current project is temporary
+  const currentProject = getCurrentProject();
+  const isTemporaryProject = currentProject?.isTemporary || false;
+  
   useEffect(() => {
     // Trigger analysis when there are elements or when entering Canvas
     if (elements.length > 0 || elements.length === 0) {
@@ -599,6 +608,32 @@ const VisualCanvas = () => {
     <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900" style={{ top: '0px', left: '-24px', right: '-24px', bottom: '0px' }}>
       <CanvasToolbar />
       
+      {/* Temporary Project Badge */}
+      {isTemporaryProject && (
+        <div className="absolute top-20 left-4 z-50">
+          <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 flex items-center gap-2">
+            <Lightbulb className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              Creative Atelier
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* Back to Mind Garden Button - for temporary projects */}
+      {isTemporaryProject && (
+        <div className="absolute top-20 right-4 z-50">
+          <button
+            onClick={() => navigateToModule('mind-garden')}
+            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
+            title="Back to Mind Garden"
+          >
+            <Brain className="w-4 h-4" />
+            <span className="text-sm font-medium">Back to Ideas</span>
+          </button>
+        </div>
+      )}
+      
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
@@ -687,12 +722,12 @@ const VisualCanvas = () => {
       {/* Help overlay */}
       <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300" style={{ right: '340px' }}>
         <div className="font-medium mb-1">Shortcuts:</div>
-        <div>Double-click canvas: Add note</div>
+        <div>Double-click atelier: Add note</div>
         <div>Double-click note: Edit text</div>
         <div>Drag: Move elements</div>
-        <div>Alt+drag: Pan canvas</div>
-        <div>Middle mouse: Pan canvas</div>
-        <div>Right+drag: Zoom canvas</div>
+        <div>Alt+drag: Pan atelier</div>
+        <div>Middle mouse: Pan atelier</div>
+        <div>Right+drag: Zoom atelier</div>
         <div>Shift+drag: Ignore snap to grid</div>
         <div>Double-click board: Enter board</div>
         <div>Ctrl/Cmd+click: Multi-select</div>
@@ -716,4 +751,7 @@ const VisualCanvas = () => {
   );
 };
 
-export default VisualCanvas;
+export default CreativeAtelier;
+
+// Backward compatibility alias
+export { CreativeAtelier as VisualCanvas };

@@ -15,7 +15,6 @@ import ConversationEdge from './components/ConversationEdge';
 import EnhancedConversationEdge from './components/EnhancedConversationEdge';
 import AICommandPalette from './components/AICommandPalette';
 import EnhancedExportPreview from './components/EnhancedExportPreview';
-import ConversationThreadVisualization from './components/ConversationThreadVisualization';
 import MiniMap from './components/MiniMap';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import DebugPanel from './components/DebugPanel';
@@ -24,7 +23,7 @@ import ConsolidationPanel from './components/ConsolidationPanel';
 import { useUnifiedStore } from '../../store/unifiedStore';
 import { useProjectStore } from '../../store/projectStore';
 import { useMindGardenStore } from './store';
-import { Plus, Download, Map, Keyboard, Layers, MessageSquare } from 'lucide-react';
+import { Plus, Download, Map, Keyboard, Layers, Lightbulb, Eye } from 'lucide-react';
 
 // Custom node types - OUTSIDE component to prevent ReactFlow warnings
 const nodeTypes = {
@@ -52,11 +51,9 @@ const MindGardenInner = () => {
   const [initialZoom, setInitialZoom] = useState(1);
   
   // Day 5: Enhanced UI State
-  const [threadVisualizationOpen, setThreadVisualizationOpen] = useState(false);
   const [miniMapVisible, setMiniMapVisible] = useState(true);
   const [keyboardHelpOpen, setKeyboardHelpOpen] = useState(false);
   const [quickActionMode, setQuickActionMode] = useState(false);
-  const [selectedThread, setSelectedThread] = useState(null);
   
   const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
@@ -101,6 +98,16 @@ const MindGardenInner = () => {
   // Check if current project is temporary
   const currentProject = getCurrentProject();
   const isTemporaryProject = currentProject?.isTemporary || false;
+  
+  // Debug: Log project status
+  useEffect(() => {
+    console.log('🧠 Mind Garden Project Status:', {
+      currentProject: currentProject?.name,
+      isTemporary: isTemporaryProject,
+      projectType: currentProject?.type,
+      nodeCount: nodes.length
+    });
+  }, [currentProject, isTemporaryProject, nodes.length]);
 
   // Center view on nodes after ReactFlow is ready
   useEffect(() => {
@@ -446,15 +453,46 @@ const MindGardenInner = () => {
     }
   }, [updateNode, currentPhase]);
 
-  const handleExportToCanvas = useCallback(() => {
-    console.log('🌱 DEBUG: selectedNodes in handleExportToCanvas:', selectedNodes);
+  const handleExportToAtelier = useCallback(() => {
+    console.log('🌱 DEBUG: selectedNodes in handleExportToAtelier:', selectedNodes);
     if (selectedNodes.length === 0) {
       console.warn('🌱 No nodes selected for export');
       return;
     }
     
-    setExportPreviewOpen(true);
-  }, [selectedNodes]);
+    // For temporary projects, create temporary atelier and navigate directly
+    if (isTemporaryProject) {
+      console.log('🧠 Temporary project export - creating temporary atelier');
+      handleTemporaryExport();
+    } else {
+      // For permanent projects, use existing export preview
+      setExportPreviewOpen(true);
+    }
+  }, [selectedNodes, isTemporaryProject]);
+  
+  const handleTemporaryExport = useCallback(async () => {
+    console.log('🎨 Creating temporary atelier from brainstorm');
+    
+    try {
+      // Export nodes to temporary atelier
+      const nodeIds = selectedNodes.map(node => node.id);
+      const success = await exportToCanvas(nodeIds);
+      
+      if (success) {
+        // Navigate to Atelier with temporary project
+        navigateToModule('canvas', { 
+          temporary: true,
+          source: 'mind-garden-temporary-export'
+        });
+        
+        console.log('✅ Successfully exported to temporary atelier');
+      } else {
+        console.warn('⚠️ Temporary export failed');
+      }
+    } catch (error) {
+      console.error('❌ Temporary export error:', error);
+    }
+  }, [selectedNodes, exportToCanvas, navigateToModule]);
 
   const onMoveEnd = useCallback((event, viewport) => {
     // Clamp zoom to max 1 (default zoom)
@@ -633,15 +671,6 @@ const MindGardenInner = () => {
             <Plus className="w-6 h-6" />
           </button>
           
-          <button
-            onClick={() => setThreadVisualizationOpen(!threadVisualizationOpen)}
-            className={`w-12 h-12 bg-white hover:bg-gray-50 text-gray-600 rounded-full flex items-center justify-center shadow-lg transition-colors ${
-              threadVisualizationOpen ? 'ring-2 ring-purple-500' : ''
-            }`}
-            title="Toggle thread visualization (T)"
-          >
-            <MessageSquare className="w-6 h-6" />
-          </button>
           
           <button
             onClick={() => setKeyboardHelpOpen(true)}
@@ -662,20 +691,34 @@ const MindGardenInner = () => {
         </div>
       </div>
 
+      {/* Temporary Project Badge - Top Left (below toolbar) */}
+      {isTemporaryProject && (
+        <div className="absolute top-20 left-4 z-50">
+          <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 flex items-center gap-2">
+            <Lightbulb className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              Brainstorming Session
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Export Button - Top Right (always visible) */}
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={selectedNodes.length > 0 ? handleExportToCanvas : undefined}
+          onClick={selectedNodes.length > 0 ? handleExportToAtelier : undefined}
           disabled={selectedNodes.length === 0}
           className={`px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors ${
             selectedNodes.length > 0
               ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
               : 'bg-gray-500 text-gray-300 cursor-not-allowed'
           }`}
-          title={selectedNodes.length > 0 ? "Export selected nodes to Canvas" : "Select nodes to export"}
+          title={selectedNodes.length > 0 ? 
+            (isTemporaryProject ? "Develop in Creative Atelier" : "Export selected nodes to Atelier") : 
+            "Select nodes to export"}
         >
-          <Download className="w-4 h-4" />
-          Export to Canvas
+          {isTemporaryProject ? <Eye className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+          {isTemporaryProject ? "Develop in Atelier" : "Export to Atelier"}
         </button>
       </div>
 
@@ -703,16 +746,16 @@ const MindGardenInner = () => {
             const success = await exportToCanvas(nodeIds);
             
             if (success) {
-              // Navigate to Canvas to show results
+              // Navigate to Atelier to show results
               navigateToModule('canvas', { 
                 showExportedElements: true,
                 source: 'mind-garden-export'
               });
               
-              console.log('✅ Successfully exported', nodeIds.length, 'nodes to Canvas');
+              console.log('✅ Successfully exported', nodeIds.length, 'nodes to Atelier');
               setExportPreviewOpen(false);
             } else {
-              console.warn('⚠️ Export to Canvas failed');
+              console.warn('⚠️ Export to Atelier failed');
             }
           } catch (error) {
             console.error('❌ Export to Canvas failed:', error);
@@ -743,38 +786,25 @@ const MindGardenInner = () => {
         <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs space-y-1">
           <div className="font-medium mb-1">📤 Recent Exports</div>
           {exportHistory.slice(-2).map((exp, idx) => (
-            <div key={idx}>• {exp.nodeCount} nodes → Canvas ({exp.timestamp})</div>
+            <div key={idx}>• {exp.nodeCount} nodes → Atelier ({exp.timestamp})</div>
           ))}
         </div>
       )}
 
-      {/* Instructions Panel - Bottom Right (like Canvas) */}
-      <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
-        <div className="font-medium mb-1">🌱 Mind Garden v5.1</div>
-        <div>• Double-click canvas to add node</div>
-        <div>• Double-click node to edit content</div>
-        <div>• Tab/Shift+Tab for child/sibling nodes</div>
-        <div>• Arrow keys for navigation</div>
-        <div>• <strong>Delete key</strong> to remove selected node</div>
-        <div>• <strong>Cmd+Delete</strong> to force delete while editing</div>
-        <div>• Press H for keyboard shortcuts</div>
-      </div>
-
-      {/* Day 5: Thread Visualization Sidebar */}
-      {threadVisualizationOpen && (
-        <div className="absolute top-16 left-4 w-80 max-h-[calc(100vh-8rem)] bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-40">
-          <ConversationThreadVisualization
-            nodes={nodes}
-            edges={edges}
-            selectedNodeId={selectedNodeId}
-            onNodeSelect={setSelectedNodeId}
-            onThreadSelect={setSelectedThread}
-            showHealthIndicators={true}
-            showFlowIndicators={true}
-            compactMode={false}
-          />
+      {/* Instructions Panel - Bottom Right (hide for temporary projects) */}
+      {!isTemporaryProject && (
+        <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
+          <div className="font-medium mb-1">🌱 Mind Garden v5.1</div>
+          <div>• Double-click canvas to add node</div>
+          <div>• Double-click node to edit content</div>
+          <div>• Tab/Shift+Tab for child/sibling nodes</div>
+          <div>• Arrow keys for navigation</div>
+          <div>• <strong>Delete key</strong> to remove selected node</div>
+          <div>• <strong>Cmd+Delete</strong> to force delete while editing</div>
+          <div>• Press H for keyboard shortcuts</div>
         </div>
       )}
+
 
       {/* Day 5: Mini-Map */}
       {miniMapVisible && (

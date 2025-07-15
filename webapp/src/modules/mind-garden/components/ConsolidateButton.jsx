@@ -20,7 +20,7 @@ const ConsolidateButton = ({
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
-      className="fixed top-4 right-4 z-40"
+      className="fixed top-32 right-4 z-50"
     >
       <motion.button
         onClick={onClick}

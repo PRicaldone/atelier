@@ -1,3 +1,4 @@
+export { default as CreativeAtelier } from './visual-canvas/VisualCanvas';
 export { default as VisualCanvas } from './visual-canvas/VisualCanvas';
 export { default as ProjectStart } from './project-start/ProjectStart';
 export { default as ProjectTracker } from './project-tracker/ProjectTracker';
