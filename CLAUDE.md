@@ -458,11 +458,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 15/07/2025 02:11
-**Ultimo commit:** f026d72 🌱 Mind Garden v5.1 Export System Complete - Smart Grouping + Canvas Integration Working
-**Branch:** main
-**Commit totali:** 132
-**Snapshots:** 64 | **Backups:** 0
+**Data:** 15/07/2025 11:10
+**Ultimo commit:** 20f0d02 🔄 WIP: Canvas store migration to project-scoped storage - partial implementation
+**Branch:** feature/project-architecture-ai
+**Commit totali:** 137
+**Snapshots:** 65 | **Backups:** 0
 
-**Ultima modifica:** 🌱 Mind Garden v5.1 Export System Complete - Smart Grouping + Canvas Integration Working
+**Ultima modifica:** 🔄 WIP: Canvas store migration to project-scoped storage - partial implementation
 
