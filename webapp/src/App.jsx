@@ -4,6 +4,7 @@ import { Layout } from './components/layout'
 import { useUnifiedStore } from './store/unifiedStore'
 import { useProjectStore } from './store/projectStore'
 import ProjectSelector from './components/ProjectSelector'
+import MigrationManager from './components/MigrationManager'
 import { 
   VisualCanvas, 
   ProjectStart, 
@@ -111,46 +112,48 @@ function App() {
   }, []);
   
   return (
-    <Layout>
-      <NavigationSync />
-      
-      {/* Project Selector Modal */}
-      <ProjectSelector
-        isOpen={showProjectSelector}
-        onClose={() => setShowProjectSelector(false)}
-      />
-      
-      {/* Main Routes */}
-      <Routes>
-        <Route path="/" element={<Navigate to="/canvas" replace />} />
-        <Route path="/canvas" element={<VisualCanvas />} />
-        <Route path="/start" element={<ProjectStart />} />
-        <Route path="/mind-garden" element={<MindGarden />} />
-        <Route path="/tracker" element={<ProjectTracker />} />
-        <Route path="/business" element={<BusinessSwitcher />} />
-        <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
-      </Routes>
-      
-      {/* Project Context Display */}
-      {currentProjectId && (
-        <div className="fixed bottom-4 right-4 z-40">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {projects[currentProjectId]?.name || 'Current Project'}
-              </span>
-              <button
-                onClick={() => setShowProjectSelector(true)}
-                className="text-xs text-blue-500 hover:text-blue-600 ml-2"
-              >
-                Switch
-              </button>
+    <MigrationManager>
+      <Layout>
+        <NavigationSync />
+        
+        {/* Project Selector Modal */}
+        <ProjectSelector
+          isOpen={showProjectSelector}
+          onClose={() => setShowProjectSelector(false)}
+        />
+        
+        {/* Main Routes */}
+        <Routes>
+          <Route path="/" element={<Navigate to="/canvas" replace />} />
+          <Route path="/canvas" element={<VisualCanvas />} />
+          <Route path="/start" element={<ProjectStart />} />
+          <Route path="/mind-garden" element={<MindGarden />} />
+          <Route path="/tracker" element={<ProjectTracker />} />
+          <Route path="/business" element={<BusinessSwitcher />} />
+          <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
+        </Routes>
+        
+        {/* Project Context Display */}
+        {currentProjectId && (
+          <div className="fixed bottom-4 right-4 z-40">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {projects[currentProjectId]?.name || 'Current Project'}
+                </span>
+                <button
+                  onClick={() => setShowProjectSelector(true)}
+                  className="text-xs text-blue-500 hover:text-blue-600 ml-2"
+                >
+                  Switch
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </Layout>
+        )}
+      </Layout>
+    </MigrationManager>
   )
 }
 

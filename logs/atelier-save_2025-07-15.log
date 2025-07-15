@@ -792,3 +792,10 @@ and the repository exists.
 [2025-07-15 02:11:24] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-15_02-11-20.txt
 [2025-07-15 02:11:24] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-15 02:11:24] [INFO] Cleaning up temporary files...
+[2025-07-15 11:10:15] [INFO] Starting atelier-save.sh v2.1
+[2025-07-15 11:10:15] [INFO] Custom commit message: 🔄 WIP: Canvas store migration to project-scoped storage - partial implementation
+[2025-07-15 11:10:15] [STEP] Checking prerequisites...
+[2025-07-15 11:10:15] [SUCCESS] Prerequisites check passed
+[2025-07-15 11:10:15] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-15 11:10:15] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-15 11:10:15] [INFO] 📝 Found 7 modified files

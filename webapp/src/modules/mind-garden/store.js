@@ -7,6 +7,7 @@ import {
   BRANCH_TYPES,
   getNextState
 } from './types/conversationTypes';
+import { useProjectStore } from '../../store/projectStore.js';
 
 // Initial demo data
 const initialNodes = [
@@ -534,8 +535,48 @@ export const useMindGardenStore = create(
       }
     },
 
+    // PROJECT-SCOPED PERSISTENCE
+    saveToProject: () => {
+      const { nodes, edges, viewport, currentPhase, exportHistory } = get();
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('🌱 No current project - cannot save MindGarden data');
+        return;
+      }
+      
+      try {
+        const mindGardenData = {
+          conversations: [], // Will be populated from nodes
+          nodes,
+          edges, 
+          viewport,
+          aiHistory: [], // Will be populated from nodes
+          contextCache: new Map(), // Will be populated from nodes
+          exportHistory
+        };
+        
+        // Update project workspace
+        projectStore.updateWorkspace('mindGarden', mindGardenData);
+        
+        console.log('🌱 ✅ MindGarden data saved to project successfully');
+        
+      } catch (error) {
+        console.error('🌱 ❌ Failed to save MindGarden to project:', error);
+      }
+    },
+
     // Persistence
     saveToLocalStorage: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (projectStore.currentProjectId) {
+        // Use project-scoped storage
+        get().saveToProject();
+        return;
+      }
+      
+      // Fallback to localStorage for backward compatibility
       const { nodes, edges, viewport, currentPhase, exportHistory } = get();
       const data = {
         nodes,
@@ -553,7 +594,49 @@ export const useMindGardenStore = create(
       }
     },
 
+    loadFromProject: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('🌱 No current project - cannot load MindGarden data');
+        return false;
+      }
+      
+      try {
+        const currentProject = projectStore.getCurrentProject();
+        if (!currentProject) {
+          console.error('🌱 Current project not found');
+          return false;
+        }
+        
+        const mindGardenWorkspace = currentProject.workspace.mindGarden;
+        
+        set({
+          nodes: mindGardenWorkspace.nodes || [],
+          edges: mindGardenWorkspace.edges || [],
+          viewport: mindGardenWorkspace.viewport || { x: 0, y: 0, zoom: 1 },
+          currentPhase: 'dump', // Default phase
+          exportHistory: mindGardenWorkspace.exportHistory || []
+        });
+        
+        console.log('🌱 Loaded Mind Garden from project successfully');
+        return true;
+        
+      } catch (error) {
+        console.error('🌱 Failed to load from project:', error);
+        return false;
+      }
+    },
+
     loadFromLocalStorage: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (projectStore.currentProjectId) {
+        // Use project-scoped storage
+        return get().loadFromProject();
+      }
+      
+      // Fallback to localStorage for backward compatibility
       try {
         const saved = localStorage.getItem('ATELIER_MIND_GARDEN');
         if (saved) {

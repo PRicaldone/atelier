@@ -36,7 +36,7 @@ export const useCanvasStore = create(
       
       // Save the updated elements to persistence
       setTimeout(() => {
-        get().saveCurrentLevelToParent();
+        get().saveCurrentLevelToProject();
       }, 100);
     },
 
@@ -49,7 +49,7 @@ export const useCanvasStore = create(
       
       // Save the updated elements to persistence
       setTimeout(() => {
-        get().saveCurrentLevelToParent();
+        get().saveCurrentLevelToProject();
       }, 100);
     },
 
@@ -60,7 +60,7 @@ export const useCanvasStore = create(
       }));
       
       // Save immediately - no timeout to avoid race conditions
-      get().saveCurrentLevelToHierarchy();
+      get().saveCurrentLevelToProject();
     },
 
     // Remove element without saving - used during board operations
@@ -82,7 +82,7 @@ export const useCanvasStore = create(
       
       // Save the updated elements to persistence
       setTimeout(() => {
-        get().saveCurrentLevelToParent();
+        get().saveCurrentLevelToProject();
       }, 100);
     },
 
@@ -362,7 +362,7 @@ export const useCanvasStore = create(
       console.log('🧭 Smart navigation to board:', boardId);
       
       // Save current level before navigating
-      get().saveCurrentLevelToHierarchy();
+      get().saveCurrentLevelToProject();
       
       if (boardId === 'root') {
         // Navigate to root
@@ -609,8 +609,14 @@ export const useCanvasStore = create(
 
     // LEGACY WRAPPER - Will be removed after migration
     saveCurrentLevelToParent: () => {
-      console.log('⚠️ Using legacy saveCurrentLevelToParent - migrating to saveCurrentLevelToHierarchy');
-      get().saveCurrentLevelToHierarchy();
+      console.log('⚠️ Using legacy saveCurrentLevelToParent - migrating to saveCurrentLevelToProject');
+      get().saveCurrentLevelToProject();
+    },
+
+    // LEGACY WRAPPER - Will be removed after migration
+    saveCurrentLevelToHierarchy: () => {
+      console.log('⚠️ Using legacy saveCurrentLevelToHierarchy - migrating to saveCurrentLevelToProject');
+      get().saveCurrentLevelToProject();
     },
 
     // Find a board in the hierarchy
@@ -677,28 +683,208 @@ export const useCanvasStore = create(
       return result;
     },
 
+    // PROJECT-SCOPED PERSISTENCE SYSTEM
+    saveCurrentLevelToProject: () => {
+      const state = get();
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('💾 No current project - cannot save canvas data');
+        return;
+      }
+      
+      console.log('💾 saveCurrentLevelToProject - currentBoardId:', state.currentBoardId, 'elements:', state.elements.length);
+      
+      try {
+        const currentProject = projectStore.getCurrentProject();
+        if (!currentProject) {
+          console.error('💾 Current project not found');
+          return;
+        }
+        
+        let updatedWorkspace = { ...currentProject.workspace };
+        
+        if (!state.currentBoardId) {
+          // We're at root - save elements directly
+          console.log('💾 Saving to root level with', state.elements.length, 'elements');
+          updatedWorkspace.canvas = {
+            ...updatedWorkspace.canvas,
+            elements: state.elements,
+            viewport: state.viewport,
+            selectedIds: state.selectedIds,
+            currentBoardId: null,
+            boardHistory: [],
+            boardViewports: state.boardViewports
+          };
+        } else {
+          // We're inside a nested board - update the hierarchy
+          console.log('💾 Updating nested board in hierarchy');
+          
+          const updateHierarchy = (elements, targetBoardId, newElements) => {
+            return elements.map(element => {
+              if (element.id === targetBoardId && element.type === 'board') {
+                console.log('💾 ✅ FOUND and updating board:', targetBoardId, 'with', newElements.length, 'elements');
+                return {
+                  ...element,
+                  data: {
+                    ...element.data,
+                    elements: newElements,
+                    updatedAt: Date.now()
+                  }
+                };
+              }
+              if (element.type === 'board' && element.data?.elements) {
+                const updatedChildren = updateHierarchy(element.data.elements, targetBoardId, newElements);
+                return {
+                  ...element,
+                  data: {
+                    ...element.data,
+                    elements: updatedChildren
+                  }
+                };
+              }
+              return element;
+            });
+          };
+          
+          const updatedElements = updateHierarchy(updatedWorkspace.canvas.elements, state.currentBoardId, state.elements);
+          
+          updatedWorkspace.canvas = {
+            ...updatedWorkspace.canvas,
+            elements: updatedElements,
+            viewport: state.viewport,
+            selectedIds: state.selectedIds,
+            currentBoardId: state.currentBoardId,
+            boardHistory: state.boardHistory,
+            boardViewports: state.boardViewports
+          };
+        }
+        
+        // Update the project with new workspace
+        projectStore.updateProject(projectStore.currentProjectId, {
+          workspace: updatedWorkspace
+        });
+        
+        console.log('💾 ✅ Canvas data saved to project successfully');
+        
+      } catch (error) {
+        console.error('💾 ❌ Failed to save canvas to project:', error);
+      }
+    },
+
     // UNIFIED PERSISTENCE SYSTEM - Always maintains full hierarchy
     saveToStorage: () => {
       const state = get();
       try {
-        // IMPORTANT: We now ALWAYS save the full hierarchy, not just current elements
-        get().saveCurrentLevelToHierarchy();
+        // IMPORTANT: We now use project-scoped storage instead of localStorage
+        get().saveCurrentLevelToProject();
         
-        // Save other state
-        localStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, JSON.stringify(state.settings));
-        localStorage.setItem(STORAGE_KEYS.CANVAS_STATE, JSON.stringify({
-          viewport: state.viewport,
-          selectedIds: state.selectedIds,
-          currentBoardId: state.currentBoardId,
-          boardHistory: state.boardHistory,
-          boardViewports: state.boardViewports
-        }));
+        // For backward compatibility, also save to localStorage if no project
+        const projectStore = useProjectStore.getState();
+        if (!projectStore.currentProjectId) {
+          localStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, JSON.stringify(state.settings));
+          localStorage.setItem(STORAGE_KEYS.CANVAS_STATE, JSON.stringify({
+            viewport: state.viewport,
+            selectedIds: state.selectedIds,
+            currentBoardId: state.currentBoardId,
+            boardHistory: state.boardHistory,
+            boardViewports: state.boardViewports
+          }));
+        }
       } catch (error) {
         console.error('Failed to save canvas to storage:', error);
       }
     },
 
+    loadFromProject: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('📚 No current project - cannot load canvas data');
+        return;
+      }
+      
+      try {
+        const currentProject = projectStore.getCurrentProject();
+        if (!currentProject) {
+          console.error('📚 Current project not found');
+          return;
+        }
+        
+        const canvasWorkspace = currentProject.workspace.canvas;
+        
+        const updates = {
+          elements: canvasWorkspace.elements || [],
+          viewport: canvasWorkspace.viewport || { x: 0, y: 0, zoom: 1 },
+          selectedIds: canvasWorkspace.selectedIds || [],
+          currentBoardId: canvasWorkspace.currentBoardId || null,
+          boardHistory: canvasWorkspace.boardHistory || [],
+          boardViewports: canvasWorkspace.boardViewports || {},
+          settings: {
+            gridEnabled: canvasWorkspace.gridEnabled ?? true,
+            snapToGrid: canvasWorkspace.snapToGrid ?? true,
+            gridSize: 20,
+            showGrid: true
+          }
+        };
+        
+        // Load elements based on current board context
+        if (updates.currentBoardId) {
+          // We're in a nested board - find and load its elements
+          const findBoard = (elements, boardId) => {
+            for (const element of elements) {
+              if (element.id === boardId && element.type === 'board') {
+                return element;
+              }
+              if (element.type === 'board' && element.data?.elements) {
+                const found = findBoard(element.data.elements, boardId);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          
+          const currentBoard = findBoard(updates.elements, updates.currentBoardId);
+          if (currentBoard) {
+            updates.elements = currentBoard.data?.elements || [];
+            console.log('📚 Loaded nested board elements:', updates.elements.length);
+          } else {
+            console.warn('📚 Board not found, falling back to root');
+            updates.currentBoardId = null;
+            updates.boardHistory = [];
+          }
+        } else {
+          // We're at root level - filter out invalid elements
+          updates.elements = updates.elements.filter(el => el && el.id && el.type);
+          console.log('📚 Loaded root elements:', updates.elements.length);
+        }
+        
+        set((state) => ({ ...state, ...updates }));
+        console.log('📚 ✅ Canvas data loaded from project successfully');
+        
+      } catch (error) {
+        console.error('📚 ❌ Failed to load canvas from project:', error);
+        // Reset to safe state on error
+        set((state) => ({
+          ...state,
+          ...createCanvasState(),
+          currentBoardId: null,
+          boardHistory: [],
+          boardViewports: {}
+        }));
+      }
+    },
+
     loadFromStorage: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (projectStore.currentProjectId) {
+        // Use project-scoped storage
+        get().loadFromProject();
+        return;
+      }
+      
+      // Fallback to localStorage for backward compatibility
       try {
         const elementsData = localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS);
         const settingsData = localStorage.getItem(STORAGE_KEYS.CANVAS_SETTINGS);
