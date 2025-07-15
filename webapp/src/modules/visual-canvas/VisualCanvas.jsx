@@ -20,7 +20,8 @@ import TreeViewSidebar from './components/TreeViewSidebar.jsx';
 import HoudiniTreeView from './components/HoudiniTreeView.jsx';
 import PathBreadcrumb from './components/PathBreadcrumb.jsx';
 import { GRID_SIZE } from './types.js';
-import { Lightbulb, Brain } from 'lucide-react';
+import { Lightbulb, Brain, Save } from 'lucide-react';
+import ConsolidationPanel from '../mind-garden/components/ConsolidationPanel';
 
 const CreativeAtelier = () => {
   console.log('CreativeAtelier rendering - full functionality without gestures');
@@ -36,6 +37,7 @@ const CreativeAtelier = () => {
   const [isZooming, setIsZooming] = useState(false);
   const [zoomStart, setZoomStart] = useState(null);
   const [initialZoom, setInitialZoom] = useState(1);
+  const [consolidationOpen, setConsolidationOpen] = useState(false);
   
   // Unified Store integration
   const {
@@ -620,9 +622,18 @@ const CreativeAtelier = () => {
         </div>
       )}
       
-      {/* Back to Mind Garden Button - for temporary projects */}
+      {/* Action Buttons for temporary projects */}
       {isTemporaryProject && (
-        <div className="absolute top-20 right-4 z-50">
+        <div className="absolute top-20 right-4 z-50 flex items-center gap-3">
+          <button
+            onClick={() => setConsolidationOpen(true)}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
+            title="Save as permanent project"
+          >
+            <Save className="w-4 h-4" />
+            <span className="text-sm font-medium">Save as Project</span>
+          </button>
+          
           <button
             onClick={() => navigateToModule('mind-garden')}
             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
@@ -747,6 +758,28 @@ const CreativeAtelier = () => {
       
       {/* Path Breadcrumb */}
       <PathBreadcrumb />
+      
+      {/* Consolidation Panel for temporary projects */}
+      {isTemporaryProject && (
+        <ConsolidationPanel
+          isOpen={consolidationOpen}
+          onClose={() => setConsolidationOpen(false)}
+          nodes={elements.map(element => ({
+            id: element.id,
+            data: {
+              title: element.type === 'note' ? element.content?.substring(0, 50) || 'Note' : element.type,
+              content: element.type === 'note' ? element.content || '' : `${element.type} element`,
+              type: element.type,
+              created: element.created || new Date().toISOString(),
+              modified: element.modified || new Date().toISOString()
+            },
+            position: { x: element.position?.x || 0, y: element.position?.y || 0 },
+            type: 'card'
+          }))}
+          edges={[]}
+          tempProjectId={currentProject?.id}
+        />
+      )}
     </div>
   );
 };

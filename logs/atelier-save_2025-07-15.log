@@ -2363,3 +2363,290 @@ sent 1608180 bytes  received 3762 bytes  37400046 bytes/sec
 total size is 1588286  speedup is 0.99
 [2025-07-15 18:11:56] [SUCCESS] Local snapshot created: /Users/paoloricaldone/atelier/ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55
 [2025-07-15 18:11:56] [STEP] Committing and pushing to main repository...
+[feature/project-architecture-ai 32e8224] 🧪 Testing Phase Complete: New UX Workflow Fully Functional
+ Committer: PAOLO RICALDONE <paoloricaldone@PAOLOsMacStudio.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 155 files changed, 47744 insertions(+)
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/ATELIER-RESUME-COMMAND.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/CLAUDE.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/CLAUDE.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/SNAPSHOT_INFO.txt
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/atelier-backup.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/atelier-save.sh
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/backup-manager.sh
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/atelier-save-v2.1-changelog.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-MASTER-v5.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v2.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v2.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v3.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v3.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v4.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v4.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v4.2.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v4.2.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v5.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v5.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v6.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/blueprint-v6.1.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/cheat-sheet-versioning.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/cheat-sheet-versioning.md.backup
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/integration/ai-intelligence-strategy.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/integration/design-system-v2.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/integration/export-system-evolution.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/modules/business-switcher-roadmap-v3.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/modules/mind-garden-roadmap-v5.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/modules/project-tracker-roadmap-v2.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/modules/visual-canvas-roadmap-v4.3.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/tech-specs/persistence-system-v2.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/docs/versioning-workflow.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/frontend/css/style.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/frontend/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/frontend/js/app.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/package-lock.json
+ create mode 100755 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/scripts/auto-backup.sh
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/.env.example
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/.gitignore
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/MANUAL_UI_TEST_GUIDE.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/MIND-GARDEN-TAB-FIX-SUMMARY.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/MIND_GARDEN_TEST_REPORT.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/README.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/SETUP-v3.1.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/SETUP.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/TEST_REPORT.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/debug-components.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/docs/ATELIER-BLUEPRINT.md
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/eslint.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/index.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/package-lock.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/package.json
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/postcss.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/public/vite.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/App.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/contextAnalysis.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/conversationAnalysis.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/errorHandling.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/intelligenceEngine.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/promptBuilder.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/responseCache.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/ai/topicExtraction.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/assets/react.svg
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/MigrationManager.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ProjectQuickAccess.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ProjectSelector.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/layout/Layout.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/layout/Navbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/layout/Sidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/layout/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ui/Button.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ui/Card.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ui/Input.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/components/ui/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/config/constants.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/config/openai.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/config/supabase.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/hooks/useTheme.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/index.css
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/main.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/ai-assistant/FloatingAssistant.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/business-switcher/BusinessSwitcher.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/content-studio/ContentStudio.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/MindGarden.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/AICommandPalette.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ConsolidateButton.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ConsolidationPanel.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ConversationEdge.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ConversationThreadVisualization.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ConversationalNode.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/DebugPanel.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/EnhancedConversationEdge.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/EnhancedExportPreview.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/ExportPreview.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/KeyboardNavigation.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/KeyboardShortcutsHelp.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/MindGardenCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/MiniMap.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/NodeCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/OrganicEdge.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/SemanticExportEngine.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/components/SmartGroupingSystem.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/store.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/styles/conversationalNodes.scss
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/mind-garden/types/conversationTypes.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/MindGarden/AICommandPalette.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/MindGarden/MindGardenCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/MindGarden/NodeCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/MindGarden/OrganicEdge.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/ProjectStart.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/components/BrainFreestyleCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/components/BrainPurposeCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-start/components/QuickProjectForm.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/project-tracker/ProjectTracker.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/unified-store-test/UnifiedStoreTest.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/unified-store-test/UnifiedStoreTestSimple.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/VisualCanvas.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/AISuggestions.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/BreadcrumbNavigation.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/CanvasToolbar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/DraggableElement.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/HoudiniTreeView.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/PathBreadcrumb.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/PropertiesPanel.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/TreeDraggableNode.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/TreeDropZone.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/TreeViewSidebar.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/cards/AICard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/cards/BoardCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/cards/ImageCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/cards/LinkCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/components/cards/NoteCard.jsx
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/store.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/modules/visual-canvas/types.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/store/index.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/store/migrationUtils.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/store/projectStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/store/unifiedStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/store/useStore.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/src/test-mind-garden-unified.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/tailwind.config.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-ai-integration.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-context-processing.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-export-intelligence.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-integration.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-keyboard-nav.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-runner.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-visual-cues.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test-workflow-navigation.js
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/test.html
+ create mode 100644 ATELIER-VERSIONS/snapshot_2025-07-15_18-11-55/webapp/vite.config.js
+[2025-07-15 18:11:56] [SUCCESS] Committed with message: 🧪 Testing Phase Complete: New UX Workflow Fully Functional
+
+✅ START PAGE REDESIGN VERIFIED:
+- Clean 2-option layout: Brain Freestyle & Brain with Purpose
+- Eliminated complexity: No project lists in start phase
+- Clear messaging: Mind Garden branding with brain icon
+- Intuitive CTAs: 'Start Free Thinking' & 'Create Project'
+
+✅ TERMINOLOGY UPDATE CONFIRMED:
+- Canvas → Creative Atelier successfully implemented
+- Badge shows 'Creative Atelier' in temporary projects
+- Routing /atelier working as primary endpoint
+- All UI messaging consistent with new terminology
+
+✅ NAVIGATION ENHANCEMENT TESTED:
+- ProjectQuickAccess dropdown fully functional
+- Shows temporary projects (Brainstorm 2025-07-15 14:20)
+- Recent projects display (My First Project)
+- Quick actions: New Project & Browse All Projects
+
+✅ WORKFLOW LOGIC VERIFIED:
+- Brain phase clearly separated from project management
+- 'Back to Ideas' badge for temporary project navigation
+- User-friendly progression: Start → Brain → Atelier → Project
+- No confusion for new users, maintains power user features
+
+Ready for complete workflow testing: Brain Freestyle & Brain with Purpose flows\!
+To https://github.com/PRicaldone/atelier.git
+   26ee06a..32e8224  feature/project-architecture-ai -> feature/project-architecture-ai
+[2025-07-15 18:11:58] [SUCCESS] Pushed to remote repository
+[2025-07-15 18:11:58] [STEP] Checking if weekly backup is needed...
+[2025-07-15 18:11:58] [INFO] Today is not Friday. Skipping weekly backup creation.
+[2025-07-15 18:11:58] [STEP] Pushing backups to backup repository...
+Cloning into '/Users/paoloricaldone/atelier/temp-backup-repo'...
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+[2025-07-15 18:11:59] [ERROR] Failed to clone backup repository
+[2025-07-15 18:11:59] [WARNING] Backup repository sync had issues, but continuing...
+[2025-07-15 18:11:59] [STEP] Updating CLAUDE.md with latest session info...
+[2025-07-15 18:11:59] [SUCCESS] CLAUDE.md updated with latest session info
+[2025-07-15 18:11:59] [STEP] Analyzing commit for documentation updates...
+[2025-07-15 18:11:59] [INFO] Analyzing commit: 🧪 Testing Phase Complete: New UX Workflow Fully Functional
+
+✅ START PAGE REDESIGN VERIFIED:
+- Clean 2-option layout: Brain Freestyle & Brain with Purpose
+- Eliminated complexity: No project lists in start phase
+- Clear messaging: Mind Garden branding with brain icon
+- Intuitive CTAs: 'Start Free Thinking' & 'Create Project'
+
+✅ TERMINOLOGY UPDATE CONFIRMED:
+- Canvas → Creative Atelier successfully implemented
+- Badge shows 'Creative Atelier' in temporary projects
+- Routing /atelier working as primary endpoint
+- All UI messaging consistent with new terminology
+
+✅ NAVIGATION ENHANCEMENT TESTED:
+- ProjectQuickAccess dropdown fully functional
+- Shows temporary projects (Brainstorm 2025-07-15 14:20)
+- Recent projects display (My First Project)
+- Quick actions: New Project & Browse All Projects
+
+✅ WORKFLOW LOGIC VERIFIED:
+- Brain phase clearly separated from project management
+- 'Back to Ideas' badge for temporary project navigation
+- User-friendly progression: Start → Brain → Atelier → Project
+- No confusion for new users, maintains power user features
+
+Ready for complete workflow testing: Brain Freestyle & Brain with Purpose flows\!
+[2025-07-15 18:11:59] [INFO] Changed files:      155 files
+[2025-07-15 18:11:59] [INFO] Analysis result: Blueprint=true, CheatSheet=true
+[2025-07-15 18:11:59] [INFO] Reason: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-15 18:11:59] [INFO] 🎯 Updating blueprint: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-15 18:11:59] [STEP] Smart updating blueprint with latest changes...
+[2025-07-15 18:11:59] [SUCCESS] Blueprint updated with commit: 32e8224 🧪 Testing Phase Complete: New UX Workflow Fully Functional
+[2025-07-15 18:11:59] [INFO] 🎯 Updating cheat-sheet: Major feature/architecture change detected. Documentation/workflow change detected. 
+[2025-07-15 18:11:59] [STEP] Smart updating cheat-sheet with latest commit patterns...
+[2025-07-15 18:11:59] [SUCCESS] Cheat-sheet updated with new commit example: 🧪 Testing Phase Complete: New UX Workflow Fully Functional
+[2025-07-15 18:11:59] [SUCCESS] 🤖 Smart documentation updates completed
+[2025-07-15 18:11:59] [STEP] Generating operation report...
+[2025-07-15 18:11:59] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-15_18-11-55.txt
+[2025-07-15 18:11:59] [SUCCESS] atelier-save.sh completed successfully! 🎉
+[2025-07-15 18:11:59] [INFO] Cleaning up temporary files...
+[2025-07-15 18:29:33] [INFO] Starting atelier-save.sh v2.1
+[2025-07-15 18:29:33] [INFO] Custom commit message: 🎯 Brain Freestyle Workflow Complete: Full User Journey Verified
+
+✅ BRAIN FREESTYLE COMPLETE END-TO-END:
+- Start → Brain Freestyle → Temporary Mind Garden → Export to Creative Atelier → Save as Project
+- All conversion logic working: elements → nodes for ConsolidationPanel
+- ProjectQuickAccess shows new project in top bar
+- Seamless temporary → permanent project conversion
+
+✅ CONSOLIDATION PANEL ENHANCED:
+- Creative Atelier elements properly converted to nodes format
+- Note elements show content, other elements show type
+- Selection interface: All/None/Connected/Recent quick select
+- Project configuration: Name + Type selection working
+
+✅ FLEXIBLE WORKFLOW CONFIRMED:
+- Can consolidate from Mind Garden (original path)
+- Can consolidate from Creative Atelier (new flexibility)
+- Save as Project button in both locations
+- Maximum user flexibility achieved
+
+✅ PROJECT MANAGEMENT INTEGRATION:
+- New projects appear in ProjectQuickAccess dropdown
+- Proper project switching and navigation
+- Temporary → permanent conversion seamless
+- Project types (NFT, VFX, Branding, General) working
+
+Ready for Brain with Purpose workflow testing - major milestone achieved!
+[2025-07-15 18:29:33] [STEP] Checking prerequisites...
+[2025-07-15 18:29:33] [SUCCESS] Prerequisites check passed
+[2025-07-15 18:29:33] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-15 18:29:33] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-15 18:29:33] [INFO] 📝 Found 6 modified files
