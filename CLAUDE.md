@@ -160,44 +160,105 @@ git log --oneline -1
 
 ### 🌳 Branch Management
 
+**MANDATORY FEATURE BRANCH POLICY** 🚨
+
+**⚠️ IMPORTANT**: Per QUALSIASI nuova funzionalità rilevante o nuovo modulo, Claude DEVE SEMPRE creare una feature branch dedicata. NON sviluppare mai direttamente su `main` per features significative.
+
 **Branch Structure:**
 ```
-main              → Stable, production-ready (Visual Canvas + Security)
-feature/*         → Development branches (AI Intelligence, new features)
+main              → Stable, production-ready (Mind Garden v5.1 + Export System)
+feature/*         → MANDATORY per nuove features rilevanti
+hotfix/*          → Solo per bug critici su main
+experimental/*    → Proof of concepts e sperimentazioni
 ```
+
+**🚨 MANDATORY BRANCH CREATION TRIGGERS:**
+- ✨ **Nuovi moduli**: Qualsiasi nuovo modulo principale
+- 🔧 **Funzionalità rilevanti**: Features che richiedono >5 file modificati
+- 🤖 **Integrazioni AI**: Nuovi sistemi AI o upgrade significativi
+- 🏢 **SaaS features**: Authentication, billing, collaboration
+- 📦 **Breaking changes**: Modifiche che potrebbero rompere esistente
+- 🎯 **Roadmap milestones**: Ogni milestone principale del roadmap
 
 **Current Status:**
 - **Active branch**: `main` ✅ 
-- **Contains**: AI Intelligence Engine v4.1 + Unified Store Architecture + NavigationSync
+- **Contains**: Mind Garden v5.1 complete + SaaS roadmap documentation
 - **GitHub URL**: `https://github.com/PRicaldone/atelier/tree/main`
-- **Feature branch**: `feature/unified-store-test` MERGED ✅ e rimossa
+- **Last feature**: Mind Garden context threading + export system
 
-**🎯 Ready for new development:**
-- main branch stabile con tutti i milestone
-- Pronto per nuovo feature branch per Mind Garden
-- NavigationSync bidirezionale come fondazione solida
+**🎯 MANDATORY Workflow per nuove features:**
+
+**Step 1: SEMPRE creare feature branch**
+```bash
+# Template naming convention
+git checkout -b feature/[module-name]-[description]
+git checkout -b feature/saas-authentication
+git checkout -b feature/mind-garden-templates
+git checkout -b feature/canvas-collaboration
+git checkout -b experimental/anthropic-sdk-upgrade
+```
+
+**Step 2: Sviluppo e testing**
+```bash
+# Sviluppo sulla feature branch
+git add . && git commit -m "feat: implement new feature"
+./atelier-save.sh "Feature progress - specific description"
+
+# Testing e iteration
+npm run dev
+npm run build
+npm run typecheck
+```
+
+**Step 3: Merge solo quando completo**
+```bash
+# Solo quando feature è 100% completa e testata
+git checkout main
+git merge feature/nome-feature
+git branch -d feature/nome-feature  # Cleanup locale
+git push origin --delete feature/nome-feature  # Cleanup remote
+```
+
+**🚫 FORBIDDEN: Direct main development**
+- NON commitare mai features direttamente su main
+- NON usare main per sperimentazione
+- NON mergere features incomplete
+
+**✅ ALLOWED on main:**
+- Hotfix critici (1-2 file max)
+- Documentation updates
+- Configuration tweaks
+- Emergency bug fixes
 
 **Branch Commands:**
 ```bash
-# Vedi tutte le branch
+# Verifica branch corrente
 git branch -a
+git status
 
-# Cambia branch locale
-git checkout main
-git checkout feature/unified-store-test
+# Crea feature branch (MANDATORY per nuove features)
+git checkout -b feature/description-of-work
 
-# Verifica remote
+# Verifica remote branches
 git ls-remote --heads origin
 
-# Merge feature → main (quando pronto)
-git checkout main
-git merge feature/unified-store-test
+# Cleanup dopo merge
+git branch -d feature/old-feature
+git push origin --delete feature/old-feature
 ```
 
-**🎯 Workflow Development:**
-1. Sviluppa su `feature/unified-store-test`
-2. Push regolari con atelier-save.sh
-3. Merge su `main` quando milestone completi
+**🎯 MANDATORY Feature Branch Protocol:**
+1. **PRIMA** di iniziare qualsiasi sviluppo significativo → crea feature branch
+2. Sviluppa SOLO sulla feature branch
+3. Push regolari con atelier-save.sh
+4. Merge su `main` SOLO quando feature completa e testata
+5. Cleanup branch dopo merge
+
+**🤖 Claude Behavior:**
+- Claude DEVE creare feature branch per qualsiasi richiesta di sviluppo significativo
+- Claude DEVE avvisare se l'utente vuole sviluppare direttamente su main
+- Claude DEVE suggerire nomi appropriati per feature branches
+- Claude DEVE verificare che siamo sulla branch corretta prima di iniziare sviluppo
 
 ### 🌐 Development
 
