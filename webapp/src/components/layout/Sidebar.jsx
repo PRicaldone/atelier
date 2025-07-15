@@ -2,19 +2,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ChevronLeft, 
-  Grid3x3, 
-  Rocket, 
-  FolderOpen, 
-  Zap,
+  Rocket,
   Menu
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 const menuItems = [
-  { id: 'canvas', label: 'Visual Canvas', icon: Grid3x3, path: '/canvas' },
   { id: 'start', label: 'Project Start', icon: Rocket, path: '/start' },
-  { id: 'tracker', label: 'Project Tracker', icon: FolderOpen, path: '/tracker' },
-  { id: 'business', label: 'Business Mode', icon: Zap, path: '/business' },
 ];
 
 const Sidebar = () => {

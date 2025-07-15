@@ -5,7 +5,10 @@ export const ELEMENT_TYPES = {
   NOTE: 'note',
   IMAGE: 'image', 
   LINK: 'link',
-  AI: 'ai'
+  AI: 'ai',
+  // AGENTIC NODES 🤖
+  FILE_OPENER: 'file-opener',
+  URL_LAUNCHER: 'url-launcher'
 };
 
 export const GRID_SIZE = 20;
@@ -46,6 +49,12 @@ export const createCanvasElement = (type, position = { x: 0, y: 0 }) => {
       break;
     case ELEMENT_TYPES.AI:
       baseElement.size = { width: 300, height: 200 };
+      break;
+    case ELEMENT_TYPES.FILE_OPENER:
+      baseElement.size = { width: 280, height: 140 };
+      break;
+    case ELEMENT_TYPES.URL_LAUNCHER:
+      baseElement.size = { width: 280, height: 140 };
       break;
     default:
       baseElement.size = { width: 200, height: 150 };
@@ -121,6 +130,32 @@ const getDefaultElementData = (type) => {
         status: 'idle', // idle, processing, completed, error
         tokens: 0,
         temperature: 0.7
+      };
+    
+    case ELEMENT_TYPES.FILE_OPENER:
+      return {
+        filePath: '',
+        fileName: 'Select File',
+        description: 'Click to open file',
+        fileType: 'unknown',
+        fileSize: null,
+        lastModified: null,
+        application: 'auto', // auto-detect or specific app
+        icon: '📄',
+        status: 'ready', // ready, opening, error
+        exists: true
+      };
+    
+    case ELEMENT_TYPES.URL_LAUNCHER:
+      return {
+        url: '',
+        title: 'Enter URL',
+        description: 'Click to open link',
+        favicon: null,
+        preview: false,
+        icon: '🔗',
+        status: 'ready', // ready, opening, error
+        openInNewTab: true
       };
     
     default:

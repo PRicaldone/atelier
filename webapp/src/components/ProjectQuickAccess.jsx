@@ -22,6 +22,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { useProjectStore, PROJECT_TYPES } from '../store/projectStore';
+import { useUnifiedStore } from '../store/unifiedStore';
 
 const PROJECT_TYPE_ICONS = {
   [PROJECT_TYPES.NFT]: Sparkles,
@@ -39,6 +40,8 @@ const ProjectQuickAccess = ({ onOpenProjectSelector }) => {
     getProjectStats,
     selectProject 
   } = useProjectStore();
+  
+  const { navigateToModule } = useUnifiedStore();
   
   const [showDropdown, setShowDropdown] = useState(false);
   
@@ -107,7 +110,7 @@ const ProjectQuickAccess = ({ onOpenProjectSelector }) => {
           >
             {/* Current Project */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
                   <ProjectIcon className="w-4 h-4 text-white" />
                 </div>
@@ -119,6 +122,28 @@ const ProjectQuickAccess = ({ onOpenProjectSelector }) => {
                     {currentProject.type} • {currentProject.phase}
                   </p>
                 </div>
+              </div>
+              
+              {/* Quick Module Access */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    navigateToModule('mind-garden');
+                  }}
+                  className="flex-1 px-3 py-2 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-colors"
+                >
+                  Mind Garden
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    navigateToModule('canvas');
+                  }}
+                  className="flex-1 px-3 py-2 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors"
+                >
+                  Creative Atelier
+                </button>
               </div>
             </div>
             

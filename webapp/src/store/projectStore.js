@@ -573,7 +573,7 @@ export const useProjectStore = create(
       }
     ),
     {
-      name: 'Project Store'
+      name: 'ATELIER_PROJECTS_STORE'
     }
   )
 );

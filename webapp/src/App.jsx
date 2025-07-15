@@ -60,6 +60,15 @@ function NavigationSync() {
     
     console.log('🔄 Mappings:', { moduleFromRoute, routeFromModule });
     
+    // IMPORTANT: Allow certain routes to work independently without sync
+    const independentRoutes = ['/start', '/tracker', '/business'];
+    const isIndependentRoute = independentRoutes.includes(location.pathname);
+    
+    if (isIndependentRoute) {
+      console.log('🔄 Independent route - no sync needed:', location.pathname);
+      return;
+    }
+    
     // Check if we need Store→Route sync first (button clicks)
     if (routeFromModule && location.pathname !== routeFromModule) {
       // Store changed, update route (higher priority)

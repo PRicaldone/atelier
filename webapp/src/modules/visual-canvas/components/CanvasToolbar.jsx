@@ -19,7 +19,9 @@ import {
   Target,
   Download,
   Layout,
-  Plus
+  Plus,
+  FileText,
+  ExternalLink
 } from 'lucide-react';
 
 export const CanvasToolbar = () => {
@@ -176,6 +178,37 @@ export const CanvasToolbar = () => {
               )}
               <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 AI Assistant {(ai?.suggestions?.length || 0) > 0 ? `(${ai.suggestions.length} suggestions)` : ''}
+              </span>
+            </button>
+            
+            {/* AGENTIC NODES 🤖 */}
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+            
+            <button
+              onClick={() => handleAddElement(ELEMENT_TYPES.FILE_OPENER)}
+              className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors group relative"
+              title="Add File Opener (Agentic)"
+            >
+              <FileText size={20} />
+              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                🤖
+              </span>
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                File Opener (Agentic)
+              </span>
+            </button>
+            
+            <button
+              onClick={() => handleAddElement(ELEMENT_TYPES.URL_LAUNCHER)}
+              className="p-2 text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors group relative"
+              title="Add URL Launcher (Agentic)"
+            >
+              <ExternalLink size={20} />
+              <span className="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                🤖
+              </span>
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                URL Launcher (Agentic)
               </span>
             </button>
           </div>

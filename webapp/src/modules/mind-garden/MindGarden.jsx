@@ -791,33 +791,8 @@ const MindGardenInner = () => {
         </div>
       )}
 
-      {/* Instructions Panel - Bottom Right (hide for temporary projects) */}
-      {!isTemporaryProject && (
-        <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 max-w-xs">
-          <div className="font-medium mb-1">🌱 Mind Garden v5.1</div>
-          <div>• Double-click canvas to add node</div>
-          <div>• Double-click node to edit content</div>
-          <div>• Tab/Shift+Tab for child/sibling nodes</div>
-          <div>• Arrow keys for navigation</div>
-          <div>• <strong>Delete key</strong> to remove selected node</div>
-          <div>• <strong>Cmd+Delete</strong> to force delete while editing</div>
-          <div>• Press H for keyboard shortcuts</div>
-        </div>
-      )}
 
 
-      {/* Day 5: Mini-Map */}
-      {miniMapVisible && (
-        <MiniMap
-          nodes={nodes}
-          edges={edges}
-          viewport={reactFlowInstance.getViewport()}
-          onViewportChange={reactFlowInstance.setViewport}
-          selectedNodeId={selectedNodeId}
-          onNodeSelect={setSelectedNodeId}
-          position="bottom-right"
-        />
-      )}
 
       {/* Day 5: Keyboard Shortcuts Help */}
       <KeyboardShortcutsHelp
