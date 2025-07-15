@@ -458,11 +458,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 15/07/2025 11:10
-**Ultimo commit:** 20f0d02 🔄 WIP: Canvas store migration to project-scoped storage - partial implementation
+**Data:** 15/07/2025 12:01
+**Ultimo commit:** 4577213 🤖 Auto-save: Resume session dopo interruzione precedente
 **Branch:** feature/project-architecture-ai
-**Commit totali:** 137
-**Snapshots:** 65 | **Backups:** 0
+**Commit totali:** 139
+**Snapshots:** 66 | **Backups:** 0
 
-**Ultima modifica:** 🔄 WIP: Canvas store migration to project-scoped storage - partial implementation
+**Ultima modifica:** 🤖 Auto-save: Resume session dopo interruzione precedente
 
