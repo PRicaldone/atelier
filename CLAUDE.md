@@ -397,11 +397,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 15/07/2025 01:45
-**Ultimo commit:** 79d809d 🌱 Mind Garden v5.1 Context Fix - Parent Chain for Child & Sibling Nodes
+**Data:** 15/07/2025 02:11
+**Ultimo commit:** f026d72 🌱 Mind Garden v5.1 Export System Complete - Smart Grouping + Canvas Integration Working
 **Branch:** main
-**Commit totali:** 130
-**Snapshots:** 63 | **Backups:** 0
+**Commit totali:** 132
+**Snapshots:** 64 | **Backups:** 0
 
-**Ultima modifica:** 🌱 Mind Garden v5.1 Context Fix - Parent Chain for Child & Sibling Nodes
+**Ultima modifica:** 🌱 Mind Garden v5.1 Export System Complete - Smart Grouping + Canvas Integration Working
 
