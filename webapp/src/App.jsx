@@ -28,7 +28,7 @@ function NavigationSync() {
   const routeToModule = {
     '/canvas': 'canvas',
     '/unified-store': 'unified-store-test',
-    '/start': 'mind-garden',
+    '/start': 'project-start',
     '/mind-garden': 'mind-garden',
     '/tracker': 'projects'
   };
@@ -36,6 +36,7 @@ function NavigationSync() {
   const moduleToRoute = {
     'canvas': '/canvas',
     'unified-store-test': '/unified-store',
+    'project-start': '/start',
     'mind-garden': '/mind-garden',
     'projects': '/tracker'
   };

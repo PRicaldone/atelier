@@ -23,7 +23,8 @@ export const PROJECT_TYPES = {
   NFT: 'nft',
   VFX: 'vfx', 
   BRANDING: 'branding',
-  GENERAL: 'general'
+  GENERAL: 'general',
+  TEMPORARY: 'temporary'
 };
 
 // Project phases for workflow management
@@ -96,6 +97,21 @@ Focus on authentic, memorable brand experiences that resonate with target audien
 
 Focus on flexible, thoughtful assistance that adapts to the specific needs of each project.`,
     features: ['creative_ideation', 'project_planning', 'problem_solving', 'adaptive_support']
+  },
+  
+  [PROJECT_TYPES.TEMPORARY]: {
+    model: 'claude-3-5-sonnet-latest',
+    temperature: 0.8,
+    maxTokens: 2048,
+    systemPrompt: `You are a rapid brainstorming assistant for quick creative sessions. You help with:
+- Free-flowing ideation without constraints
+- Rapid concept exploration and expansion
+- Creative connections between ideas
+- Energetic, supportive brainstorming facilitation
+- No judgment, all ideas are welcome
+
+Focus on encouraging creative flow and capturing ideas quickly in a supportive environment.`,
+    features: ['rapid_ideation', 'creative_flow', 'idea_expansion', 'supportive_facilitation']
   }
 };
 
@@ -190,6 +206,31 @@ export const useProjectStore = create(
           
           console.log('📁 Created new project:', newProject.name, newProject.type);
           return newProject.id;
+        },
+        
+        // Create temporary project for quick brainstorming
+        createTemporaryProject: () => {
+          const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+          const tempProject = createDefaultProject(`Brainstorm ${timestamp}`, PROJECT_TYPES.TEMPORARY);
+          
+          // Add temporary project metadata
+          tempProject.isTemporary = true;
+          tempProject.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
+          tempProject.parkingLot = {
+            discardedNodes: [],
+            discardedEdges: []
+          };
+          
+          set((state) => ({
+            projects: {
+              ...state.projects,
+              [tempProject.id]: tempProject
+            },
+            currentProjectId: tempProject.id
+          }));
+          
+          console.log('🧠 Created temporary project:', tempProject.name);
+          return tempProject.id;
         },
         
         selectProject: (projectId) => {
@@ -389,6 +430,68 @@ export const useProjectStore = create(
           }
           
           return projectId;
+        },
+        
+        // Consolidate temporary project into permanent project
+        consolidateTemporaryProject: (tempProjectId, newName, newType, selectedNodeIds = []) => {
+          const tempProject = get().projects[tempProjectId];
+          if (!tempProject || !tempProject.isTemporary) {
+            console.warn('📁 Not a temporary project:', tempProjectId);
+            return null;
+          }
+          
+          // Create new permanent project
+          const newProjectId = get().createProject(newName, newType);
+          const newProject = get().projects[newProjectId];
+          
+          // Transfer selected nodes or all nodes
+          const allNodes = tempProject.workspace.mindGarden.nodes;
+          const allEdges = tempProject.workspace.mindGarden.edges;
+          
+          let nodesToTransfer, edgesToTransfer, nodesToPark;
+          
+          if (selectedNodeIds.length > 0) {
+            // Transfer only selected nodes
+            nodesToTransfer = allNodes.filter(node => selectedNodeIds.includes(node.id));
+            edgesToTransfer = allEdges.filter(edge => 
+              selectedNodeIds.includes(edge.source) && selectedNodeIds.includes(edge.target)
+            );
+            nodesToPark = allNodes.filter(node => !selectedNodeIds.includes(node.id));
+          } else {
+            // Transfer all nodes
+            nodesToTransfer = allNodes;
+            edgesToTransfer = allEdges;
+            nodesToPark = [];
+          }
+          
+          // Update new project with transferred data
+          get().updateWorkspace('mindGarden', {
+            nodes: nodesToTransfer,
+            edges: edgesToTransfer,
+            viewport: tempProject.workspace.mindGarden.viewport
+          });
+          
+          // Add parked nodes to parking lot
+          if (nodesToPark.length > 0) {
+            const parkedItems = nodesToPark.map(node => ({
+              node,
+              discardedAt: new Date().toISOString(),
+              reason: 'consolidation-skip'
+            }));
+            
+            get().updateProject(newProjectId, {
+              parkingLot: {
+                discardedNodes: parkedItems,
+                discardedEdges: []
+              }
+            });
+          }
+          
+          // Delete temporary project
+          get().deleteProject(tempProjectId);
+          
+          console.log('🎯 Consolidated temporary project:', newName, 'Type:', newType);
+          return newProjectId;
         },
         
         // Initialization

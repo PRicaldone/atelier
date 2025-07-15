@@ -19,7 +19,10 @@ import ConversationThreadVisualization from './components/ConversationThreadVisu
 import MiniMap from './components/MiniMap';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import DebugPanel from './components/DebugPanel';
+import ConsolidateButton from './components/ConsolidateButton';
+import ConsolidationPanel from './components/ConsolidationPanel';
 import { useUnifiedStore } from '../../store/unifiedStore';
+import { useProjectStore } from '../../store/projectStore';
 import { useMindGardenStore } from './store';
 import { Plus, Download, Map, Keyboard, Layers, MessageSquare } from 'lucide-react';
 
@@ -39,6 +42,7 @@ const edgeTypes = {
 const MindGardenInner = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [exportPreviewOpen, setExportPreviewOpen] = useState(false);
+  const [consolidationOpen, setConsolidationOpen] = useState(false);
   const [commandPosition, setCommandPosition] = useState({ x: 0, y: 0 });
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedNodes, setSelectedNodes] = useState([]);
@@ -59,6 +63,9 @@ const MindGardenInner = () => {
 
   // Unified Store integration
   const { navigateToModule, analyzeCanvasContext } = useUnifiedStore();
+  
+  // Project Store integration
+  const { getCurrentProject } = useProjectStore();
   
   // Mind Garden Store
   const {
@@ -90,6 +97,10 @@ const MindGardenInner = () => {
     initializeStore();
     // Don't auto-navigate to avoid redirect loop
   }, [initializeStore]);
+  
+  // Check if current project is temporary
+  const currentProject = getCurrentProject();
+  const isTemporaryProject = currentProject?.isTemporary || false;
 
   // Center view on nodes after ReactFlow is ready
   useEffect(() => {
@@ -710,6 +721,21 @@ const MindGardenInner = () => {
           setExportPreviewOpen(false);
         }}
         topicExtractor={useUnifiedStore.getState().getTopicExtractor?.()}
+      />
+
+      {/* Consolidation Components */}
+      <ConsolidateButton
+        isVisible={isTemporaryProject && nodes.length > 0}
+        nodeCount={nodes.length}
+        onClick={() => setConsolidationOpen(true)}
+      />
+      
+      <ConsolidationPanel
+        isOpen={consolidationOpen}
+        onClose={() => setConsolidationOpen(false)}
+        nodes={nodes}
+        edges={edges}
+        tempProjectId={currentProject?.id}
       />
 
       {/* Export History - Bottom Left */}

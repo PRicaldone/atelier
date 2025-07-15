@@ -32,6 +32,7 @@ import {
   Star
 } from 'lucide-react';
 import { useProjectStore, PROJECT_TYPES, PROJECT_PHASES } from '../store/projectStore';
+import { useUnifiedStore } from '../store/unifiedStore';
 
 // Project type configurations with icons and descriptions
 const PROJECT_TYPE_CONFIG = {
@@ -65,7 +66,7 @@ const PROJECT_TYPE_CONFIG = {
   }
 };
 
-const ProjectSelector = ({ isOpen, onClose }) => {
+const ProjectSelector = ({ isOpen, onClose, selectedPhase = null, mode = 'select' }) => {
   const {
     projects,
     currentProjectId,
@@ -75,11 +76,22 @@ const ProjectSelector = ({ isOpen, onClose }) => {
     getProjectStats
   } = useProjectStore();
   
+  const { navigateToModule } = useUnifiedStore();
+  
   const [view, setView] = useState('select'); // 'select' | 'create' | 'settings'
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState(PROJECT_TYPES.GENERAL);
   const [projectName, setProjectName] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
+  
+  // Auto-open create form when selectedPhase is provided or mode is 'create'
+  useEffect(() => {
+    if (selectedPhase || mode === 'create') {
+      setShowCreateForm(true);
+    } else if (mode === 'select') {
+      setShowCreateForm(false);
+    }
+  }, [selectedPhase, mode]);
   
   // Get project statistics
   const stats = getProjectStats();
@@ -101,6 +113,12 @@ const ProjectSelector = ({ isOpen, onClose }) => {
     setProjectName('');
     setShowCreateForm(false);
     onClose();
+    
+    // If we have a selected phase, navigate to Mind Garden
+    if (selectedPhase) {
+      console.log('🚀 Project created, navigating to Mind Garden for phase:', selectedPhase.title);
+      navigateToModule('mind-garden');
+    }
   };
   
   // Handle project selection
@@ -147,10 +165,17 @@ const ProjectSelector = ({ isOpen, onClose }) => {
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {showCreateForm ? 'Create New Project' : 'Select Project'}
+                {selectedPhase && (
+                  <span className="ml-2 text-lg font-medium text-blue-600 dark:text-blue-400">
+                    for {selectedPhase.title}
+                  </span>
+                )}
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
                 {showCreateForm 
-                  ? 'Choose a template and configure your new creative workspace'
+                  ? selectedPhase 
+                    ? `Create a new project to start with ${selectedPhase.title} phase`
+                    : 'Choose a template and configure your new creative workspace'
                   : `Choose from ${stats.totalProjects} projects or create a new one`
                 }
               </p>
