@@ -136,7 +136,7 @@ export const migrateCanvasData = (projectStore) => {
     canvasData.boards = boards;
     
     // Update project workspace
-    projectStore.updateWorkspace('canvas', canvasData);
+    projectStore.updateWorkspace('scriptorium', canvasData);
     
     console.log('🔄 Canvas migration completed:', {
       elements: canvasData.elements.length,

@@ -1,13 +1,14 @@
 /**
  * Canvas Adapter - Safe interface for canvas operations
- * Handles multiple canvas implementations (visual-canvas, creative-atelier, etc.)
+ * Handles multiple canvas implementations (scriptorium, visual-canvas, creative-atelier, etc.)
+ * Primary module: scriptorium (formerly creative-atelier)
  */
 import moduleRegistry from '../registry/ModuleRegistry.js';
 import { adapterLogger } from '../monitoring/ModuleLogger.js';
 
 class CanvasAdapter {
   constructor() {
-    this.moduleNames = ['canvas', 'visual-canvas', 'creative-atelier'];
+    this.moduleNames = ['scriptorium', 'canvas', 'visual-canvas', 'creative-atelier'];
     this._canvasStore = null;
     this._initialized = false;
     this.logger = adapterLogger.child({ adapter: 'canvas' });

@@ -33,8 +33,9 @@ function NavigationSync() {
   
   // Route mapping
   const routeToModule = {
-    '/atelier': 'canvas',
-    '/canvas': 'canvas', // Backward compatibility
+    '/scriptorium': 'scriptorium',
+    '/atelier': 'scriptorium', // Backward compatibility
+    '/canvas': 'scriptorium', // Backward compatibility
     '/unified-store': 'unified-store-test',
     '/start': 'project-start',
     '/mind-garden': 'mind-garden',
@@ -44,7 +45,8 @@ function NavigationSync() {
   };
   
   const moduleToRoute = {
-    'canvas': '/atelier',
+    'scriptorium': '/scriptorium',
+    'canvas': '/scriptorium', // Backward compatibility alias
     'unified-store-test': '/unified-store',
     'project-start': '/start',
     'mind-garden': '/mind-garden',
@@ -158,7 +160,8 @@ function App() {
         
         {/* Main Routes */}
         <Routes>
-          <Route path="/" element={<Navigate to="/atelier" replace />} />
+          <Route path="/" element={<Navigate to="/scriptorium" replace />} />
+          <Route path="/scriptorium" element={<CreativeAtelier />} />
           <Route path="/atelier" element={<CreativeAtelier />} />
           <Route path="/canvas" element={<CreativeAtelier />} />
           <Route path="/start" element={<ProjectStart />} />

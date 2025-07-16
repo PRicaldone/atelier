@@ -18,15 +18,15 @@ export async function initializeModules() {
   console.log('[ModuleInit] Starting module initialization...');
   
   try {
-    // Register Visual Canvas module with multiple aliases
+    // Register Scriptorium module (formerly Creative Atelier) with backward compatibility aliases
     moduleRegistry.register(
-      'visual-canvas',
+      'scriptorium',
       async () => {
         const { useCanvasStore } = await import('../visual-canvas/store.js');
         return useCanvasStore;
       },
       {
-        aliases: ['canvas', 'creative-atelier'],
+        aliases: ['canvas', 'creative-atelier', 'visual-canvas'],
         adapter: canvasAdapter,
         contract: ICanvas
       }
@@ -142,6 +142,7 @@ function setupEventHandlers() {
  */
 export function getModuleAdapter(moduleName) {
   switch (moduleName) {
+    case 'scriptorium':
     case 'canvas':
     case 'visual-canvas':
     case 'creative-atelier':

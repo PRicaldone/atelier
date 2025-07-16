@@ -35,7 +35,7 @@ export const generateTestEvents = () => {
   setTimeout(() => {
     eventBus.emit(ModuleEvents.MINDGARDEN_EXPORT_REQUESTED, {
       nodeIds: ['node-' + Date.now()],
-      target: 'canvas'
+      target: 'scriptorium'
     });
   }, 1500);
   

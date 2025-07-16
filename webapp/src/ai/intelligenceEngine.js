@@ -173,7 +173,7 @@ class IntelligenceEngine {
       // MOCK ANALYSIS for now (will be replaced with real AI)
       const mockAnalysis = {
         timestamp: Date.now(),
-        module: state.currentModule || 'canvas',
+        module: state.currentModule || 'scriptorium',
         elementsCount: state.canvas.elements?.length || 0,
         suggestions: this.generateMockSuggestions(state),
         context: {
@@ -210,11 +210,11 @@ class IntelligenceEngine {
   // GENERATE MOCK SUGGESTIONS (temporary) - Return simple strings for UI compatibility
   generateMockSuggestions(state) {
     const elementsCount = state.canvas.elements?.length || 0
-    const currentModule = state.currentModule || 'canvas'
+    const currentModule = state.currentModule || 'scriptorium'
     
     const suggestions = []
     
-    if (currentModule === 'canvas') {
+    if (currentModule === 'scriptorium') {
       if (elementsCount === 0) {
         suggestions.push('💡 Start your creative workflow - Add a project board to organize your ideas')
         suggestions.push('📝 Capture your thoughts - Create notes to document your creative process')
@@ -734,9 +734,9 @@ Provide a natural, useful transformation that maintains the essence while adapti
     
     // Use context-aware suggestions
     const state = this.store?.getState() || context
-    const currentModule = state.currentModule || 'canvas'
+    const currentModule = state.currentModule || 'scriptorium'
     
-    if (currentModule === 'canvas') {
+    if (currentModule === 'scriptorium') {
       return this.generateCanvasSuggestions(state)
     }
     

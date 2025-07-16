@@ -124,10 +124,13 @@ export function createModuleLogger(moduleName, defaultContext = {}) {
 /**
  * Pre-configured loggers for existing modules
  */
-export const canvasLogger = createModuleLogger('canvas', {
-  module: 'visual-canvas',
+export const scriptoriumLogger = createModuleLogger('scriptorium', {
+  module: 'scriptorium',
   component: 'store'
 });
+
+// Backward compatibility alias
+export const canvasLogger = scriptoriumLogger;
 
 export const mindGardenLogger = createModuleLogger('mind-garden', {
   module: 'mind-garden',

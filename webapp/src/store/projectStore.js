@@ -396,7 +396,7 @@ export const useProjectStore = create(
               break;
               
             case PROJECT_TYPES.VFX:
-              get().updateWorkspace('canvas', {
+              get().updateWorkspace('scriptorium', {
                 elements: [
                   // Pre-populate with VFX pipeline template
                   {
