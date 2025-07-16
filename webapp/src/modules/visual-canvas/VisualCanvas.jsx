@@ -688,6 +688,7 @@ const CreativeAtelier = () => {
           style={gridStyle}
           onClick={handleCanvasClick}
           onContextMenu={(e) => e.preventDefault()} // Disable context menu for right-click zoom
+          data-canvas-background="true"
         >
           {/* Viewport transform container */}
           <motion.div

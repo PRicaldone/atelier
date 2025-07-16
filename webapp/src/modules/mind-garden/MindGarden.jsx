@@ -677,7 +677,7 @@ const MindGardenInner = () => {
         if (e.button === 2) {
           handleMouseDown(e);
         }
-      })
+      }}
       style={{ cursor: isRightDragging ? 'ns-resize' : 'default' }}
     >
       <ReactFlow
@@ -709,7 +709,7 @@ const MindGardenInner = () => {
         connectionMode="loose"
         connectOnClick={false}
         selectionOnDrag={false}
-        panOnDrag={[1]}
+        panOnDrag={false}
         panOnScroll={false}
         zoomOnScroll={true}
         minZoom={0.1}

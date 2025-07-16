@@ -35,19 +35,9 @@ export const useSelectionBox = (containerRef, onSelectionComplete) => {
       return;
     }
 
-    // Check if click is directly on the container or canvas background
     const container = containerRef.current;
     if (!container) {
       console.log('🖱️ No container ref');
-      return;
-    }
-
-    // Only start selection if clicking directly on background
-    if (e.target !== container && 
-        !e.target.closest('.react-flow__pane') &&
-        !e.target.classList.contains('react-flow__renderer') &&
-        e.target !== container.querySelector('.react-flow__pane')) {
-      console.log('🖱️ Not clicking on background, target:', e.target.className);
       return;
     }
 
@@ -130,6 +120,8 @@ export const useSelectionBox = (containerRef, onSelectionComplete) => {
     }
 
     console.log('🖱️ Setting up event listeners on container:', container);
+    console.log('🖱️ Container class:', container.className);
+    console.log('🖱️ Container dimensions:', container.offsetWidth, 'x', container.offsetHeight);
 
     // Add event listeners to container
     container.addEventListener('mousedown', handleMouseDown);
