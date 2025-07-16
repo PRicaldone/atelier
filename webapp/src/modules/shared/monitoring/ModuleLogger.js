@@ -154,6 +154,21 @@ export const adapterLogger = createModuleLogger('adapter', {
   component: 'adapter'
 });
 
+export const healthLogger = createModuleLogger('health-check', {
+  module: 'shared',
+  component: 'health'
+});
+
+export const testLogger = createModuleLogger('integration-test', {
+  module: 'shared',
+  component: 'testing'
+});
+
+export const alertLogger = createModuleLogger('alerting-system', {
+  module: 'shared',
+  component: 'alerting'
+});
+
 /**
  * Console replacement for gradual migration
  * Drop-in replacement for console.log/error/warn

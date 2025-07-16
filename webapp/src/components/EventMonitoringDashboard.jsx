@@ -27,6 +27,12 @@ import {
   generateHealthTestScenarios,
   clearTestData
 } from '../utils/monitoringTestUtils.js';
+import { 
+  getHealthReport,
+  isSystemHealthy,
+  forceHealthCheck,
+  getUnhealthyModules
+} from '../modules/shared/health/HealthCheckIntegration.js';
 
 const EventMonitoringDashboard = () => {
   const [isLive, setIsLive] = useState(true);
@@ -37,6 +43,8 @@ const EventMonitoringDashboard = () => {
   const [selectedModule, setSelectedModule] = useState('all');
   const [showSystemEvents, setShowSystemEvents] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [healthReport, setHealthReport] = useState(null);
+  const [systemHealthy, setSystemHealthy] = useState(true);
   
   const eventListRef = useRef(null);
   const updateInterval = useRef(null);
@@ -58,6 +66,15 @@ const EventMonitoringDashboard = () => {
     // Get error statistics
     const errors = errorTracker.getStats();
     setErrorStats(errors);
+    
+    // Get health check data
+    try {
+      const healthData = getHealthReport();
+      setHealthReport(healthData);
+      setSystemHealthy(isSystemHealthy());
+    } catch (error) {
+      console.error('Failed to get health report:', error);
+    }
   };
 
   // Calculate event statistics
@@ -336,6 +353,12 @@ const EventMonitoringDashboard = () => {
           >
             Clear Data
           </button>
+          <button
+            onClick={forceHealthCheck}
+            className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+          >
+            Force Health Check
+          </button>
         </div>
       </div>
 
@@ -396,9 +419,17 @@ const EventMonitoringDashboard = () => {
 
       {/* Module Health */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 mb-8">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Module Health Status
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+            Module Health Status
+          </h2>
+          <div className="flex items-center space-x-2">
+            <div className={`w-3 h-3 rounded-full ${systemHealthy ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className={`text-sm font-medium ${systemHealthy ? 'text-green-700' : 'text-red-700'}`}>
+              {systemHealthy ? 'System Healthy' : 'System Issues'}
+            </span>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {Object.entries(moduleHealth).map(([module, health]) => (
@@ -427,6 +458,87 @@ const EventMonitoringDashboard = () => {
           ))}
         </div>
       </div>
+
+      {/* Automated Health Checks */}
+      {healthReport && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Automated Health Checks
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Object.entries(healthReport.healthCheck.modules).map(([moduleName, moduleHealth]) => (
+              <div key={moduleName} className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium text-gray-800 dark:text-white capitalize">
+                    {moduleName}
+                  </h3>
+                  <span className={getHealthStatusStyle(moduleHealth.status)}>
+                    {moduleHealth.status}
+                  </span>
+                </div>
+                
+                <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <div>Failure Count: {moduleHealth.failureCount}</div>
+                  <div>Restart Attempts: {moduleHealth.restartAttempts}</div>
+                  <div>
+                    Last Ping: {
+                      moduleHealth.lastHeartbeat 
+                        ? new Date(moduleHealth.lastHeartbeat).toLocaleTimeString()
+                        : 'None'
+                    }
+                  </div>
+                  <div>
+                    Time Since Last Ping: {
+                      moduleHealth.timeSinceLastHeartbeat 
+                        ? `${Math.floor(moduleHealth.timeSinceLastHeartbeat / 1000)}s`
+                        : 'N/A'
+                    }
+                  </div>
+                  <div>
+                    Uptime: {
+                      moduleHealth.registeredAt 
+                        ? `${Math.floor((Date.now() - moduleHealth.registeredAt) / 1000)}s`
+                        : 'N/A'
+                    }
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Health Check Summary */}
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 className="font-medium text-gray-800 dark:text-white mb-2">Health Check Summary</h3>
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Total: </span>
+                <span className="font-medium">{healthReport.healthCheck.summary.total}</span>
+              </div>
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Healthy: </span>
+                <span className="font-medium text-green-600">{healthReport.healthCheck.summary.healthy}</span>
+              </div>
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Warning: </span>
+                <span className="font-medium text-yellow-600">{healthReport.healthCheck.summary.warning}</span>
+              </div>
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Critical: </span>
+                <span className="font-medium text-red-600">{healthReport.healthCheck.summary.critical}</span>
+              </div>
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Dead: </span>
+                <span className="font-medium text-red-800">{healthReport.healthCheck.summary.dead}</span>
+              </div>
+              <div>
+                <span className="text-gray-600 dark:text-gray-400">Restarting: </span>
+                <span className="font-medium text-blue-600">{healthReport.healthCheck.summary.restarting}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Live Event Stream */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">

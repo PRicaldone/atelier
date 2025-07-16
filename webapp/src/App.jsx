@@ -19,6 +19,8 @@ import { initializeModules } from './modules/shared/moduleInit'
 import ModuleSystemDemo from './components/ModuleSystemDemo'
 import ErrorTrackingDemo from './components/ErrorTrackingDemo'
 import EventMonitoringDashboard from './components/EventMonitoringDashboard'
+import IntegrationTestDashboard from './components/IntegrationTestDashboard'
+import AlertingConfigurationUI from './components/AlertingConfigurationUI'
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -169,6 +171,8 @@ function App() {
           <Route path="/module-demo" element={<ModuleSystemDemo />} />
           <Route path="/error-demo" element={<ErrorTrackingDemo />} />
           <Route path="/monitoring" element={<EventMonitoringDashboard />} />
+          <Route path="/tests" element={<IntegrationTestDashboard />} />
+          <Route path="/alerts" element={<AlertingConfigurationUI />} />
         </Routes>
       </Layout>
     </MigrationManager>

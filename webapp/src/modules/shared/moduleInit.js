@@ -8,6 +8,7 @@ import { mindGardenAdapter } from './adapters/MindGardenAdapter.js';
 import { eventBus, ModuleEvents } from './events/EventBus.js';
 import { ICanvas, ICanvas_v2 } from './contracts/ICanvas.js';
 import { IMindGarden } from './contracts/IMindGarden.js';
+import { initializeHealthChecking } from './health/HealthCheckIntegration.js';
 
 /**
  * Initialize all modules with the registry
@@ -65,6 +66,9 @@ export async function initializeModules() {
     
     // Setup cross-module event handlers
     setupEventHandlers();
+    
+    // Initialize health checking system
+    await initializeHealthChecking();
     
     console.log('[ModuleInit] Module initialization complete');
     console.log('[ModuleInit] Registered modules:', moduleRegistry.getInfo());
