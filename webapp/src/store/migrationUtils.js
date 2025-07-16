@@ -8,7 +8,7 @@
  * - Backup creation before migration
  */
 
-import { STORAGE_KEYS } from '../modules/creative-atelier/types.js';
+import { STORAGE_KEYS } from '../modules/visual-canvas/types.js';
 
 export const MIGRATION_KEYS = {
   CANVAS_ELEMENTS: 'ATELIER_CANVAS_ELEMENTS',

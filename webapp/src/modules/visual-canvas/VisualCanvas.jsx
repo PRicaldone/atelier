@@ -85,9 +85,11 @@ const CreativeAtelier = () => {
   const isTemporaryProject = currentProject?.isTemporary || false;
   
   useEffect(() => {
-    // Trigger analysis only when elements change meaningfully
-    analyzeCanvasContext();
-  }, [elements.length]); // Only when elements count changes
+    // Trigger analysis when there are elements or when entering Canvas
+    if (elements.length > 0 || elements.length === 0) {
+      analyzeCanvasContext();
+    }
+  }, [elements.length]); // Removed analyzeCanvasContext from deps to prevent loop
   
   // Auto-center viewport when new elements are added (like from Mind Garden export)
   useEffect(() => {
@@ -719,7 +721,34 @@ const CreativeAtelier = () => {
         <HoudiniTreeView />
       </DndContext>
 
+      {/* Canvas info overlay */}
+      <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300 space-y-1">
+        <div>Elements: {elements.length}</div>
+        <div>Selected: {selectedIds.length}</div>
+        <div>Zoom: {Math.round(viewport.zoom * 100)}%</div>
+        <div>Grid: {settings.gridVisible ? 'Visible' : 'Hidden'}</div>
+        <div>Snap: {settings.snapToGrid ? 'On' : 'Off'}</div>
+      </div>
 
+      {/* Help overlay */}
+      <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-300" style={{ right: '340px' }}>
+        <div className="font-medium mb-1">Shortcuts:</div>
+        <div>Double-click atelier: Add note</div>
+        <div>Double-click note: Edit text</div>
+        <div>Drag: Move elements</div>
+        <div>Alt+drag: Pan atelier</div>
+        <div>Middle mouse: Pan atelier</div>
+        <div>Right+drag: Zoom atelier</div>
+        <div>Shift+drag: Ignore snap to grid</div>
+        <div>Double-click board: Enter board</div>
+        <div>Ctrl/Cmd+click: Multi-select</div>
+        <div>Drag area: Select multiple</div>
+        <div>Delete: Remove selected</div>
+        <div>Ctrl/Cmd+A: Select all</div>
+        <div>Ctrl/Cmd+C/V: Copy/Paste</div>
+        <div>Spacebar: Center view</div>
+        <div>Escape: Clear selection</div>
+      </div>
 
       {/* Properties Panel */}
       <PropertiesPanel />

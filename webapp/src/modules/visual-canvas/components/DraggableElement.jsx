@@ -7,8 +7,6 @@ import { NoteCard } from './cards/NoteCard.jsx';
 import { ImageCard } from './cards/ImageCard.jsx';
 import { LinkCard } from './cards/LinkCard.jsx';
 import { AICard } from './cards/AICard.jsx';
-import FileOpenerNode from './FileOpenerNode.jsx';
-import URLLauncherNode from './URLLauncherNode.jsx';
 import { ELEMENT_TYPES } from '../types.js';
 
 export const DraggableElement = ({ element }) => {
@@ -87,18 +85,6 @@ export const DraggableElement = ({ element }) => {
         return <LinkCard element={element} />;
       case ELEMENT_TYPES.AI:
         return <AICard element={element} />;
-      case ELEMENT_TYPES.FILE_OPENER:
-        return <FileOpenerNode 
-          element={element} 
-          onUpdate={updateElement}
-          onExecute={(action, data) => console.log('🤖 Agentic action:', action, data)}
-        />;
-      case ELEMENT_TYPES.URL_LAUNCHER:
-        return <URLLauncherNode 
-          element={element} 
-          onUpdate={updateElement}
-          onExecute={(action, data) => console.log('🤖 Agentic action:', action, data)}
-        />;
       default:
         return <div>Unknown element type</div>;
     }

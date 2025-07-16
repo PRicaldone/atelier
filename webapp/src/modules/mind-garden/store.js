@@ -475,8 +475,8 @@ export const useMindGardenStore = create(
         });
 
         // Add to canvas through Canvas Store using proper Canvas element creation
-        const { useCanvasStore } = await import('../creative-atelier/store');
-        const { createCanvasElement } = await import('../creative-atelier/types');
+        const { useCanvasStore } = await import('../visual-canvas/store');
+        const { createCanvasElement } = await import('../visual-canvas/types');
         
         // Create proper Canvas elements and merge with our data
         const properCanvasElements = canvasElements.map(element => {

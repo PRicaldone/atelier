@@ -24,7 +24,7 @@ const createUnifiedState = () => ({
   theme: 'light',
   isSidebarCollapsed: false,
   
-  // Canvas State (from creative-atelier/store.js)
+  // Canvas State (from visual-canvas/store.js)
   canvas: {
     elements: [],
     selectedIds: [],
