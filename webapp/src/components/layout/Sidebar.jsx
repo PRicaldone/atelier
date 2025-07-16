@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { 
   ChevronLeft, 
   Rocket,
-  Menu
+  Menu,
+  Activity
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 const menuItems = [
   { id: 'start', label: 'Project Start', icon: Rocket, path: '/start' },
+  { id: 'monitoring', label: 'Event Monitor', icon: Activity, path: '/monitoring' },
 ];
 
 const Sidebar = () => {

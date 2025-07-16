@@ -474,41 +474,44 @@ export const useMindGardenStore = create(
           };
         });
 
-        // Add to canvas through Canvas Store using proper Canvas element creation
-        const { useCanvasStore } = await import('../visual-canvas/store');
-        const { createCanvasElement } = await import('../visual-canvas/types');
+        // Use the event bus for loose coupling
+        const { eventBus, ModuleEvents } = await import('../shared/events/EventBus');
         
-        // Create proper Canvas elements and merge with our data
-        const properCanvasElements = canvasElements.map(element => {
-          const baseElement = createCanvasElement(element.type, element.position);
-          const mergedElement = {
-            ...baseElement,
-            data: { ...baseElement.data, ...element.data }
-          };
-          console.log('🐛 Created canvas element:', JSON.stringify(mergedElement, null, 2));
-          return mergedElement;
+        // Emit export request event
+        eventBus.emit(ModuleEvents.MINDGARDEN_EXPORT_REQUESTED, {
+          nodeIds: nodeIds,
+          elements: canvasElements
         });
         
-        // Add elements to Canvas Store state (support adaptive sizing)
-        useCanvasStore.setState((state) => ({
-          ...state,
-          elements: [...state.elements, ...properCanvasElements],
-          selectedIds: properCanvasElements.map(el => el.id)
-        }));
+        // Wait for export completion
+        const exportCompleted = new Promise((resolve) => {
+          const unsubscribe = eventBus.on(ModuleEvents.MINDGARDEN_EXPORT_COMPLETED, (data) => {
+            if (data.nodeIds && data.nodeIds.length === nodeIds.length) {
+              unsubscribe();
+              resolve(data);
+            }
+          });
+          
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            unsubscribe();
+            resolve({ success: false, error: 'Export timeout' });
+          }, 5000);
+        });
         
-        // Force save to localStorage immediately
-        const canvasStore = useCanvasStore.getState();
-        console.log('🌱 EXPORT DEBUG: Canvas store before save:', canvasStore.elements.length, 'elements');
-        canvasStore.saveCurrentLevelToHierarchy();
-        console.log('🌱 EXPORT DEBUG: Canvas store after save');
+        const result = await exportCompleted;
         
-        // Also update Unified Store for coordination
-        useUnifiedStore.setState((state) => ({
-          lastActivity: new Date().toISOString(),
-          currentModule: 'canvas'
-        }));
-        
-        console.log('🌱 EXPORT DEBUG: Export completed successfully, added', properCanvasElements.length, 'elements to canvas');
+        if (result.success) {
+          console.log('🌱 EXPORT DEBUG: Export completed successfully via event bus');
+          
+          // Also update Unified Store for coordination
+          useUnifiedStore.setState((state) => ({
+            lastActivity: new Date().toISOString(),
+            currentModule: 'canvas'
+          }));
+        } else {
+          console.error('🌱 EXPORT DEBUG: Export failed:', result.error);
+        }
 
         // Record export history
         const exportRecord = {

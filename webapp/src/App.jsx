@@ -11,9 +11,14 @@ import {
   ProjectTracker, 
   BusinessSwitcher,
   UnifiedStoreTest,
-  MindGarden
+  MindGarden,
+  Orchestra
 } from './modules'
 import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
+import { initializeModules } from './modules/shared/moduleInit'
+import ModuleSystemDemo from './components/ModuleSystemDemo'
+import ErrorTrackingDemo from './components/ErrorTrackingDemo'
+import EventMonitoringDashboard from './components/EventMonitoringDashboard'
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -31,7 +36,9 @@ function NavigationSync() {
     '/unified-store': 'unified-store-test',
     '/start': 'project-start',
     '/mind-garden': 'mind-garden',
-    '/tracker': 'projects'
+    '/tracker': 'projects',
+    '/orchestra': 'orchestra',
+    '/content-studio': 'orchestra' // Backward compatibility
   };
   
   const moduleToRoute = {
@@ -39,7 +46,8 @@ function NavigationSync() {
     'unified-store-test': '/unified-store',
     'project-start': '/start',
     'mind-garden': '/mind-garden',
-    'projects': '/tracker'
+    'projects': '/tracker',
+    'orchestra': '/orchestra'
   };
   
   // Only sync when there's a real mismatch and we're not already navigating
@@ -92,6 +100,7 @@ function NavigationSync() {
 
 function App() {
   const [showProjectSelector, setShowProjectSelector] = useState(false);
+  const [modulesInitialized, setModulesInitialized] = useState(false);
   const { initialized, currentProjectId, initialize, projects } = useProjectStore();
   
   // Initialize project store on app load
@@ -100,6 +109,18 @@ function App() {
       initialize();
     }
   }, [initialized, initialize]);
+  
+  // Initialize module system
+  useEffect(() => {
+    if (initialized && !modulesInitialized) {
+      initializeModules().then(() => {
+        setModulesInitialized(true);
+        console.log('🎯 Module system initialized');
+      }).catch(error => {
+        console.error('🎯 Module system initialization failed:', error);
+      });
+    }
+  }, [initialized, modulesInitialized]);
   
   // Show project selector if no current project or if explicitly requested
   useEffect(() => {
@@ -143,6 +164,11 @@ function App() {
           <Route path="/tracker" element={<ProjectTracker />} />
           <Route path="/business" element={<BusinessSwitcher />} />
           <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
+          <Route path="/orchestra" element={<Orchestra />} />
+          <Route path="/content-studio" element={<Orchestra />} />
+          <Route path="/module-demo" element={<ModuleSystemDemo />} />
+          <Route path="/error-demo" element={<ErrorTrackingDemo />} />
+          <Route path="/monitoring" element={<EventMonitoringDashboard />} />
         </Routes>
       </Layout>
     </MigrationManager>

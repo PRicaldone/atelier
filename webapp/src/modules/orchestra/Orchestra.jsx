@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, PenTool, BarChart3, Settings } from 'lucide-react';
 
-const ContentStudio = () => {
+const Orchestra = () => {
   const [activeTab, setActiveTab] = useState('calendar');
 
   const tabs = [
@@ -16,10 +16,10 @@ const ContentStudio = () => {
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 p-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Content Studio
+          Orchestra
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Plan, create and manage your content across all platforms
+          Orchestrate your content creation across all platforms
         </p>
       </div>
 
@@ -102,4 +102,4 @@ const ContentStudio = () => {
   );
 };
 
-export default ContentStudio;
+export default Orchestra;

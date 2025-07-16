@@ -44,28 +44,42 @@ const NodeCard = ({ data, selected }) => {
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
+        whileHover={{ scale: 1.02 }}
         className={`
           relative min-w-[200px] max-w-[400px] 
           bg-white/[0.02] dark:bg-gray-900/50
-          border border-white/10 rounded-xl p-4
+          border rounded-xl p-4
           backdrop-blur-md
           transition-all duration-200
-          hover:border-white/20
+          ${selected 
+            ? 'ring-4 ring-blue-300 border-blue-300 bg-blue-400/12 scale-106 shadow-lg' 
+            : 'border-white/10 hover:border-white/20'
+          }
         `}
         style={{
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          boxShadow: selected 
+            ? `0 0 51px rgba(59, 130, 246, 0.51), 0 0 25px rgba(59, 130, 246, 0.38), 0 0 12px rgba(59, 130, 246, 0.25), 0 8px 32px rgba(0, 0, 0, 0.2)`
+            : '0 8px 32px rgba(0, 0, 0, 0.1)',
+          transform: selected ? 'scale(1.06)' : 'scale(1)',
           zIndex: selected ? 1000 : 1
         }}
       >
         {/* Accent Line */}
         <div 
-          className="absolute top-0 left-4 right-4 h-0.5 rounded-full"
+          className={`absolute top-0 left-4 right-4 rounded-full ${selected ? 'h-1' : 'h-0.5'}`}
           style={{ 
             backgroundColor: selected ? '#3B82F6' : accentColor, 
-            opacity: selected ? 1 : 0.6
+            opacity: selected ? 1 : 0.6,
+            boxShadow: selected ? '0 0 6px rgba(59, 130, 246, 0.51)' : 'none'
           }}
         />
         
+        {/* Selection Badge */}
+        {selected && (
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+            ✓
+          </div>
+        )}
 
         {/* Header */}
         <div className="flex items-center justify-between mb-2">

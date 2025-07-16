@@ -65,10 +65,11 @@ export const NoteCard = ({ element }) => {
   // Adaptive height based on content lines
   const getAdaptiveHeight = () => {
     const estimatedLines = Math.ceil(totalLength / 40); // Rough estimate
-    if (estimatedLines <= 3) return 'min-h-[120px]';
-    if (estimatedLines <= 6) return 'min-h-[160px]';
-    if (estimatedLines <= 10) return 'min-h-[200px]';
-    return 'min-h-[240px] max-h-[300px]';
+    if (estimatedLines <= 3) return 'min-h-[140px]';
+    if (estimatedLines <= 6) return 'min-h-[200px]';
+    if (estimatedLines <= 10) return 'min-h-[280px]';
+    if (estimatedLines <= 15) return 'min-h-[360px]';
+    return 'min-h-[400px] max-h-[500px]';
   };
 
   return (
@@ -209,7 +210,7 @@ export const NoteCard = ({ element }) => {
                   </div>
                 )}
                 {data.content && (
-                  <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-4">
+                  <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed max-h-[300px] overflow-y-auto">
                     {data.content}
                   </div>
                 )}
