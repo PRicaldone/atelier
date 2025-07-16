@@ -22,6 +22,8 @@ import PathBreadcrumb from './components/PathBreadcrumb.jsx';
 import { GRID_SIZE } from './types.js';
 import { Lightbulb, Brain, Save } from 'lucide-react';
 import ConsolidationPanel from '../mind-garden/components/ConsolidationPanel';
+import { useSelectionBox, isElementInSelectionBox } from './hooks/useSelectionBox.js';
+import { SelectionBox } from './components/SelectionBox.jsx';
 
 const CreativeAtelier = () => {
   console.log('CreativeAtelier rendering - full functionality without gestures');
@@ -71,6 +73,73 @@ const CreativeAtelier = () => {
     addElement,
     addCompleteElement
   } = useCanvasStore();
+
+  // Selection box for drag selection
+  const handleSelectionComplete = useCallback((selectionBoxData) => {
+    if (!selectionBoxData) return;
+
+    console.log('🎨 Selection box:', selectionBoxData);
+    console.log('🎨 Current elements:', elements.length);
+    console.log('🎨 Viewport:', viewport);
+
+    // Convert selection box from screen coordinates to world coordinates
+    const worldSelectionBox = {
+      x: (selectionBoxData.x - viewport.x) / viewport.zoom,
+      y: (selectionBoxData.y - viewport.y) / viewport.zoom,
+      width: selectionBoxData.width / viewport.zoom,
+      height: selectionBoxData.height / viewport.zoom
+    };
+
+    console.log('🎨 World selection box:', worldSelectionBox);
+
+    // Get all elements that are within the selection box (in world coordinates)
+    const selectedElements = elements.filter(element => {
+      // Element position and size in world coordinates
+      const elementX = element.position.x;
+      const elementY = element.position.y;
+      const elementWidth = element.size?.width || 200;
+      const elementHeight = element.size?.height || 150;
+
+      // Check overlap with world selection box
+      const elementRight = elementX + elementWidth;
+      const elementBottom = elementY + elementHeight;
+      const selectionRight = worldSelectionBox.x + worldSelectionBox.width;
+      const selectionBottom = worldSelectionBox.y + worldSelectionBox.height;
+
+      const overlaps = !(
+        elementX > selectionRight ||
+        elementRight < worldSelectionBox.x ||
+        elementY > selectionBottom ||
+        elementBottom < worldSelectionBox.y
+      );
+
+      console.log(`🎨 Element ${element.id}:`, {
+        world: { x: elementX, y: elementY, w: elementWidth, h: elementHeight },
+        worldSelection: worldSelectionBox,
+        overlaps
+      });
+
+      return overlaps;
+    });
+
+    console.log('🎨 Selected elements:', selectedElements.map(el => el.id));
+
+    if (selectedElements.length > 0) {
+      // Update selection state
+      const selectedElementIds = selectedElements.map(el => el.id);
+      selectMultiple(selectedElementIds);
+    } else {
+      // Clear selection if no elements in box
+      clearSelection();
+    }
+  }, [elements, viewport, selectMultiple, clearSelection]);
+
+  const { isSelecting: isDragSelecting, selectionBox: dragSelectionBox } = useSelectionBox(canvasRef, handleSelectionComplete);
+
+  // Debug: Check if ref is working
+  useEffect(() => {
+    console.log('🎨 Creative Atelier container ref:', canvasRef.current);
+  }, []);
 
   // Initialize atelier on mount
   useEffect(() => {
@@ -385,16 +454,8 @@ const CreativeAtelier = () => {
       return;
     }
     
-    // Priority 3: Canvas selection
-    if (e.target === canvasRef.current && !e.metaKey && !e.ctrlKey) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / viewport.zoom;
-      const y = (e.clientY - rect.top) / viewport.zoom;
-      
-      setIsSelecting(true);
-      setSelectionStart({ x, y });
-      setSelectionBox({ x, y, width: 0, height: 0 });
-    }
+    // Priority 3: Canvas selection - DISABLED (using useSelectionBox instead)
+    // The useSelectionBox hook handles all selection logic
   }, [viewport.zoom]);
 
   // Handle mouse move for selection box, panning, and zooming
@@ -440,21 +501,8 @@ const CreativeAtelier = () => {
       return;
     }
     
-    // Handle selection box
-    if (isSelecting && selectionStart && canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const currentX = (e.clientX - rect.left) / viewport.zoom;
-      const currentY = (e.clientY - rect.top) / viewport.zoom;
-      
-      const box = {
-        x: Math.min(selectionStart.x, currentX),
-        y: Math.min(selectionStart.y, currentY),
-        width: Math.abs(currentX - selectionStart.x),
-        height: Math.abs(currentY - selectionStart.y)
-      };
-      
-      setSelectionBox(box);
-    }
+    // Handle selection box - DISABLED (using useSelectionBox instead)
+    // The useSelectionBox hook handles all selection box updates
   }, [isZooming, zoomStart, initialZoom, updateViewport, isPanning, panStart, panViewport, isSelecting, selectionStart, viewport.zoom]);
 
   // Handle mouse up for selection box, panning, and zooming
@@ -474,27 +522,8 @@ const CreativeAtelier = () => {
       return;
     }
     
-    // Handle selection box
-    if (isSelecting && selectionBox) {
-      // Find elements within selection box
-      const selectedElements = elements.filter(element => {
-        const elementRight = element.position.x + element.size.width;
-        const elementBottom = element.position.y + element.size.height;
-        const boxRight = selectionBox.x + selectionBox.width;
-        const boxBottom = selectionBox.y + selectionBox.height;
-        
-        return (
-          element.position.x < boxRight &&
-          elementRight > selectionBox.x &&
-          element.position.y < boxBottom &&
-          elementBottom > selectionBox.y
-        );
-      });
-      
-      if (selectedElements.length > 0) {
-        selectMultiple(selectedElements.map(el => el.id));
-      }
-    }
+    // Handle selection box - DISABLED (using useSelectionBox instead)
+    // The useSelectionBox hook handles all selection completion
     
     setIsSelecting(false);
     setSelectionBox(null);
@@ -680,23 +709,15 @@ const CreativeAtelier = () => {
               ))}
             </AnimatePresence>
 
-            {/* Selection box */}
-            {selectionBox && (
-              <motion.div
-                className="absolute border-2 border-blue-500 bg-blue-100 dark:bg-blue-900 bg-opacity-20 pointer-events-none"
-                style={{
-                  left: selectionBox.x,
-                  top: selectionBox.y,
-                  width: selectionBox.width,
-                  height: selectionBox.height
-                }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
-            )}
           </motion.div>
         </div>
+
+        {/* Selection box for drag selection - OUTSIDE viewport transform */}
+        {isDragSelecting && dragSelectionBox && (
+          <div className="absolute inset-0 pointer-events-none z-[10000]">
+            <SelectionBox box={dragSelectionBox} />
+          </div>
+        )}
 
         {/* Drag overlay */}
         <DragOverlay>

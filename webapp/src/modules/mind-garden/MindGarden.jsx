@@ -24,6 +24,8 @@ import { useUnifiedStore } from '../../store/unifiedStore';
 import { useProjectStore } from '../../store/projectStore';
 import { useMindGardenStore } from './store';
 import { Plus, Download, Map, Keyboard, Layers, Lightbulb, Eye } from 'lucide-react';
+import { useSelectionBox, isElementInSelectionBox } from './hooks/useSelectionBox.js';
+import { SelectionBox } from './components/SelectionBox.jsx';
 
 // Custom node types - OUTSIDE component to prevent ReactFlow warnings
 const nodeTypes = {
@@ -94,6 +96,78 @@ const MindGardenInner = () => {
     initializeStore();
     // Don't auto-navigate to avoid redirect loop
   }, [initializeStore]);
+
+  // Selection box for drag selection
+  const handleSelectionComplete = useCallback((selectionBox) => {
+    if (!selectionBox) return;
+
+    console.log('🌱 Selection box:', selectionBox);
+    console.log('🌱 Current nodes:', nodes.length);
+
+    // Get ReactFlow viewport
+    const viewport = reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 };
+    console.log('🌱 Viewport:', viewport);
+
+    // Convert selection box from screen coordinates to ReactFlow world coordinates
+    const worldSelectionBox = {
+      x: (selectionBox.x - viewport.x) / viewport.zoom,
+      y: (selectionBox.y - viewport.y) / viewport.zoom,
+      width: selectionBox.width / viewport.zoom,
+      height: selectionBox.height / viewport.zoom
+    };
+
+    console.log('🌱 World selection box:', worldSelectionBox);
+
+    // Get all nodes that are within the selection box (in world coordinates)
+    const selectedNodes = nodes.filter(node => {
+      // Node position and dimensions in world coordinates
+      const nodeX = node.position.x;
+      const nodeY = node.position.y;
+      const nodeWidth = node.data?.width || node.width || 200;
+      const nodeHeight = node.data?.height || node.height || 100;
+
+      // Check overlap with world selection box
+      const nodeRight = nodeX + nodeWidth;
+      const nodeBottom = nodeY + nodeHeight;
+      const selectionRight = worldSelectionBox.x + worldSelectionBox.width;
+      const selectionBottom = worldSelectionBox.y + worldSelectionBox.height;
+
+      const overlaps = !(
+        nodeX > selectionRight ||
+        nodeRight < worldSelectionBox.x ||
+        nodeY > selectionBottom ||
+        nodeBottom < worldSelectionBox.y
+      );
+
+      console.log(`🌱 Node ${node.id}:`, {
+        world: { x: nodeX, y: nodeY, w: nodeWidth, h: nodeHeight },
+        worldSelection: worldSelectionBox,
+        overlaps
+      });
+
+      return overlaps;
+    });
+
+    console.log('🌱 Selected nodes:', selectedNodes.map(n => n.id));
+
+    if (selectedNodes.length > 0) {
+      // Update nodes selection state
+      setNodes(nodes => nodes.map(node => ({
+        ...node,
+        selected: selectedNodes.some(selected => selected.id === node.id)
+      })));
+    } else {
+      // Clear selection if no nodes found
+      setNodes(nodes => nodes.map(node => ({ ...node, selected: false })));
+    }
+  }, [nodes, setNodes, reactFlowInstance]);
+
+  const { isSelecting, selectionBox } = useSelectionBox(reactFlowWrapper, handleSelectionComplete);
+
+  // Debug: Check if ref is working
+  useEffect(() => {
+    console.log('🌱 Mind Garden container ref:', reactFlowWrapper.current);
+  }, []);
   
   // Check if current project is temporary
   const currentProject = getCurrentProject();
@@ -598,7 +672,12 @@ const MindGardenInner = () => {
     <div 
       className="h-full w-full relative" 
       ref={reactFlowWrapper}
-      onMouseDown={handleMouseDown}
+      onMouseDown={(e) => {
+        // Only handle right mouse for zoom - let useSelectionBox handle left mouse
+        if (e.button === 2) {
+          handleMouseDown(e);
+        }
+      })
       style={{ cursor: isRightDragging ? 'ns-resize' : 'default' }}
     >
       <ReactFlow
@@ -652,6 +731,9 @@ const MindGardenInner = () => {
           size={2}
         />
       </ReactFlow>
+
+      {/* Selection Box for Drag Selection */}
+      {isSelecting && <SelectionBox box={selectionBox} />}
 
       {/* Enhanced Toolbar - Top Left */}
       <div className="absolute top-4 left-4 z-50">
