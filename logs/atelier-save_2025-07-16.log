@@ -1306,3 +1306,10 @@ and the repository exists.
 [2025-07-16 02:20:32] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-16_02-20-27.txt
 [2025-07-16 02:20:32] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-16 02:20:32] [INFO] Cleaning up temporary files...
+[2025-07-16 14:55:14] [INFO] Starting atelier-save.sh v2.1
+[2025-07-16 14:55:14] [INFO] Custom commit message: Clean up Mind Garden node selection - removed glow and popping effects
+[2025-07-16 14:55:14] [STEP] Checking prerequisites...
+[2025-07-16 14:55:14] [SUCCESS] Prerequisites check passed
+[2025-07-16 14:55:14] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-16 14:55:14] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-16 14:55:14] [INFO] 📝 Found 4 modified files

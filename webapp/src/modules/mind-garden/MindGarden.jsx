@@ -151,22 +151,23 @@ const MindGardenInner = () => {
     console.log('🌱 Selected nodes:', selectedNodes.map(n => n.id));
 
     if (selectedNodes.length > 0) {
-      // Use ReactFlow instance to set selection properly
-      if (reactFlowInstance) {
-        // First clear existing selection
-        const allNodeIds = nodes.map(n => n.id);
-        reactFlowInstance.removeSelectedElements({ nodes: allNodeIds });
-        
-        // Then add new selection
-        const nodesToSelect = selectedNodes.map(n => ({ id: n.id, type: 'node' }));
-        reactFlowInstance.addSelectedElements({ nodes: selectedNodes.map(n => ({ id: n.id })) });
-      }
+      // Update nodes with selected state for ReactFlow v11
+      const updatedNodes = nodes.map(node => ({
+        ...node,
+        selected: selectedNodes.some(selected => selected.id === node.id)
+      }));
+      
+      setNodes(updatedNodes);
+      console.log('🌱 Updated nodes with selection:', updatedNodes.filter(n => n.selected).map(n => n.id));
     } else {
       // Clear selection if no nodes found
-      if (reactFlowInstance) {
-        const allNodeIds = nodes.map(n => n.id);
-        reactFlowInstance.removeSelectedElements({ nodes: allNodeIds });
-      }
+      const updatedNodes = nodes.map(node => ({
+        ...node,
+        selected: false
+      }));
+      
+      setNodes(updatedNodes);
+      console.log('🌱 Cleared all selections');
     }
   }, [nodes, setNodes, reactFlowInstance]);
 
