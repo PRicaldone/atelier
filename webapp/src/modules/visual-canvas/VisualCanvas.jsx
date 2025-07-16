@@ -139,7 +139,9 @@ const CreativeAtelier = () => {
   // Debug: Check if ref is working
   useEffect(() => {
     console.log('🎨 Creative Atelier container ref:', canvasRef.current);
-  }, []);
+    console.log('🎨 isDragSelecting:', isDragSelecting);
+    console.log('🎨 dragSelectionBox:', dragSelectionBox);
+  }, [isDragSelecting, dragSelectionBox]);
 
   // Initialize atelier on mount
   useEffect(() => {
@@ -689,6 +691,7 @@ const CreativeAtelier = () => {
           onClick={handleCanvasClick}
           onContextMenu={(e) => e.preventDefault()} // Disable context menu for right-click zoom
           data-canvas-background="true"
+          id="creative-atelier-canvas"
         >
           {/* Viewport transform container */}
           <motion.div

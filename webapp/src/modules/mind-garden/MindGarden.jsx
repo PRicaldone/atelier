@@ -151,14 +151,22 @@ const MindGardenInner = () => {
     console.log('🌱 Selected nodes:', selectedNodes.map(n => n.id));
 
     if (selectedNodes.length > 0) {
-      // Update nodes selection state
-      setNodes(nodes => nodes.map(node => ({
-        ...node,
-        selected: selectedNodes.some(selected => selected.id === node.id)
-      })));
+      // Use ReactFlow instance to set selection properly
+      if (reactFlowInstance) {
+        // First clear existing selection
+        const allNodeIds = nodes.map(n => n.id);
+        reactFlowInstance.removeSelectedElements({ nodes: allNodeIds });
+        
+        // Then add new selection
+        const nodesToSelect = selectedNodes.map(n => ({ id: n.id, type: 'node' }));
+        reactFlowInstance.addSelectedElements({ nodes: selectedNodes.map(n => ({ id: n.id })) });
+      }
     } else {
       // Clear selection if no nodes found
-      setNodes(nodes => nodes.map(node => ({ ...node, selected: false })));
+      if (reactFlowInstance) {
+        const allNodeIds = nodes.map(n => n.id);
+        reactFlowInstance.removeSelectedElements({ nodes: allNodeIds });
+      }
     }
   }, [nodes, setNodes, reactFlowInstance]);
 
@@ -681,7 +689,10 @@ const MindGardenInner = () => {
       style={{ cursor: isRightDragging ? 'ns-resize' : 'default' }}
     >
       <ReactFlow
-        nodes={nodes}
+        nodes={nodes.map(node => ({
+          ...node,
+          selected: node.selected || false
+        }))}
         edges={edges.map(edge => ({
           ...edge,
           selected: edge.id === selectedEdgeId,

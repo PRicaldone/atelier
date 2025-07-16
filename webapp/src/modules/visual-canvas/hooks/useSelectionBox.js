@@ -10,6 +10,8 @@ export const useSelectionBox = (containerRef, onSelectionComplete) => {
   const [selectionBox, setSelectionBox] = useState(null);
   const startPoint = useRef({ x: 0, y: 0 });
   const currentPoint = useRef({ x: 0, y: 0 });
+  
+  console.log('🎯 useSelectionBox hook initialized', { containerRef: !!containerRef?.current });
 
   // Start selection on mouse down
   const handleMouseDown = useCallback((e) => {
