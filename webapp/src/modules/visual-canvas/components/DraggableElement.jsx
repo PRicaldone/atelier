@@ -11,6 +11,7 @@ import FileOpenerNode from './FileOpenerNode.jsx';
 import URLLauncherNode from './URLLauncherNode.jsx';
 import { ELEMENT_TYPES } from '../types.js';
 import { generateContextualNodes, createNodesFromSuggestions } from '../utils/contextAwareCreation.js';
+import { generateIntelligentContent, generateSmartTitle } from '../utils/contentGeneration.js';
 
 export const DraggableElement = ({ element }) => {
   const { selectElement, updateElement, navigateToBoard, addElement, elements } = useCanvasStore();
@@ -107,41 +108,109 @@ export const DraggableElement = ({ element }) => {
       case 'execute-suggestion':
         console.log('💡 Executing suggestion:', data.suggestion);
         
-        // Handle specific suggestion types
+        // Handle specific suggestion types with intelligent content
         switch (data.suggestion.type) {
           case 'PROJECT_SETUP':
-            // Create project board structure
+            // Create project board structure with intelligent content
+            const smartTitle = generateSmartTitle(data.analysis.contentType, 'PROJECT_SETUP', data.fileName);
             const projectBoard = addElement(ELEMENT_TYPES.BOARD, {
               x: element.position.x + 320,
               y: element.position.y
             }, {
-              title: 'Project Overview',
+              title: smartTitle,
               backgroundColor: '#E3F2FD',
-              description: `Auto-generated from ${data.fileName}`
+              description: `Auto-generated project structure from ${data.fileName} analysis`
             });
+            
+            // Add requirements note inside the board
+            setTimeout(() => {
+              const requirementsContent = generateIntelligentContent(
+                data.analysis.contentType, 
+                'requirements', 
+                data.fileName, 
+                data.analysis
+              );
+              
+              addElement(ELEMENT_TYPES.NOTE, {
+                x: element.position.x + 340,
+                y: element.position.y + 60
+              }, {
+                title: 'Requirements',
+                content: requirementsContent,
+                backgroundColor: '#FFF9C4'
+              });
+            }, 300);
             break;
             
           case 'COLOR_PALETTE':
-            // Create color palette note
+            // Create color palette note with extracted colors
+            const colorContent = generateIntelligentContent(
+              data.analysis.contentType, 
+              'COLOR_PALETTE', 
+              data.fileName, 
+              data.analysis
+            );
             const colorNote = addElement(ELEMENT_TYPES.NOTE, {
               x: element.position.x + 320,
               y: element.position.y + 160
             }, {
-              title: 'Color Palette',
-              content: 'Auto-extracted colors from design...',
+              title: generateSmartTitle(data.analysis.contentType, 'COLOR_PALETTE', data.fileName),
+              content: colorContent,
               backgroundColor: '#F3E5F5'
             });
             break;
             
           case 'TIMELINE':
-            // Create timeline note
+            // Create timeline note with project phases
+            const timelineContent = generateIntelligentContent(
+              data.analysis.contentType, 
+              'TIMELINE', 
+              data.fileName, 
+              data.analysis
+            );
             const timelineNote = addElement(ELEMENT_TYPES.NOTE, {
               x: element.position.x,
               y: element.position.y + 200
             }, {
-              title: 'Project Timeline',
-              content: 'Auto-generated timeline from brief...',
+              title: generateSmartTitle(data.analysis.contentType, 'TIMELINE', data.fileName),
+              content: timelineContent,
               backgroundColor: '#E8F5E9'
+            });
+            break;
+            
+          case 'STYLE_ANALYSIS':
+            // Create style analysis note for images
+            const styleContent = generateIntelligentContent(
+              data.analysis.contentType, 
+              'STYLE_ANALYSIS', 
+              data.fileName, 
+              data.analysis
+            );
+            const styleNote = addElement(ELEMENT_TYPES.NOTE, {
+              x: element.position.x + 320,
+              y: element.position.y
+            }, {
+              title: generateSmartTitle(data.analysis.contentType, 'STYLE_ANALYSIS', data.fileName),
+              content: styleContent,
+              backgroundColor: '#F3E5F5'
+            });
+            break;
+            
+          case 'COLOR_EXTRACTION':
+            // Create color mood analysis
+            const moodContent = generateIntelligentContent(
+              data.analysis.contentType, 
+              'colorMood', 
+              data.fileName, 
+              data.analysis
+            );
+            const moodNote = addElement(ELEMENT_TYPES.NOTE, {
+              x: element.position.x + 320,
+              y: element.position.y + 200
+            }, {
+              title: 'Color Psychology',
+              content: moodContent,
+              backgroundColor: '#FFE0B2'
             });
             break;
         }
@@ -150,10 +219,10 @@ export const DraggableElement = ({ element }) => {
       case 'execute-automation':
         console.log('⚡ Executing automation:', data.automation);
         
-        // Handle automation workflows
+        // Handle automation workflows with intelligent content
         switch (data.automation.id) {
           case 'auto-project-setup':
-            // Create complete project structure
+            // Create complete project structure with intelligent content
             setTimeout(() => {
               const suggestions = generateContextualNodes(
                 data.analysis, 
@@ -162,9 +231,105 @@ export const DraggableElement = ({ element }) => {
               );
               
               if (suggestions.length > 0) {
-                createNodesFromSuggestions(suggestions, addElement);
+                // Create nodes with intelligent content
+                suggestions.forEach((suggestion, index) => {
+                  setTimeout(() => {
+                    const content = generateIntelligentContent(
+                      data.analysis.contentType,
+                      suggestion.data?.title || suggestion.type,
+                      data.fileName,
+                      data.analysis
+                    );
+                    
+                    const title = generateSmartTitle(
+                      data.analysis.contentType,
+                      suggestion.data?.title || suggestion.type,
+                      data.fileName
+                    );
+                    
+                    const enrichedData = {
+                      ...suggestion.data,
+                      title: title,
+                      content: suggestion.type === ELEMENT_TYPES.NOTE ? content : suggestion.data?.description || content,
+                      description: suggestion.type === ELEMENT_TYPES.BOARD ? `Auto-generated from ${data.fileName}` : suggestion.data?.description
+                    };
+                    
+                    addElement(suggestion.type, suggestion.position, enrichedData);
+                  }, index * 200); // Stagger creation for visual effect
+                });
               }
             }, 500);
+            break;
+            
+          case 'auto-design-analysis':
+            // Create design analysis workflow
+            setTimeout(() => {
+              // Color palette note
+              const colorContent = generateIntelligentContent(data.analysis.contentType, 'COLOR_PALETTE', data.fileName, data.analysis);
+              addElement(ELEMENT_TYPES.NOTE, {
+                x: element.position.x + 320,
+                y: element.position.y
+              }, {
+                title: 'Color Palette Analysis',
+                content: colorContent,
+                backgroundColor: '#F3E5F5'
+              });
+              
+              // Typography note
+              setTimeout(() => {
+                const typoContent = generateIntelligentContent(data.analysis.contentType, 'typography', data.fileName, data.analysis);
+                addElement(ELEMENT_TYPES.NOTE, {
+                  x: element.position.x + 320,
+                  y: element.position.y + 180
+                }, {
+                  title: 'Typography Guide',
+                  content: typoContent,
+                  backgroundColor: '#FFE0B2'
+                });
+              }, 300);
+              
+              // Style guide board
+              setTimeout(() => {
+                const styleContent = generateIntelligentContent(data.analysis.contentType, 'styleGuide', data.fileName, data.analysis);
+                addElement(ELEMENT_TYPES.BOARD, {
+                  x: element.position.x + 640,
+                  y: element.position.y
+                }, {
+                  title: 'Style Guide',
+                  backgroundColor: '#E8F5E9',
+                  description: `Complete style guide extracted from ${data.fileName}`
+                });
+              }, 600);
+            }, 300);
+            break;
+            
+          case 'auto-mood-board':
+            // Create mood board workflow for images
+            setTimeout(() => {
+              // Style analysis
+              const styleContent = generateIntelligentContent(data.analysis.contentType, 'STYLE_ANALYSIS', data.fileName, data.analysis);
+              addElement(ELEMENT_TYPES.BOARD, {
+                x: element.position.x + 320,
+                y: element.position.y
+              }, {
+                title: 'Style Analysis Board',
+                backgroundColor: '#F3E5F5',
+                description: `Visual style analysis of ${data.fileName}`
+              });
+              
+              // Color mood analysis
+              setTimeout(() => {
+                const moodContent = generateIntelligentContent(data.analysis.contentType, 'colorMood', data.fileName, data.analysis);
+                addElement(ELEMENT_TYPES.NOTE, {
+                  x: element.position.x + 340,
+                  y: element.position.y + 60
+                }, {
+                  title: 'Color Psychology',
+                  content: moodContent,
+                  backgroundColor: '#FFE0B2'
+                });
+              }, 400);
+            }, 300);
             break;
         }
         break;
