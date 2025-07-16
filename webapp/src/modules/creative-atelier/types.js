@@ -38,8 +38,8 @@ export const createCanvasElement = (type, position = { x: 0, y: 0 }) => {
       baseElement.size = { width: 300, height: 250 };
       break;
     case ELEMENT_TYPES.NOTE:
-      // Default size for notes - can be overridden for adaptive sizing
-      baseElement.size = { width: 200, height: 150 };
+      // Larger default size for notes to show more content
+      baseElement.size = { width: 280, height: 220 };
       break;
     case ELEMENT_TYPES.IMAGE:
       baseElement.size = { width: 250, height: 200 };

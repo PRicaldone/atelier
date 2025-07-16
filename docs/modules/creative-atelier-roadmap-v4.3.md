@@ -1,11 +1,11 @@
-# Visual Canvas Roadmap v4.3 - Templates & Export Evolution
+# Creative Atelier Roadmap v4.3 - Templates & Export Evolution
 **Foundation Enhancement for Advanced Creative Workflows**
 
 ## 🎯 **Module Vision v4.3**
 
 **Evolution Goal**: From stable foundation → **Template-Driven Export Powerhouse**
 
-**Strategic Position**: Visual Canvas becomes the **output and organization layer** for Mind Garden's conversational intelligence, with powerful templates and export capabilities.
+**Strategic Position**: Creative Atelier becomes the **output and organization layer** for Mind Garden's conversational intelligence, with powerful templates and export capabilities.
 
 ## 🏗️ **CURRENT STATUS v4.2**
 

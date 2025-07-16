@@ -20,7 +20,7 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
 
 ### ✅ Moduli Completati
 
-1. **Visual Canvas** (100% completo)
+1. **Creative Atelier** (100% completo)
    - Drag & drop multi-tipo (note, image, link, AI, board)
    - Pan con Alt+drag o middle mouse
    - Zoom con right-click+drag (0.1x-5x)
@@ -34,9 +34,9 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
    - ReactFlow-based visual mind mapping
    - Ultra-intense selection visual (Ring4 + Triple Glow + Badge)
    - Right-click zoom Wacom-friendly (clamp max 1x)
-   - Export to Canvas workflow (Mind Garden → Canvas notes)
+   - Export to Creative Atelier workflow (Mind Garden → Creative Atelier notes)
    - Auto-centering nodes with optimal zoom
-   - Canvas-coherent UI layout
+   - Creative Atelier-coherent UI layout
    - AI Command Palette integration
    - Organic edges e phase-based coloring
 
@@ -64,8 +64,8 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
 ├── webapp/
 │   ├── src/
 │   │   ├── modules/
-│   │   │   ├── visual-canvas/
-│   │   │   │   ├── VisualCanvas.jsx (componente principale)
+│   │   │   ├── creative-atelier/
+│   │   │   │   ├── CreativeAtelier.jsx (componente principale)
 │   │   │   │   ├── store.js (stato e logica)
 │   │   │   │   ├── types.js (tipi e costanti)
 │   │   │   │   └── components/
@@ -298,34 +298,34 @@ npm run typecheck
 
 **MANDATORY BEHAVIOR**: Quando l'utente fa richieste che deviano dalla roadmap corrente, DEVI fornire un WARNING e chiedere conferma.
 
-**Current Active Roadmap**: Mind Garden v5.1 - 10-Day Sprint (Flora AI Revolution)
-**Documentation Reference**: `/docs/modules/mind-garden-roadmap-v5.1.md`
+**Current Active Roadmap**: Creative Atelier v4.3 - Templates & Export Evolution
+**Documentation Reference**: `/docs/modules/creative-atelier-roadmap-v4.3.md`
 
 ### ⚠️ **Deviation Warning Protocol**
 Quando l'utente chiede modifiche che non sono nel piano corrente:
 
 1. **IMMEDIATE WARNING**: 
    ```
-   ⚠️ WARNING: Questa richiesta devia dal roadmap Mind Garden v5.1, Day X.
+   ⚠️ WARNING: Questa richiesta devia dal roadmap Creative Atelier v4.3.
    
    Roadmap prevede: [cosa dovremmo fare secondo il piano]
    Tu chiedi: [cosa sta chiedendo l'utente]
    
    Vuoi:
    A) Continuare con la deviazione (possiamo vedere dopo)
-   B) Tornare al roadmap Day X
+   B) Tornare al roadmap Creative Atelier v4.3
    C) Aggiornare il roadmap con questa priorità
    ```
 
 2. **Se richieste estetiche durante sviluppo core**: "⚠️ WARNING: Roadmap suggerisce completare [feature core] prima di polish visuale. Procedere comunque?"
 
-3. **Se nuove feature non pianificate**: "⚠️ WARNING: Questa feature non è nel 10-day sprint. Meglio completare Day X prima?"
+3. **Se nuove feature non pianificate**: "⚠️ WARNING: Questa feature non è nel roadmap Creative Atelier v4.3. Meglio completare la fase attuale prima?"
 
-### 📋 **Current Sprint Status Tracking**
-- **Day 1**: Enhanced Node Foundation ← CURRENTLY HERE
-- **Day 2**: Contextual AI Integration  
-- **Day 3**: Visual Cues System
-- **Day 4-10**: [Come da roadmap]
+### 📋 **Current Roadmap Status Tracking**
+- **Phase 1**: Template System Foundation (Priority: HIGH)
+- **Phase 2**: Advanced Export System (Priority: HIGH)
+- **Phase 3**: AI Integration Enhancement (Priority: MEDIUM)
+- **Phase 4**: Collaboration Foundation (Priority: LOW)
 
 **REMEMBER**: Ogni deviazione rallenta il completamento. Mantieni focus sul piano concordato.
 
@@ -340,7 +340,7 @@ Quando riprendi il lavoro:
 
 ## 📌 Keywords per Ricerca
 
-- Visual Canvas, Drag Drop, Tree View, Nested Boards
+- Creative Atelier, Drag Drop, Tree View, Nested Boards
 - Zustand Store, localStorage persistence
 - Pan Zoom, Mouse Controls, Keyboard Shortcuts
 - React DnD Kit, Framer Motion, Tailwind CSS

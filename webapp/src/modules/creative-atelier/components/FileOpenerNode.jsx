@@ -21,8 +21,12 @@ import {
   ExternalLink,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Brain,
+  Lightbulb,
+  Zap
 } from 'lucide-react';
+import { analyzeFile, analyzeTextContent } from '../utils/fileIntelligence.js';
 
 // File type icons mapping
 const FILE_TYPE_ICONS = {
@@ -89,9 +93,24 @@ const STATUS_ICONS = {
 const FileOpenerNode = ({ element, onUpdate, onExecute }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   
   const { data } = element;
-  const { filePath, fileName, description, fileType, icon, status, exists } = data;
+  const { 
+    filePath, 
+    fileName, 
+    description, 
+    fileType, 
+    icon, 
+    status, 
+    exists,
+    // New intelligent properties
+    analysis,
+    suggestions,
+    automations,
+    confidence
+  } = data;
   
   // Get appropriate icon for file type
   const FileIcon = FILE_TYPE_ICONS[fileType] || FILE_TYPE_ICONS.unknown;
@@ -208,28 +227,77 @@ const FileOpenerNode = ({ element, onUpdate, onExecute }) => {
     return { success: true };
   }, []);
   
-  // Handle file selection via file input
-  const handleFileSelect = useCallback((event) => {
+  // Handle file selection via file input with intelligent analysis
+  const handleFileSelect = useCallback(async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     
     const newFileType = getFileType(file.name);
     const newIcon = FILE_TYPE_ICONS[newFileType] ? '📄' : '📁';
     
-    onUpdate(element.id, {
-      data: {
-        ...data,
-        filePath: file.path || file.name, // In Electron, file.path would be available
-        fileName: file.name,
-        fileType: newFileType,
-        fileSize: file.size,
-        lastModified: file.lastModified,
-        icon: newIcon,
-        exists: true,
-        status: 'ready'
+    // Start file analysis
+    setIsAnalyzing(true);
+    
+    try {
+      // Basic file info update
+      onUpdate(element.id, {
+        data: {
+          ...data,
+          filePath: file.path || file.name,
+          fileName: file.name,
+          fileType: newFileType,
+          fileSize: file.size,
+          lastModified: file.lastModified,
+          icon: newIcon,
+          exists: true,
+          status: 'ready'
+        }
+      });
+      
+      // Perform intelligent analysis
+      const fileAnalysis = await analyzeFile(file);
+      
+      if (fileAnalysis) {
+        // Update with analysis results
+        onUpdate(element.id, {
+          data: {
+            ...data,
+            filePath: file.path || file.name,
+            fileName: file.name,
+            fileType: newFileType,
+            fileSize: file.size,
+            lastModified: file.lastModified,
+            icon: newIcon,
+            exists: true,
+            status: 'ready',
+            analysis: fileAnalysis,
+            suggestions: fileAnalysis.suggestions,
+            automations: fileAnalysis.automations,
+            confidence: fileAnalysis.confidence
+          }
+        });
+        
+        // Show suggestions if confidence is high
+        if (fileAnalysis.confidence > 0.7) {
+          setShowSuggestions(true);
+        }
+        
+        // Notify parent about intelligent suggestions
+        if (onExecute && fileAnalysis.suggestions.length > 0) {
+          onExecute('file-analyzed', {
+            fileName: file.name,
+            analysis: fileAnalysis,
+            suggestions: fileAnalysis.suggestions
+          });
+        }
       }
-    });
-  }, [element.id, data, onUpdate, getFileType]);
+      
+    } catch (error) {
+      console.error('File analysis failed:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [element.id, data, onUpdate, onExecute, getFileType]);
   
   return (
     <motion.div
@@ -262,8 +330,28 @@ const FileOpenerNode = ({ element, onUpdate, onExecute }) => {
       
       {/* Status Indicator */}
       <div className="absolute top-3 right-3">
-        <StatusIcon className={`w-4 h-4 ${STATUS_COLORS[status]}`} />
+        {isAnalyzing ? (
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <StatusIcon className={`w-4 h-4 ${STATUS_COLORS[status]}`} />
+        )}
       </div>
+      
+      {/* AI Analysis Indicator */}
+      {(suggestions?.length > 0 || confidence > 0.7) && !isAnalyzing && (
+        <div className="absolute top-3 right-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSuggestions(!showSuggestions);
+            }}
+            className="w-6 h-6 bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 rounded transition-colors flex items-center justify-center"
+            title="View AI Suggestions"
+          >
+            <Brain className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+          </button>
+        </div>
+      )}
       
       {/* Content */}
       <div className="pt-14 pb-4 px-4">
@@ -321,16 +409,107 @@ const FileOpenerNode = ({ element, onUpdate, onExecute }) => {
             </button>
           )}
         </div>
+        
+        {/* AI Suggestions Panel */}
+        {showSuggestions && suggestions?.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                AI Suggestions
+              </span>
+              {confidence && (
+                <span className="text-xs text-purple-500 dark:text-purple-400">
+                  {Math.round(confidence * 100)}% confident
+                </span>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              {suggestions.slice(0, 3).map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onExecute) {
+                      onExecute('execute-suggestion', {
+                        suggestion,
+                        fileName,
+                        analysis
+                      });
+                    }
+                  }}
+                  className="w-full text-left p-2 text-xs bg-white dark:bg-gray-800 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-600 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-3 h-3 text-purple-500" />
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {suggestion.title}
+                    </span>
+                    {suggestion.priority === 'high' && (
+                      <span className="px-1 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs rounded">
+                        Priority
+                      </span>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            {/* Automations */}
+            {automations?.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-purple-200 dark:border-purple-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                    Quick Actions
+                  </span>
+                </div>
+                
+                {automations.slice(0, 2).map((automation, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onExecute) {
+                        onExecute('execute-automation', {
+                          automation,
+                          fileName,
+                          analysis
+                        });
+                      }
+                    }}
+                    className="w-full text-left p-2 text-xs bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded transition-colors mb-1"
+                  >
+                    <div className="font-medium">{automation.title}</div>
+                    <div className="text-purple-100 text-xs">{automation.description}</div>
+                    <div className="text-purple-200 text-xs mt-1">⚡ {automation.estimatedTime}</div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
       
       {/* Loading Overlay */}
-      {isExecuting && (
+      {(isExecuting || isAnalyzing) && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center"
         >
           <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          {isAnalyzing && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-xs">
+              Analyzing file...
+            </div>
+          )}
         </motion.div>
       )}
     </motion.div>

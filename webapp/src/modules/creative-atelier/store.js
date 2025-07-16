@@ -22,12 +22,43 @@ export const useCanvasStore = create(
     autoSaveEnabled: true,
     
     // Element management
-    addElement: (type, position) => {
+    addElement: (type, position, customData = {}) => {
       const newElement = createCanvasElement(type, position);
       
+      // Merge custom data with default data
+      if (customData && Object.keys(customData).length > 0) {
+        newElement.data = {
+          ...newElement.data,
+          ...customData
+        };
+        
+        // Apply custom title to the element data
+        if (customData.title) {
+          newElement.data.title = customData.title;
+        }
+        
+        // Apply custom content for notes
+        if (customData.content && type === 'note') {
+          newElement.data.content = customData.content;
+          newElement.data.text = customData.content; // Legacy support
+        }
+      }
+      
       // Auto-enable editing mode for notes created via double-click
-      if (type === 'note') {
+      if (type === 'note' && !customData.content) {
         newElement.editing = true;
+      }
+      
+      // Adjust size for notes with long content
+      if (type === 'note' && customData.content) {
+        const contentLength = customData.content.length;
+        if (contentLength > 500) {
+          newElement.size = { width: 360, height: 400 };
+        } else if (contentLength > 300) {
+          newElement.size = { width: 320, height: 300 };
+        } else if (contentLength > 150) {
+          newElement.size = { width: 300, height: 250 };
+        }
       }
       
       set((state) => ({
@@ -39,6 +70,9 @@ export const useCanvasStore = create(
       setTimeout(() => {
         get().saveCurrentLevelToProject();
       }, 100);
+      
+      // Return the element ID for reference
+      return newElement.id;
     },
 
     // Add a complete element (used for drag from tree)
