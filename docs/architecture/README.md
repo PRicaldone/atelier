@@ -28,6 +28,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | **Monitoring** | `/monitoring` | Real-time system monitoring | ✅ Production |
 | **Alerting** | `/alerts` | Notification configuration | ✅ Production |
 | **Testing** | `/tests` | Integration test dashboard | ✅ Production |
+| **🤖 Routine Agent** | `/routine` | Autonomous maintenance system | ✅ Production |
 
 ### 🔄 Backward Compatibility
 
@@ -55,6 +56,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 - Real-time health checks
 - Automated alerting system
 - Comprehensive error tracking
+- 🤖 Autonomous maintenance agent
 
 ### 4. **Test-Driven Reliability**
 - 100% integration test coverage
@@ -165,6 +167,118 @@ const healthCheck = {
 
 ---
 
+## 🤖 Atelier Routine Agent
+
+### Autonomous Maintenance System
+
+**Location**: `/webapp/src/modules/shared/agents/`
+
+The Atelier Routine Agent is an autonomous system maintenance solution that provides:
+
+#### Core Components
+
+1. **AtelierRoutineAgent.js** - Main agent class
+2. **routineChecklist.js** - Structured maintenance checklists
+3. **RoutineAgentDashboard.jsx** - Visual monitoring interface
+
+#### Health Check Capabilities
+
+```javascript
+// Comprehensive system health verification
+const healthChecks = {
+  moduleHealth: 'Verify all Module Registry components',
+  eventBusFlow: 'Check event communication patterns',
+  errorTracking: 'Analyze error trends and thresholds',
+  storageHealth: 'Monitor localStorage usage and cleanup',
+  adapterCommunication: 'Test all adapter methods',
+  performanceMetrics: 'Detect bottlenecks and optimization opportunities'
+};
+```
+
+#### Structured Maintenance Checklists
+
+**Daily Routine**:
+- ✅ Module health verification
+- ✅ Error count analysis (threshold: <10 errors)
+- ✅ Event flow validation
+- ✅ Storage cleanup (threshold: <5MB)
+- ⚠️ Backup reminder (user action required)
+
+**Weekly Routine**:
+- ⚠️ Dependency updates review
+- ✅ Performance metrics analysis
+- ✅ Code quality checks (lint, typecheck)
+- ⚠️ Documentation synchronization
+
+**Critical Routine**:
+- ✅ Module contract validation
+- ✅ Adapter communication testing
+- ✅ Event bus integrity verification
+- ✅ Data persistence validation
+
+#### Dashboard Features
+
+**Location**: `/routine`
+
+- **Real-time Health Status**: Color-coded system overview
+- **Scheduled Maintenance**: Automatic alerts for due routines
+- **Quick Actions**: One-click checklist execution
+- **Historical Analysis**: Trend tracking and insights
+- **Expandable Details**: Drill-down into specific checks
+
+#### Integration Points
+
+```javascript
+// Module Registry Integration
+async checkModuleHealth() {
+  const modules = moduleRegistry.getRegisteredModules();
+  const healthResults = await Promise.allSettled(
+    modules.map(module => module.adapter.healthCheck())
+  );
+  return this.analyzeHealthResults(healthResults);
+}
+
+// Event Bus Monitoring
+async checkEventBus() {
+  const eventStats = eventBus.getStats();
+  return this.analyzeEventFlow(eventStats);
+}
+
+// Error Tracking Analysis
+async checkErrorTracking() {
+  const errorStats = errorTracker.getStats();
+  const trends = this.analyzeErrorTrends(errorStats);
+  return this.generateErrorRecommendations(trends);
+}
+```
+
+#### Console Access
+
+```javascript
+// Full system routine
+window.__atelierRoutineAgent.runRoutine()
+
+// Specific checklists
+window.__atelierRoutineAgent.runChecklist('daily')
+window.__atelierRoutineAgent.runChecklist('weekly')
+window.__atelierRoutineAgent.runChecklist('critical')
+
+// Individual health checks
+window.__atelierRoutineAgent.checkModuleHealth()
+window.__atelierRoutineAgent.checkEventBus()
+window.__atelierRoutineAgent.checkErrorTracking()
+```
+
+#### Benefits
+
+- **Proactive Monitoring**: Detect issues before they impact users
+- **Automated Maintenance**: Reduce manual oversight requirements
+- **Predictive Intelligence**: Trend analysis with actionable recommendations
+- **Structured Approach**: Consistent maintenance procedures
+- **Enterprise Ready**: Professional monitoring for production deployment
+
+---
+
 ## 🧪 Testing & Quality Assurance
 
 ### Integration Test Suite
@@ -216,6 +330,11 @@ window.__alertingSystem.testAllChannels()
 // Integration Tests
 window.__integrationTestSuite.runAll()
 window.__integrationTestSuite.exportResults()
+
+// Routine Agent
+window.__atelierRoutineAgent.runRoutine()
+window.__atelierRoutineAgent.runChecklist('daily')
+window.__atelierRoutineAgent.checkModuleHealth()
 ```
 
 ### Module Development Guidelines
@@ -282,6 +401,7 @@ integrationTestSuite.addTest(
 | **System Health** | `/monitoring` | Real-time status and events |
 | **Alert Configuration** | `/alerts` | Notification setup and testing |
 | **Integration Tests** | `/tests` | Test execution and results |
+| **🤖 Routine Agent** | `/routine` | Autonomous maintenance and health checks |
 
 ### Emergency Procedures
 
@@ -295,6 +415,9 @@ curl http://localhost:5173/tests
 
 # 3. Check recent alerts
 curl http://localhost:5173/alerts
+
+# 4. Run routine agent checks
+curl http://localhost:5173/routine
 ```
 
 #### Module Recovery
@@ -307,6 +430,10 @@ window.__moduleRegistry.resetModule('moduleName')
 
 // Run specific tests
 window.__integrationTestSuite.runTest('Module Validation')
+
+// Run routine agent diagnostics
+window.__atelierRoutineAgent.runRoutine()
+window.__atelierRoutineAgent.checkModuleHealth()
 ```
 
 #### Rollback Procedure
@@ -387,6 +514,7 @@ git reset --hard <commit-hash>
 - ✅ **Test Coverage**: 100% integration test success rate
 - ✅ **Developer Experience**: Comprehensive debugging tools
 - ✅ **Production Ready**: Full observability and recovery procedures
+- ✅ **🤖 Autonomous Maintenance**: Routine Agent for proactive system care
 
 ---
 
