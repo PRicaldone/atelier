@@ -10,6 +10,7 @@ graph TB
         UI[User Interface]
         Routes[React Router]
         Components[Module Components]
+        AICommandBar[🤖 AI Command Bar]
     end
 
     subgraph "🏛️ Module System Core"
@@ -17,6 +18,14 @@ graph TB
         EventBus[Event Bus]
         Adapters[Module Adapters]
         Contracts[Interface Contracts]
+    end
+
+    subgraph "🧠 Intelligence & AI Layer"
+        TaskAnalyzer[Task Analyzer]
+        TaskCoordinator[Task Coordinator]
+        ClaudeConnectors[Claude Connectors]
+        Orchestrator[Orchestrator]
+        ModuleContext[Module Context]
     end
 
     subgraph "📊 Monitoring & Observability"

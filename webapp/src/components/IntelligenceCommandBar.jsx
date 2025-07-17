@@ -10,9 +10,11 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Zap, Brain, MessageCircle, Clock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, Zap, Brain, MessageCircle, Clock, CheckCircle, AlertCircle, Loader2, Eye } from 'lucide-react';
 import { taskAnalyzer } from '../modules/shared/intelligence/TaskAnalyzer.js';
 import { taskCoordinator } from '../modules/shared/intelligence/TaskCoordinator.js';
+import TaskPreview from '../modules/shared/intelligence/TaskPreview.js';
+import TaskPreviewModal from './TaskPreviewModal.jsx';
 
 // Execution states
 const ExecutionState = {
@@ -74,9 +76,12 @@ export default function IntelligenceCommandBar({
   const [error, setError] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [taskPreview, setTaskPreview] = useState(null);
   
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
+  const taskPreviewRef = useRef(null);
 
   // Module-specific suggestions
   const moduleSuggestions = {
@@ -108,6 +113,13 @@ export default function IntelligenceCommandBar({
       'Setup automation workflow'
     ]
   };
+
+  // Initialize task preview system
+  useEffect(() => {
+    if (taskAnalyzer && taskCoordinator && !taskPreviewRef.current) {
+      taskPreviewRef.current = new TaskPreview(taskAnalyzer, taskCoordinator);
+    }
+  }, []);
 
   // Update suggestions based on module
   useEffect(() => {
@@ -157,6 +169,40 @@ export default function IntelligenceCommandBar({
   };
 
   /**
+   * Generate preview for the analyzed task
+   */
+  const generatePreview = async () => {
+    if (!input.trim() || !analysis || !taskPreviewRef.current) return;
+
+    try {
+      setExecutionState(ExecutionState.ANALYZING);
+      
+      const preview = await taskPreviewRef.current.generatePreview(
+        input, 
+        analysis, 
+        { module }
+      );
+      
+      setTaskPreview(preview);
+      setShowPreview(true);
+      setExecutionState(ExecutionState.IDLE);
+      
+    } catch (error) {
+      console.error('Failed to generate preview:', error);
+      setError(`Preview generation failed: ${error.message}`);
+      setExecutionState(ExecutionState.ERROR);
+    }
+  };
+
+  /**
+   * Execute task with preview options
+   */
+  const executeWithOptions = async (options = {}) => {
+    setShowPreview(false);
+    await executeTask(options);
+  };
+
+  /**
    * Execute the analyzed task
    */
   const executeTask = async () => {
@@ -165,11 +211,33 @@ export default function IntelligenceCommandBar({
     setExecutionState(ExecutionState.EXECUTING);
     setError(null);
 
+    const startTime = Date.now();
+
     try {
       const result = await taskCoordinator.executeTask(input, { 
         module,
         analysis 
       });
+      
+      const executionTime = Date.now() - startTime;
+      
+      // Track AI command execution for analytics
+      if (window.__trackAICommand) {
+        // Estimate time saved based on complexity
+        const manualTimeEstimates = {
+          'simple': 120000,   // 2 minutes
+          'medium': 300000,   // 5 minutes  
+          'complex': 600000   // 10 minutes
+        };
+        const estimatedManualTime = manualTimeEstimates[analysis.complexity] || 180000;
+        const timeSaved = Math.max(0, estimatedManualTime - executionTime);
+        
+        window.__trackAICommand(input, analysis, {
+          ...result,
+          executionTime,
+          success: true
+        }, timeSaved);
+      }
       
       setResult(result);
       setExecutionState(ExecutionState.COMPLETED);
@@ -188,6 +256,16 @@ export default function IntelligenceCommandBar({
       
     } catch (error) {
       console.error('Execution failed:', error);
+      
+      // Track failed AI command
+      if (window.__trackAICommand) {
+        window.__trackAICommand(input, analysis, {
+          error: error.message,
+          executionTime: Date.now() - startTime,
+          success: false
+        }, 0);
+      }
+      
       setError(error.message);
       setExecutionState(ExecutionState.ERROR);
     }
@@ -284,16 +362,29 @@ export default function IntelligenceCommandBar({
               autoComplete="off"
             />
             
-            {/* Execute Button */}
+            {/* Action Buttons */}
             {analysis && executionState === ExecutionState.IDLE && (
-              <button
-                onClick={executeTask}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                aria-label="Execute intelligence task"
-              >
-                <Zap className="w-3 h-3" />
-                <span className="hidden sm:inline">Execute</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Preview Button */}
+                <button
+                  onClick={generatePreview}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  aria-label="Preview intelligence task"
+                >
+                  <Eye className="w-3 h-3" />
+                  <span className="hidden sm:inline">Preview</span>
+                </button>
+                
+                {/* Execute Button */}
+                <button
+                  onClick={executeTask}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  aria-label="Execute intelligence task"
+                >
+                  <Zap className="w-3 h-3" />
+                  <span className="hidden sm:inline">Execute</span>
+                </button>
+              </div>
             )}
           </div>
 
@@ -400,6 +491,15 @@ export default function IntelligenceCommandBar({
           onClick={() => setIsOpen(false)}
         />
       )}
+      
+      {/* Task Preview Modal */}
+      <TaskPreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        preview={taskPreview}
+        onExecute={executeTask}
+        onExecuteWithOptions={executeWithOptions}
+      />
     </div>
   );
 }

@@ -30,6 +30,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | **Testing** | `/tests` | Integration test dashboard | ✅ Production |
 | **🤖 Routine Agent** | `/routine` | Autonomous maintenance system | ✅ Production |
 | **🧠 Intelligence System** | `/intelligence` | Automated task routing & orchestration | ✅ Production |
+| **🤖 AI Command Bar** | `All Modules` | Natural language interface for AI interaction | ✅ Production |
 
 ### 🔄 Backward Compatibility
 
@@ -420,6 +421,111 @@ window.__contextManager.getContextsByScope('session')
 
 ---
 
+## 🤖 AI Command Bar System
+
+### Natural Language Interface for All Modules
+
+**Location**: `/webapp/src/components/IntelligenceCommandBar.jsx`
+
+The AI Command Bar provides a unified natural language interface across all Atelier modules, enabling users to interact with the Intelligence System through conversational commands.
+
+#### Core Components
+
+1. **IntelligenceCommandBar.jsx** - Universal AI command interface
+2. **ModuleContext.js** - Context-aware suggestions and analysis
+3. **Module Integrations** - Seamless integration across all modules
+
+#### Module Integration Points
+
+| Module | Location | Features |
+|--------|----------|----------|
+| **Mind Garden** | Top-center floating | Node creation, import/export, knowledge mapping |
+| **Scriptorium** | Above canvas area | Dashboard creation, data import, board generation |
+| **Orchestra** | Header position | Campaign management, content scheduling, automation |
+
+#### Key Features
+
+**Real-time Analysis**:
+- Task complexity assessment (Simple/Medium/Complex)
+- Intelligent routing (Connectors/Orchestrator/Hybrid)
+- Confidence scoring and reasoning display
+
+**Context-Aware Suggestions**:
+- Module-specific command suggestions
+- User behavior learning and personalization
+- Pattern recognition for optimal routing
+
+**Execution Capabilities**:
+- Direct connector operations (Notion, Google Drive, Asana, etc.)
+- Multi-step workflow orchestration
+- Cross-module data transfer and synchronization
+
+#### Usage Examples
+
+**Mind Garden Commands**:
+```
+"Import my Notion pages as nodes"
+"Export selected nodes to Scriptorium board"
+"Create knowledge graph from documents"
+```
+
+**Scriptorium Commands**:
+```
+"Create dashboard with my Drive files"
+"Generate project report and save to Drive"
+"Import Airtable records as visual cards"
+```
+
+**Orchestra Commands**:
+```
+"Schedule content from current campaign"
+"Launch multi-channel campaign"
+"Create automated client onboarding workflow"
+```
+
+#### Technical Implementation
+
+**Responsive Design**:
+- Mobile-optimized interface
+- Adaptive layout for different screen sizes
+- Touch-friendly interaction patterns
+
+**Accessibility Features**:
+- ARIA labels for screen readers
+- Keyboard navigation support
+- Focus management and visual indicators
+
+**Performance Optimization**:
+- Debounced real-time analysis
+- Efficient suggestion caching
+- Minimal render impact
+
+#### Console Access
+
+```javascript
+// Test command analysis
+window.__taskAnalyzer.analyzeTask('Create mind map from Notion')
+
+// Execute tasks directly
+window.__taskCoordinator.executeTask('Show me my files')
+
+// Check module context
+window.__moduleContext.getContextSuggestions('mind-garden')
+
+// Test specific connectors
+window.__claudeConnectorsAdapter.testAllConnectors()
+```
+
+#### Integration Benefits
+
+- **Unified Experience**: Consistent AI interaction across all modules
+- **Natural Language**: No need to learn complex UI patterns
+- **Context Preservation**: Smart understanding of user intent and module state
+- **Intelligent Routing**: Optimal execution path selection automatically
+- **Cross-Module Workflows**: Seamless data flow between different modules
+
+---
+
 ## 🧪 Testing & Quality Assurance
 
 ### Integration Test Suite
@@ -483,6 +589,12 @@ window.__taskCoordinator.getStats()
 window.__claudeConnectorsAdapter.testAllConnectors()
 window.__orchestratorAdapter.getAvailableTemplates()
 window.__contextManager.getStats()
+
+// AI Command Bar
+window.__taskAnalyzer.analyzeTask('Create mind map from Notion')
+window.__moduleContext.getContextSuggestions('mind-garden')
+window.__moduleContext.analyzeInputContext('Import my files')
+window.__moduleContext.getPersonalizedSuggestions('scriptorium')
 ```
 
 ### Module Development Guidelines
@@ -674,6 +786,7 @@ git reset --hard <commit-hash>
 - ✅ **Production Ready**: Full observability and recovery procedures
 - ✅ **🤖 Autonomous Maintenance**: Routine Agent for proactive system care
 - ✅ **🧠 Intelligence System**: Automated task routing and orchestration
+- ✅ **🤖 AI Command Bar**: Natural language interface across all modules
 
 ---
 

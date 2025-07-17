@@ -23,6 +23,8 @@ import IntegrationTestDashboard from './components/IntegrationTestDashboard'
 import AlertingConfigurationUI from './components/AlertingConfigurationUI'
 import RoutineAgentDashboard from './components/RoutineAgentDashboard'
 import IntelligenceSystemDashboard from './components/IntelligenceSystemDashboard'
+import AnalyticsDashboard from './components/AnalyticsDashboard'
+import './modules/shared/analytics'  // Initialize analytics system
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -180,6 +182,7 @@ function App() {
           <Route path="/alerts" element={<AlertingConfigurationUI />} />
           <Route path="/routine" element={<RoutineAgentDashboard />} />
           <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
         </Routes>
       </Layout>
     </MigrationManager>
