@@ -2588,3 +2588,10 @@ and the repository exists.
 [2025-07-17 13:00:04] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-17_12-59-59.txt
 [2025-07-17 13:00:04] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-17 13:00:04] [INFO] Cleaning up temporary files...
+[2025-07-17 15:31:14] [INFO] Starting atelier-save.sh v2.1
+[2025-07-17 15:31:14] [INFO] Custom commit message: 🤖 AI COMMAND BAR COMPLETE: Natural Language Interface Implementation
+[2025-07-17 15:31:14] [STEP] Checking prerequisites...
+[2025-07-17 15:31:14] [SUCCESS] Prerequisites check passed
+[2025-07-17 15:31:14] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-17 15:31:14] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-17 15:31:14] [INFO] 📝 Found 1 modified files
