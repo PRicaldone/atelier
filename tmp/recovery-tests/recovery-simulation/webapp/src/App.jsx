@@ -26,17 +26,7 @@ import RoutineAgentDashboard from './components/RoutineAgentDashboard'
 import IntelligenceSystemDashboard from './components/IntelligenceSystemDashboard'
 import AnalyticsDashboard from './components/AnalyticsDashboard'
 import SecurityStatus from './components/SecurityStatus'
-import RecoveryTestDashboard from './components/RecoveryTestDashboard'
-import AlertNotifications from './components/AlertNotifications'
-import AlertManagementDashboard from './components/AlertManagementDashboard'
-import CryptoMigrationDashboard from './components/CryptoMigrationDashboard'
-import WIPProtectionIndicator from './components/WIPProtectionIndicator'
-import WIPProtectionDashboard from './components/WIPProtectionDashboard'
-import AuditLogsDashboard from './components/AuditLogsDashboard'
 import './modules/shared/analytics'  // Initialize analytics system
-import './utils/alertSystem'  // Initialize alert system
-import './utils/wipProtection'  // Initialize WIP protection
-import './utils/auditLogger'  // Initialize audit logging
 import { autoMigrateOnStartup } from './utils/migrationSecureStorage'
 
 // Navigation sync component - ROBUST version to prevent loops
@@ -202,11 +192,6 @@ function App() {
           <Route path="/routine" element={<RoutineAgentDashboard />} />
           <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
           <Route path="/analytics" element={<AnalyticsDashboard />} />
-          <Route path="/recovery" element={<RecoveryTestDashboard />} />
-          <Route path="/alerts-mgmt" element={<AlertManagementDashboard />} />
-          <Route path="/crypto-migration" element={<CryptoMigrationDashboard />} />
-          <Route path="/wip-protection" element={<WIPProtectionDashboard />} />
-          <Route path="/audit-logs" element={<AuditLogsDashboard />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/roadmap" element={<Ideas />} />
           <Route path="/commercial-ideas" element={<Ideas />} />
@@ -214,12 +199,6 @@ function App() {
         
         {/* Security Status (Development Only) */}
         <SecurityStatus />
-        
-        {/* Alert Notifications System */}
-        <AlertNotifications />
-        
-        {/* WIP Protection Indicator */}
-        <WIPProtectionIndicator />
       </Layout>
     </MigrationManager>
   )

@@ -1,0 +1,26 @@
+2025-07-17 22:27:12 [INFO] [0;34m🎯 Starting Atelier Recovery Test Suite[0m
+2025-07-17 22:27:12 [INFO] [0;34mTest Directory: /Users/paoloricaldone/atelier/tmp/recovery-tests[0m
+2025-07-17 22:27:12 [INFO] [0;34mBackup Directory: /Users/paoloricaldone/atelier/ATELIER-VERSIONS[0m
+2025-07-17 22:27:12 [INFO] [0;34mCreated directory: /Users/paoloricaldone/atelier/tmp/recovery-tests[0m
+2025-07-17 22:27:12 [INFO] [0;34mTesting snapshot: snapshot_2025-07-17_21-29-30[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Snapshot Integrity Check[0m
+2025-07-17 22:27:12 [SUCCESS] [0;32m✅ Snapshot Integrity Check: All critical files present[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Package.json Validity[0m
+2025-07-17 22:27:12 [SUCCESS] [0;32m✅ Package.json Validity: Package.json is valid[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Module System Integrity[0m
+2025-07-17 22:27:12 [SUCCESS] [0;32m✅ Module System Integrity: All core modules present[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Security Files Integrity[0m
+2025-07-17 22:27:12 [SUCCESS] [0;32m✅ Security Files Integrity: All security files present[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Documentation Integrity[0m
+2025-07-17 22:27:12 [WARNING] [1;33m⚠️ Documentation Integrity: Missing documentation: docs/architecture-visual.md docs/security-implementation.md[0m
+2025-07-17 22:27:12 [INFO] [0;34m🧪 Running: Recovery Simulation[0m
+2025-07-17 22:27:12 [INFO] [0;34mCreated directory: /Users/paoloricaldone/atelier/tmp/recovery-tests/recovery-simulation[0m
+2025-07-17 22:27:12 [INFO] [0;34mSimulating recovery process...[0m
+2025-07-17 22:27:12 [INFO] [0;34m✓ Webapp files recovered[0m
+2025-07-17 22:27:12 [INFO] [0;34m✓ API files recovered[0m
+2025-07-17 22:27:12 [INFO] [0;34m✓ Documentation recovered[0m
+2025-07-17 22:27:12 [SUCCESS] [0;32m✅ Recovery Simulation: Recovery simulation successful[0m
+2025-07-17 22:27:12 [INFO] [0;34m🎯 Recovery Test Summary[0m
+2025-07-17 22:27:12 [INFO] [0;34mTests Passed: 5/6[0m
+2025-07-17 22:27:12 [WARNING] [1;33m⚠️ ⚠️ Some tests failed. Backup system needs attention.[0m
+2025-07-17 22:27:12 [INFO] [0;34mTest artifacts preserved in: /Users/paoloricaldone/atelier/tmp/recovery-tests[0m
