@@ -31,6 +31,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | **🤖 Routine Agent** | `/routine` | Autonomous maintenance system | ✅ Production |
 | **🧠 Intelligence System** | `/intelligence` | Automated task routing & orchestration | ✅ Production |
 | **🤖 AI Command Bar** | `All Modules` | Natural language interface for AI interaction | ✅ Production |
+| **🔬 Analytics System** | `/analytics` | Usage tracking, pattern recognition & ROI metrics | ✅ Production |
 
 ### 🔄 Backward Compatibility
 
