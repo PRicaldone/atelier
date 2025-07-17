@@ -6,7 +6,8 @@ import {
   Menu,
   Activity,
   TestTube,
-  Bell
+  Bell,
+  Shield
 } from 'lucide-react';
 import { useStore } from '../../store';
 
@@ -15,6 +16,7 @@ const menuItems = [
   { id: 'monitoring', label: 'Event Monitor', icon: Activity, path: '/monitoring' },
   { id: 'tests', label: 'Integration Tests', icon: TestTube, path: '/tests' },
   { id: 'alerts', label: 'Alert Config', icon: Bell, path: '/alerts' },
+  { id: 'routine', label: 'Routine Agent', icon: Shield, path: '/routine' },
 ];
 
 const Sidebar = () => {
