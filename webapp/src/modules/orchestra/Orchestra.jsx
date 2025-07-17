@@ -1,8 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, PenTool, BarChart3, Settings } from 'lucide-react';
+import IntelligenceCommandBar from '../../components/IntelligenceCommandBar';
+import { moduleContext } from '../shared/intelligence/ModuleContext';
 
 const Orchestra = () => {
   const [activeTab, setActiveTab] = useState('calendar');
+
+  // Intelligence System integration
+  useEffect(() => {
+    moduleContext.setCurrentModule('orchestra');
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+
+  // Intelligence System execution handler
+  const handleIntelligenceExecution = useCallback(async (result) => {
+    console.log('🎼 Intelligence System executed:', result);
+    
+    try {
+      // Handle different types of results based on the task
+      if (result.type === 'create_campaign') {
+        // Create new campaign
+        console.log('🎼 Creating new campaign:', result.campaign);
+        // Switch to appropriate tab
+        setActiveTab('composer');
+      } else if (result.type === 'schedule_content') {
+        // Schedule content across platforms
+        console.log('🎼 Scheduling content:', result.content);
+        setActiveTab('calendar');
+      } else if (result.type === 'analyze_performance') {
+        // Analyze campaign performance
+        console.log('🎼 Analyzing performance:', result.analytics);
+        setActiveTab('analytics');
+      } else if (result.type === 'automate_workflow') {
+        // Setup automation workflow
+        console.log('🎼 Setting up automation:', result.workflow);
+        setActiveTab('settings');
+      } else if (result.type === 'import_content') {
+        // Import content from external sources
+        console.log('🎼 Importing content:', result.data);
+        setActiveTab('composer');
+      } else if (result.type === 'client_presentation') {
+        // Create client presentation
+        console.log('🎼 Creating client presentation:', result.presentation);
+        setActiveTab('analytics');
+      }
+      
+      // Update module context with successful execution
+      moduleContext.updateUserPreferences('orchestra', result.type, true);
+      
+    } catch (error) {
+      console.error('🎼 Intelligence execution failed:', error);
+      moduleContext.updateUserPreferences('orchestra', result.type, false);
+    }
+  }, []);
 
   const tabs = [
     { id: 'calendar', label: 'Calendar', icon: Calendar },
@@ -15,12 +67,25 @@ const Orchestra = () => {
     <div className="h-screen bg-white dark:bg-gray-900 flex flex-col">
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 p-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Orchestra
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Orchestrate your content creation across all platforms
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Orchestra
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Orchestrate your content creation across all platforms
+            </p>
+          </div>
+          
+          {/* Intelligence Command Bar */}
+          <div className="w-96">
+            <IntelligenceCommandBar
+              module="orchestra"
+              onExecute={handleIntelligenceExecution}
+              className="shadow-lg"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}

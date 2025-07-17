@@ -22,6 +22,8 @@ import PathBreadcrumb from './components/PathBreadcrumb.jsx';
 import { GRID_SIZE } from './types.js';
 import { Lightbulb, Brain, Save } from 'lucide-react';
 import ConsolidationPanel from '../mind-garden/components/ConsolidationPanel';
+import IntelligenceCommandBar from '../../components/IntelligenceCommandBar';
+import { moduleContext } from '../shared/intelligence/ModuleContext';
 
 const CreativeAtelier = () => {
   console.log('CreativeAtelier rendering - full functionality without gestures');
@@ -49,6 +51,14 @@ const CreativeAtelier = () => {
   const { getCurrentProject } = useProjectStore();
   
   const unifiedCanvas = useCanvasState();
+
+  // Intelligence System integration
+  useEffect(() => {
+    moduleContext.setCurrentModule('scriptorium');
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
   
   // Legacy Canvas Store (gradually migrate to unified)
   const {
@@ -98,6 +108,82 @@ const CreativeAtelier = () => {
       }, 100);
     }
   }, [elements.length, centerViewport]);
+
+  // Intelligence System execution handler
+  const handleIntelligenceExecution = useCallback(async (result) => {
+    console.log('🧠 Intelligence System executed:', result);
+    
+    try {
+      // Handle different types of results based on the task
+      if (result.type === 'create_board') {
+        // Create new board/canvas
+        clearSelection();
+        if (result.elements) {
+          result.elements.forEach((elementData, index) => {
+            const position = elementData.position || { 
+              x: 100 + (index % 4) * 300, 
+              y: 100 + Math.floor(index / 4) * 200 
+            };
+            const element = {
+              id: `element-${Date.now()}-${index}`,
+              type: elementData.type || 'note',
+              position,
+              data: elementData.data || { content: 'New element' },
+              source: 'intelligence-system'
+            };
+            addElement(element);
+          });
+        }
+        centerViewport();
+      } else if (result.type === 'import_external_data') {
+        // Import external data as canvas elements
+        if (result.data) {
+          result.data.forEach((item, index) => {
+            const position = { 
+              x: 100 + (index % 3) * 350, 
+              y: 100 + Math.floor(index / 3) * 250 
+            };
+            const element = {
+              id: `import-${Date.now()}-${index}`,
+              type: item.type || 'note',
+              position,
+              data: {
+                content: item.content || item.title || 'Imported element',
+                title: item.title || 'Imported',
+                source: result.source || 'external'
+              }
+            };
+            addElement(element);
+          });
+          centerViewport();
+        }
+      } else if (result.type === 'export_board') {
+        // Export current board/elements
+        if (selectedIds.length > 0) {
+          const selectedElements = elements.filter(el => selectedIds.includes(el.id));
+          console.log('🎨 Exporting selected elements:', selectedElements);
+          // Export logic would go here
+        }
+      } else if (result.type === 'organize_elements') {
+        // Auto-organize elements on canvas
+        if (result.layout) {
+          result.layout.forEach(({ id, position }) => {
+            const element = elements.find(el => el.id === id);
+            if (element) {
+              moveElement(id, position);
+            }
+          });
+        }
+      }
+      
+      // Update module context with successful execution
+      moduleContext.updateUserPreferences('scriptorium', result.type, true);
+      
+    } catch (error) {
+      console.error('🧠 Intelligence execution failed:', error);
+      moduleContext.updateUserPreferences('scriptorium', result.type, false);
+    }
+  }, [elements, selectedIds, clearSelection, addElement, centerViewport, moveElement]);
 
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -607,6 +693,15 @@ const CreativeAtelier = () => {
   return (
     <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900" style={{ top: '0px', left: '-24px', right: '-24px', bottom: '0px' }}>
       <CanvasToolbar />
+      
+      {/* Intelligence Command Bar - Top Center */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 w-96">
+        <IntelligenceCommandBar
+          module="scriptorium"
+          onExecute={handleIntelligenceExecution}
+          className="shadow-lg"
+        />
+      </div>
       
       {/* Temporary Project Badge */}
       {isTemporaryProject && (

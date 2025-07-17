@@ -20,9 +20,11 @@ import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import DebugPanel from './components/DebugPanel';
 import ConsolidateButton from './components/ConsolidateButton';
 import ConsolidationPanel from './components/ConsolidationPanel';
+import IntelligenceCommandBar from '../../components/IntelligenceCommandBar';
 import { useUnifiedStore } from '../../store/unifiedStore';
 import { useProjectStore } from '../../store/projectStore';
 import { useMindGardenStore } from './store';
+import { moduleContext } from '../shared/intelligence/ModuleContext';
 import { Plus, Download, Map, Keyboard, Layers, Lightbulb, Eye } from 'lucide-react';
 
 // Custom node types - OUTSIDE component to prevent ReactFlow warnings
@@ -57,6 +59,14 @@ const MindGardenInner = () => {
   
   const reactFlowInstance = useReactFlow();
   const reactFlowWrapper = useRef(null);
+
+  // Intelligence System integration
+  useEffect(() => {
+    moduleContext.setCurrentModule('mind-garden');
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
 
   // Unified Store integration
   const { navigateToModule, analyzeCanvasContext } = useUnifiedStore();
@@ -238,6 +248,68 @@ const MindGardenInner = () => {
       }
     }
   }, [currentPhase, reactFlowInstance, addNode, createConversationalNode, setFocusedNode]);
+
+  // Intelligence System execution handler
+  const handleIntelligenceExecution = useCallback(async (result) => {
+    console.log('🧠 Intelligence System executed:', result);
+    
+    try {
+      // Handle different types of results based on the task
+      if (result.type === 'node_creation') {
+        // Create new nodes from result
+        if (result.nodes) {
+          result.nodes.forEach(nodeData => {
+            const position = nodeData.position || { 
+              x: Math.random() * 400 + 100, 
+              y: Math.random() * 300 + 100 
+            };
+            const nodeId = createConversationalNode(position);
+            updateNode(nodeId, {
+              data: {
+                title: nodeData.title || 'New Node',
+                content: nodeData.content || '',
+                type: nodeData.type || 'text',
+                source: 'intelligence-system',
+                phase: currentPhase
+              }
+            });
+          });
+        }
+      } else if (result.type === 'export_to_scriptorium') {
+        // Export selected nodes to Scriptorium
+        if (selectedNodes.length > 0) {
+          handleExportToAtelier();
+        }
+      } else if (result.type === 'import_from_external') {
+        // Import external data as nodes
+        if (result.data) {
+          result.data.forEach((item, index) => {
+            const position = { 
+              x: 100 + (index % 3) * 250, 
+              y: 100 + Math.floor(index / 3) * 150 
+            };
+            const nodeId = createConversationalNode(position);
+            updateNode(nodeId, {
+              data: {
+                title: item.title || 'Imported Node',
+                content: item.content || '',
+                type: 'text',
+                source: result.source || 'external',
+                phase: currentPhase
+              }
+            });
+          });
+        }
+      }
+      
+      // Update module context with successful execution
+      moduleContext.updateUserPreferences('mind-garden', result.type, true);
+      
+    } catch (error) {
+      console.error('🧠 Intelligence execution failed:', error);
+      moduleContext.updateUserPreferences('mind-garden', result.type, false);
+    }
+  }, [selectedNodes, currentPhase, createConversationalNode, updateNode, handleExportToAtelier]);
 
   const handleAICommand = useCallback(async (command) => {
     console.log('🌱 AI Command:', command, 'on node:', selectedNodeId);
@@ -652,6 +724,15 @@ const MindGardenInner = () => {
           size={2}
         />
       </ReactFlow>
+
+      {/* Intelligence Command Bar - Top Center */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 w-96">
+        <IntelligenceCommandBar
+          module="mind-garden"
+          onExecute={handleIntelligenceExecution}
+          className="shadow-lg"
+        />
+      </div>
 
       {/* Enhanced Toolbar - Top Left */}
       <div className="absolute top-4 left-4 z-50">

@@ -426,6 +426,28 @@ npm run typecheck
 - 🕐 **Time-based**: >20 minuti di sviluppo attivo
 - 🎯 **Feature completion**: Route, componente o modulo completato
 
+## 📚 ARCHITECTURE DOCUMENTATION UPDATE PROTOCOL (CRITICAL)
+
+**MANDATORY BEHAVIOR**: Quando fai modifiche all'architettura del sistema, DEVI SEMPRE aggiornare anche questi file di documentazione:
+
+### 🎯 **File da Aggiornare SEMPRE**
+1. **`/Users/paoloricaldone/atelier/docs/architecture/README.md`** - Documentazione architetturale principale
+2. **`/Users/paoloricaldone/atelier/docs/architecture/VISUAL_ARCHITECTURE.md`** - Diagrammi e visualizzazioni
+3. **`/Users/paoloricaldone/atelier/docs/blueprint-v6.2.md`** - Blueprint tecnico del sistema
+
+### 📋 **Checklist Modifiche Architettura**
+- [ ] Implementazione completata
+- [ ] README.md aggiornato con nuovi componenti
+- [ ] VISUAL_ARCHITECTURE.md aggiornato con diagrammi
+- [ ] Blueprint aggiornato con dettagli tecnici
+- [ ] Esempi console API aggiunti
+- [ ] Integration patterns documentati
+
+### ⚠️ **WARNING Protocol**
+Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI i file di documentazione prima del commit finale.
+
+---
+
 ## 🚨 Roadmap Adherence System (CRITICAL)
 
 **MANDATORY BEHAVIOR**: Quando l'utente fa richieste che deviano dalla roadmap corrente, DEVI fornire un WARNING e chiedere conferma.
