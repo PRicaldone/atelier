@@ -12,6 +12,9 @@ import { alertLogger } from '../monitoring/ModuleLogger.js';
 import { errorTracker } from '../monitoring/ErrorTracker.js';
 import { eventBus } from '../events/EventBus.js';
 import { DailyChecklist, WeeklyChecklist, CriticalChecklist, getChecklistByFrequency } from './routineChecklist.js';
+import { taskCoordinator } from '../intelligence/TaskCoordinator.js';
+import { claudeConnectorsAdapter } from '../intelligence/ClaudeConnectorsAdapter.js';
+import { orchestratorAdapter } from '../intelligence/OrchestratorAdapter.js';
 
 // Status indicators
 export const AgentStatus = {
@@ -887,6 +890,18 @@ export class AtelierRoutineAgent {
             case 'performance-review':
               result = await this.checkPerformance();
               break;
+            case 'intelligence-system':
+              result = await this.checkIntelligenceSystem();
+              break;
+            case 'task-coordination':
+              result = await this.checkTaskCoordination();
+              break;
+            case 'connectors-health':
+              result = await this.checkConnectorsHealth();
+              break;
+            case 'orchestrator-health':
+              result = await this.checkOrchestratorHealth();
+              break;
             case 'code-quality':
               // Would need to integrate with actual lint/typecheck commands
               result = {
@@ -946,6 +961,235 @@ export class AtelierRoutineAgent {
                     userActions.length > 0 ? 'pending' :
                     'healthy'
     };
+  }
+
+  /**
+   * Check Intelligence System health
+   */
+  async checkIntelligenceSystem() {
+    this.logger.info('🧠 Checking Intelligence System health', 'checkIntelligenceSystem');
+    
+    try {
+      // Check TaskCoordinator
+      const coordinatorHealth = await taskCoordinator.healthCheck();
+      const coordinatorStats = taskCoordinator.getStats();
+      
+      // Check if system is functioning
+      const issues = [];
+      
+      if (coordinatorHealth.status !== 'healthy') {
+        issues.push(`TaskCoordinator status: ${coordinatorHealth.status}`);
+      }
+      
+      if (coordinatorStats.successRate < 0.8) {
+        issues.push(`Low success rate: ${(coordinatorStats.successRate * 100).toFixed(1)}%`);
+      }
+      
+      if (coordinatorStats.averageExecutionTime > 10000) {
+        issues.push(`High execution time: ${coordinatorStats.averageExecutionTime.toFixed(0)}ms`);
+      }
+      
+      return {
+        status: issues.length === 0 ? CheckStatus.HEALTHY : CheckStatus.WARNING,
+        details: {
+          coordinator: coordinatorHealth,
+          stats: coordinatorStats,
+          issues
+        }
+      };
+      
+    } catch (error) {
+      return {
+        status: CheckStatus.CRITICAL,
+        error: error.message,
+        details: { error: 'Failed to check Intelligence System' }
+      };
+    }
+  }
+
+  /**
+   * Check Task Coordination health
+   */
+  async checkTaskCoordination() {
+    this.logger.info('🎯 Checking Task Coordination', 'checkTaskCoordination');
+    
+    try {
+      // Test task execution
+      const testResult = await taskCoordinator.executeTask('Test task coordination health check');
+      
+      const stats = taskCoordinator.getStats();
+      const issues = [];
+      
+      if (stats.activeTasks > 50) {
+        issues.push(`High active tasks: ${stats.activeTasks}`);
+      }
+      
+      if (!testResult.success) {
+        issues.push(`Test execution failed: ${testResult.metadata.error}`);
+      }
+      
+      return {
+        status: issues.length === 0 ? CheckStatus.HEALTHY : CheckStatus.WARNING,
+        details: {
+          testResult: testResult.success,
+          stats,
+          issues
+        }
+      };
+      
+    } catch (error) {
+      return {
+        status: CheckStatus.CRITICAL,
+        error: error.message,
+        details: { error: 'Failed to check Task Coordination' }
+      };
+    }
+  }
+
+  /**
+   * Check Claude Connectors health
+   */
+  async checkConnectorsHealth() {
+    this.logger.info('🔗 Checking Claude Connectors health', 'checkConnectorsHealth');
+    
+    try {
+      const connectorsHealth = await claudeConnectorsAdapter.healthCheck();
+      const connectorsStats = claudeConnectorsAdapter.getOperationStats();
+      const connectorsStatus = claudeConnectorsAdapter.getAllConnectorsStatus();
+      
+      const issues = [];
+      
+      if (connectorsHealth.status !== 'healthy') {
+        issues.push(`Connectors health: ${connectorsHealth.status}`);
+      }
+      
+      if (connectorsStats.successRate < 0.8) {
+        issues.push(`Low connector success rate: ${(connectorsStats.successRate * 100).toFixed(1)}%`);
+      }
+      
+      const disconnectedConnectors = Object.values(connectorsStatus)
+        .filter(c => c.status === 'disconnected' || c.status === 'error');
+      
+      if (disconnectedConnectors.length > 0) {
+        issues.push(`Disconnected connectors: ${disconnectedConnectors.map(c => c.name).join(', ')}`);
+      }
+      
+      return {
+        status: issues.length === 0 ? CheckStatus.HEALTHY : CheckStatus.WARNING,
+        details: {
+          health: connectorsHealth,
+          stats: connectorsStats,
+          connectors: Object.keys(connectorsStatus).length,
+          connected: Object.values(connectorsStatus).filter(c => c.status === 'connected').length,
+          issues
+        }
+      };
+      
+    } catch (error) {
+      return {
+        status: CheckStatus.CRITICAL,
+        error: error.message,
+        details: { error: 'Failed to check Claude Connectors' }
+      };
+    }
+  }
+
+  /**
+   * Check Orchestrator health
+   */
+  async checkOrchestratorHealth() {
+    this.logger.info('🎭 Checking Orchestrator health', 'checkOrchestratorHealth');
+    
+    try {
+      const orchestratorHealth = await orchestratorAdapter.healthCheck();
+      const orchestratorStats = orchestratorAdapter.getStats();
+      
+      const issues = [];
+      
+      if (orchestratorHealth.status !== 'healthy') {
+        issues.push(`Orchestrator health: ${orchestratorHealth.status}`);
+      }
+      
+      if (orchestratorStats.successRate < 0.8) {
+        issues.push(`Low orchestrator success rate: ${(orchestratorStats.successRate * 100).toFixed(1)}%`);
+      }
+      
+      if (orchestratorStats.queuedWorkflows > 10) {
+        issues.push(`High queued workflows: ${orchestratorStats.queuedWorkflows}`);
+      }
+      
+      return {
+        status: issues.length === 0 ? CheckStatus.HEALTHY : CheckStatus.WARNING,
+        details: {
+          health: orchestratorHealth,
+          stats: orchestratorStats,
+          issues
+        }
+      };
+      
+    } catch (error) {
+      return {
+        status: CheckStatus.CRITICAL,
+        error: error.message,
+        details: { error: 'Failed to check Orchestrator' }
+      };
+    }
+  }
+
+  /**
+   * Enhanced routine check with Intelligence System
+   */
+  async runRoutine() {
+    this.logger.info('🚀 Starting comprehensive routine check', 'runRoutine');
+    this.startTime = Date.now();
+    this.checkResults = [];
+
+    const checks = [
+      { name: 'Module Health', check: () => this.checkModuleHealth() },
+      { name: 'Event Bus', check: () => this.checkEventBus() },
+      { name: 'Error Tracking', check: () => this.checkErrorTracking() },
+      { name: 'Local Storage', check: () => this.checkLocalStorage() },
+      { name: 'Adapters', check: () => this.checkAdapters() },
+      { name: 'Performance', check: () => this.checkPerformance() },
+      { name: 'Intelligence System', check: () => this.checkIntelligenceSystem() },
+      { name: 'Task Coordination', check: () => this.checkTaskCoordination() },
+      { name: 'Claude Connectors', check: () => this.checkConnectorsHealth() },
+      { name: 'Orchestrator', check: () => this.checkOrchestratorHealth() }
+    ];
+
+    // Execute all checks
+    for (const { name, check } of checks) {
+      try {
+        this.logger.info(`Running check: ${name}`, 'runRoutine');
+        const result = await check();
+        this.checkResults.push({
+          check: name,
+          status: result.status,
+          details: result.details,
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        this.logger.error(error, `runRoutine.${name}`);
+        this.checkResults.push({
+          check: name,
+          status: CheckStatus.CRITICAL,
+          error: error.message,
+          timestamp: Date.now()
+        });
+      }
+    }
+
+    // Generate comprehensive report
+    const report = this.generateReport();
+    this.currentReport = report;
+    
+    this.logger.info('✅ Routine check completed', 'runRoutine', {
+      duration: Date.now() - this.startTime,
+      checks: this.checkResults.length,
+      status: report.overallStatus
+    });
+
+    return report;
   }
 }
 

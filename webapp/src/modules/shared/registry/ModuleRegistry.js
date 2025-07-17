@@ -213,6 +213,53 @@ class ModuleRegistry {
 // Create singleton instance
 export const moduleRegistry = new ModuleRegistry();
 
+// Register intelligence system adapters
+const registerIntelligenceSystem = async () => {
+  try {
+    // Register TaskCoordinator
+    const { taskCoordinator } = await import('../intelligence/TaskCoordinator.js');
+    moduleRegistry.register('task-coordinator', taskCoordinator, {
+      adapter: taskCoordinator,
+      aliases: ['intelligence-coordinator', 'task-router']
+    });
+
+    // Register ClaudeConnectorsAdapter
+    const { claudeConnectorsAdapter } = await import('../intelligence/ClaudeConnectorsAdapter.js');
+    moduleRegistry.register('claude-connectors', claudeConnectorsAdapter, {
+      adapter: claudeConnectorsAdapter,
+      aliases: ['connectors', 'claude-plugins']
+    });
+
+    // Register OrchestratorAdapter
+    const { orchestratorAdapter } = await import('../intelligence/OrchestratorAdapter.js');
+    moduleRegistry.register('orchestrator', orchestratorAdapter, {
+      adapter: orchestratorAdapter,
+      aliases: ['workflow-orchestrator', 'workflow-engine']
+    });
+
+    // Register TaskAnalyzer
+    const { taskAnalyzer } = await import('../intelligence/TaskAnalyzer.js');
+    moduleRegistry.register('task-analyzer', taskAnalyzer, {
+      adapter: taskAnalyzer,
+      aliases: ['complexity-analyzer', 'request-analyzer']
+    });
+
+    // Register ContextManager
+    const { contextManager } = await import('../intelligence/ContextManager.js');
+    moduleRegistry.register('context-manager', contextManager, {
+      adapter: contextManager,
+      aliases: ['context', 'session-manager']
+    });
+
+    moduleRegistry.logger.info('Intelligence system registered successfully', 'registerIntelligenceSystem');
+  } catch (error) {
+    moduleRegistry.logger.error(error, 'registerIntelligenceSystem');
+  }
+};
+
+// Auto-register intelligence system on load
+registerIntelligenceSystem();
+
 // For debugging in console
 if (typeof window !== 'undefined') {
   window.__moduleRegistry = moduleRegistry;

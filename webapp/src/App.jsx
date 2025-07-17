@@ -22,6 +22,7 @@ import EventMonitoringDashboard from './components/EventMonitoringDashboard'
 import IntegrationTestDashboard from './components/IntegrationTestDashboard'
 import AlertingConfigurationUI from './components/AlertingConfigurationUI'
 import RoutineAgentDashboard from './components/RoutineAgentDashboard'
+import IntelligenceSystemDashboard from './components/IntelligenceSystemDashboard'
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -178,6 +179,7 @@ function App() {
           <Route path="/tests" element={<IntegrationTestDashboard />} />
           <Route path="/alerts" element={<AlertingConfigurationUI />} />
           <Route path="/routine" element={<RoutineAgentDashboard />} />
+          <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
         </Routes>
       </Layout>
     </MigrationManager>

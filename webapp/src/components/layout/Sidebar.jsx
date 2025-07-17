@@ -7,12 +7,14 @@ import {
   Activity,
   TestTube,
   Bell,
-  Shield
+  Shield,
+  Brain
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 const menuItems = [
   { id: 'start', label: 'Project Start', icon: Rocket, path: '/start' },
+  { id: 'intelligence', label: 'Intelligence System', icon: Brain, path: '/intelligence' },
   { id: 'monitoring', label: 'Event Monitor', icon: Activity, path: '/monitoring' },
   { id: 'tests', label: 'Integration Tests', icon: TestTube, path: '/tests' },
   { id: 'alerts', label: 'Alert Config', icon: Bell, path: '/alerts' },

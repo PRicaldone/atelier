@@ -2045,3 +2045,10 @@ and the repository exists.
 [2025-07-17 12:11:29] [SUCCESS] Report generated: /Users/paoloricaldone/atelier/logs/atelier-save_report_2025-07-17_12-11-25.txt
 [2025-07-17 12:11:29] [SUCCESS] atelier-save.sh completed successfully! 🎉
 [2025-07-17 12:11:29] [INFO] Cleaning up temporary files...
+[2025-07-17 12:59:59] [INFO] Starting atelier-save.sh v2.1
+[2025-07-17 12:59:59] [INFO] Custom commit message: ✨ INTELLIGENCE SYSTEM COMPLETE: Claude + Connectors + Orchestrator with Context Preservation
+[2025-07-17 12:59:59] [STEP] Checking prerequisites...
+[2025-07-17 12:59:59] [SUCCESS] Prerequisites check passed
+[2025-07-17 12:59:59] [STEP] Checking for uncommitted changes (WIP Protection)...
+[2025-07-17 12:59:59] [WARNING] 🚧 Uncommitted changes detected - protecting your work!
+[2025-07-17 13:00:00] [INFO] 📝 Found 10 modified files

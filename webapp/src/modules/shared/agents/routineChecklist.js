@@ -36,6 +36,19 @@ export const DailyChecklist = {
       threshold: { maxSizeMB: 5 }
     },
     {
+      id: 'intelligence-system',
+      name: 'Intelligence System Health',
+      description: 'Check TaskCoordinator and routing system',
+      automated: true,
+      critical: true
+    },
+    {
+      id: 'connectors-health',
+      name: 'Claude Connectors Health',
+      description: 'Verify connector status and connectivity',
+      automated: true
+    },
+    {
       id: 'backup-reminder',
       name: 'Backup Reminder',
       description: 'Remind to run atelier-save if significant changes',
@@ -61,6 +74,18 @@ export const WeeklyChecklist = {
       id: 'performance-review',
       name: 'Performance Metrics',
       description: 'Analyze module load times and optimization opportunities',
+      automated: true
+    },
+    {
+      id: 'task-coordination',
+      name: 'Task Coordination Analysis',
+      description: 'Review task routing efficiency and success rates',
+      automated: true
+    },
+    {
+      id: 'orchestrator-health',
+      name: 'Orchestrator Health Review',
+      description: 'Analyze workflow execution patterns and performance',
       automated: true
     },
     {
