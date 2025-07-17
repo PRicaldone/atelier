@@ -29,6 +29,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | **Alerting** | `/alerts` | Notification configuration | ✅ Production |
 | **Testing** | `/tests` | Integration test dashboard | ✅ Production |
 | **🤖 Routine Agent** | `/routine` | Autonomous maintenance system | ✅ Production |
+| **🧠 Intelligence System** | `/intelligence` | Automated task routing & orchestration | ✅ Production |
 
 ### 🔄 Backward Compatibility
 
@@ -57,6 +58,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 - Automated alerting system
 - Comprehensive error tracking
 - 🤖 Autonomous maintenance agent
+- 🧠 Intelligent task routing and orchestration
 
 ### 4. **Test-Driven Reliability**
 - 100% integration test coverage
@@ -279,6 +281,145 @@ window.__atelierRoutineAgent.checkErrorTracking()
 
 ---
 
+## 🧠 Intelligence System
+
+### Automated Task Routing & Orchestration
+
+**Location**: `/webapp/src/modules/shared/intelligence/`
+
+The Intelligence System provides automated task analysis, routing, and orchestration capabilities that integrate:
+- **Claude Connectors** for external services (Notion, Google Drive, Asana, etc.)
+- **Orchestrator** for complex multi-step workflows
+- **Context Management** for seamless user experience
+
+#### Core Components
+
+1. **TaskAnalyzer.js** - Intelligent request complexity analysis
+2. **TaskCoordinator.js** - Central routing and execution engine
+3. **ClaudeConnectorsAdapter.js** - External service integration
+4. **OrchestratorAdapter.js** - Complex workflow management
+5. **ContextManager.js** - Cross-system context preservation
+
+#### Task Analysis & Routing
+
+```javascript
+// Intelligent task analysis
+const analysis = await taskAnalyzer.analyzeTask(request);
+// Returns: { complexity: 'simple|medium|complex', route: 'connectors|orchestrator|hybrid' }
+
+// Automated execution
+const result = await taskCoordinator.executeTask(request, options);
+// Handles routing, execution, and context preservation automatically
+```
+
+#### Supported Connectors
+
+| Connector | Service | Capabilities | Auth Required |
+|-----------|---------|-------------|---------------|
+| **Notion** | Notion.so | read, write, search, create | ✅ |
+| **Google Drive** | Google Drive | read, write, search, upload, download | ✅ |
+| **Asana** | Asana | read, write, create, update | ✅ |
+| **Filesystem** | Local Files | read, write, search, create | ❌ |
+| **Airtable** | Airtable | read, write, create, update, delete | ✅ |
+| **Zapier** | Zapier | trigger, webhook, automation | ✅ |
+
+#### Workflow Templates
+
+```javascript
+// Built-in workflow templates
+const templates = {
+  'multi-service-aggregation': 'Aggregate data from multiple services',
+  'create-atelier-board': 'Create board with external data',
+  'file-processing-workflow': 'Process and organize files'
+};
+
+// Custom workflow creation
+const workflow = orchestratorAdapter.createWorkflow(
+  'multi-service-aggregation',
+  'task-123',
+  { notion_params: {...}, drive_params: {...} }
+);
+```
+
+#### Context Management
+
+```javascript
+// Context preservation across systems
+contextManager.setContext('user_preferences', data, 'preferences', 'session');
+contextManager.setContext('task_history', results, 'execution_result', 'session');
+
+// Context retrieval
+const prefs = contextManager.getContext('user_preferences');
+const history = contextManager.getContextsByType('execution_result');
+```
+
+#### Dashboard Features
+
+**Location**: `/intelligence`
+
+- **System Health Overview**: Real-time status of all components
+- **Performance Metrics**: Task execution stats and success rates
+- **Context Analytics**: Context usage and distribution analysis
+- **Quick Actions**: Testing, debugging, and system control
+
+#### Integration Points
+
+```javascript
+// Module Registry Integration
+moduleRegistry.register('task-coordinator', taskCoordinator, {
+  adapter: taskCoordinator,
+  aliases: ['intelligence-coordinator', 'task-router']
+});
+
+// Event Bus Communication
+eventBus.on('task-coordinator:state:changed', (data) => {
+  // Handle task state changes
+});
+
+// Health Check Integration
+async checkIntelligenceSystem() {
+  const health = {
+    taskCoordinator: await taskCoordinator.healthCheck(),
+    claudeConnectors: await claudeConnectorsAdapter.healthCheck(),
+    orchestrator: await orchestratorAdapter.healthCheck(),
+    contextManager: await contextManager.healthCheck()
+  };
+  return this.analyzeIntelligenceHealth(health);
+}
+```
+
+#### Console Access
+
+```javascript
+// Task execution testing
+window.__taskCoordinator.executeTask('Show me my Notion pages')
+window.__taskCoordinator.executeTask('Create a new board with files from Google Drive')
+window.__taskCoordinator.getStats()
+
+// Connector testing
+window.__claudeConnectorsAdapter.testAllConnectors()
+window.__claudeConnectorsAdapter.getAllConnectorsStatus()
+
+// Orchestrator management
+window.__orchestratorAdapter.getAvailableTemplates()
+window.__orchestratorAdapter.getStats()
+
+// Context management
+window.__contextManager.getStats()
+window.__contextManager.createSnapshot()
+window.__contextManager.getContextsByScope('session')
+```
+
+#### Benefits
+
+- **Intelligent Routing**: Automatic task analysis and optimal execution path
+- **Context Continuity**: Preserved context across all system interactions
+- **Unified Interface**: Single point of entry for complex operations
+- **Scalable Architecture**: Supports unlimited connectors and workflows
+- **Enterprise Ready**: Professional monitoring and error handling
+
+---
+
 ## 🧪 Testing & Quality Assurance
 
 ### Integration Test Suite
@@ -335,6 +476,13 @@ window.__integrationTestSuite.exportResults()
 window.__atelierRoutineAgent.runRoutine()
 window.__atelierRoutineAgent.runChecklist('daily')
 window.__atelierRoutineAgent.checkModuleHealth()
+
+// Intelligence System
+window.__taskCoordinator.executeTask('Show me my Notion pages')
+window.__taskCoordinator.getStats()
+window.__claudeConnectorsAdapter.testAllConnectors()
+window.__orchestratorAdapter.getAvailableTemplates()
+window.__contextManager.getStats()
 ```
 
 ### Module Development Guidelines
@@ -402,6 +550,7 @@ integrationTestSuite.addTest(
 | **Alert Configuration** | `/alerts` | Notification setup and testing |
 | **Integration Tests** | `/tests` | Test execution and results |
 | **🤖 Routine Agent** | `/routine` | Autonomous maintenance and health checks |
+| **🧠 Intelligence System** | `/intelligence` | Task routing, orchestration, and context management |
 
 ### Emergency Procedures
 
@@ -418,6 +567,9 @@ curl http://localhost:5173/alerts
 
 # 4. Run routine agent checks
 curl http://localhost:5173/routine
+
+# 5. Check intelligence system status
+curl http://localhost:5173/intelligence
 ```
 
 #### Module Recovery
@@ -434,6 +586,12 @@ window.__integrationTestSuite.runTest('Module Validation')
 // Run routine agent diagnostics
 window.__atelierRoutineAgent.runRoutine()
 window.__atelierRoutineAgent.checkModuleHealth()
+
+// Test intelligence system
+window.__taskCoordinator.healthCheck()
+window.__claudeConnectorsAdapter.healthCheck()
+window.__orchestratorAdapter.healthCheck()
+window.__contextManager.healthCheck()
 ```
 
 #### Rollback Procedure
@@ -515,9 +673,10 @@ git reset --hard <commit-hash>
 - ✅ **Developer Experience**: Comprehensive debugging tools
 - ✅ **Production Ready**: Full observability and recovery procedures
 - ✅ **🤖 Autonomous Maintenance**: Routine Agent for proactive system care
+- ✅ **🧠 Intelligence System**: Automated task routing and orchestration
 
 ---
 
 *Generated by Atelier Professional Architecture System*  
 *Last Updated: 2025-07-17*  
-*Version: 1.0.0*
+*Version: 1.1.0 - Intelligence System Integration*

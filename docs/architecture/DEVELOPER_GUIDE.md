@@ -25,6 +25,9 @@ npm run dev
 
 # 3. Open monitoring dashboard
 open http://localhost:5173/monitoring
+
+# 4. Check intelligence system
+open http://localhost:5173/intelligence
 ```
 
 ---
@@ -240,6 +243,30 @@ window.__integrationTestSuite.exportResults()
 
 // Reset mock data
 window.__mockAdapterFactory.resetAllStores()
+```
+
+#### Intelligence System
+```javascript
+// Task execution testing
+window.__taskCoordinator.executeTask('Show me my Notion pages')
+window.__taskCoordinator.executeTask('Create a new board with files from Google Drive')
+window.__taskCoordinator.getStats()
+
+// Connector testing
+window.__claudeConnectorsAdapter.testAllConnectors()
+window.__claudeConnectorsAdapter.getAllConnectorsStatus()
+window.__claudeConnectorsAdapter.executeOperation('notion', 'read', {})
+
+// Orchestrator management
+window.__orchestratorAdapter.getAvailableTemplates()
+window.__orchestratorAdapter.getStats()
+window.__orchestratorAdapter.createWorkflow('multi-service-aggregation', 'test-workflow')
+
+// Context management
+window.__contextManager.getStats()
+window.__contextManager.createSnapshot()
+window.__contextManager.getContextsByScope('session')
+window.__contextManager.setContext('test-key', 'test-value', 'system_state', 'task')
 ```
 
 #### Alerting System
