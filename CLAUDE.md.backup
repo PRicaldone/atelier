@@ -16,7 +16,7 @@ L'ultimo salvataggio è del 13/07/2025 con Mind Garden Visual Enhancements compl
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 16/07/2025)
+## 📊 Stato Progetto (Ultimo aggiornamento: 17/07/2025)
 
 ### ✅ Moduli Completati
 
@@ -86,6 +86,36 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
     - Test utilities per development
     - Professional export capabilities
 
+### 🤖 **ATELIER ROUTINE AGENT SYSTEM** (100% completo)
+
+11. **Atelier Routine Agent** (100% completo)
+    - Autonomous system maintenance agent
+    - Comprehensive health check automation
+    - Structured maintenance checklists (Daily/Weekly/Critical)
+    - Module Registry integration per health monitoring
+    - Event Bus flow verification
+    - Error tracking trend analysis
+    - Storage health monitoring
+    - Adapter communication testing
+    - Performance bottleneck detection
+
+12. **Routine Agent Dashboard** (100% completo)
+    - Real-time system health visualization
+    - Scheduled maintenance alerts
+    - Quick checklist execution buttons
+    - Health check history tracking
+    - Expandable check details
+    - Color-coded status indicators
+    - Actionable recommendations display
+
+13. **Automated Checklists** (100% completo)
+    - Daily routine: Module health, error count, event flow, storage, backup reminders
+    - Weekly routine: Dependencies, performance review, code quality, documentation
+    - Critical routine: Contract validation, adapter testing, data integrity
+    - Scheduled execution tracking
+    - User action reminders
+    - Automated vs manual check differentiation
+
 ### 🔧 Stack Tecnico
 
 - **Frontend**: React 18 + Vite + Tailwind CSS
@@ -127,12 +157,18 @@ IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e a
 │   │   │       ├── events/
 │   │   │       │   ├── EventBus.js (comunicazione asincrona)
 │   │   │       │   └── events-matrix.md (documentazione eventi)
-│   │   │       └── monitoring/
-│   │   │           ├── ErrorTracker.js (error tracking centralizzato)
-│   │   │           └── ModuleLogger.js (convenience wrappers)
+│   │   │       ├── monitoring/
+│   │   │       │   ├── ErrorTracker.js (error tracking centralizzato)
+│   │   │       │   └── ModuleLogger.js (convenience wrappers)
+│   │   │       └── agents/
+│   │   │           ├── AtelierRoutineAgent.js (autonomous maintenance)
+│   │   │           ├── routineChecklist.js (structured checklists)
+│   │   │           ├── testRoutineAgent.js (testing utilities)
+│   │   │           └── index.js (agents export)
 │   │   ├── components/
 │   │   │   ├── EventMonitoringDashboard.jsx (dashboard monitoraggio)
-│   │   │   └── ErrorTrackingDemo.jsx (demo error tracking)
+│   │   │   ├── ErrorTrackingDemo.jsx (demo error tracking)
+│   │   │   └── RoutineAgentDashboard.jsx (routine agent UI)
 │   │   ├── utils/
 │   │   │   └── monitoringTestUtils.js (test utilities)
 │   │   └── [config, hooks, utils...]
@@ -231,6 +267,14 @@ window.__moduleRegistry.getInfo() // info moduli registrati
 window.__eventBus.getStats() // statistiche eventi
 window.__errorTracker.getStats() // statistiche errori
 window.__monitoringTestUtils.generateTestEvents() // genera test events
+
+// ATELIER ROUTINE AGENT
+window.__atelierRoutineAgent.runRoutine() // esegui routine completa
+window.__atelierRoutineAgent.runChecklist('daily') // esegui checklist giornaliera
+window.__atelierRoutineAgent.runChecklist('weekly') // esegui checklist settimanale
+window.__atelierRoutineAgent.runChecklist('critical') // esegui checklist critica
+window.__atelierRoutineAgent.getConfig() // configurazione agent
+window.__atelierRoutineAgent.checkModuleHealth() // check singolo modulo
 ```
 
 ### 📝 Git Workflow
@@ -421,10 +465,12 @@ Quando l'utente chiede modifiche che non sono nel piano corrente:
 
 Quando riprendi il lavoro:
 1. **Context Monitor**: Attivato automaticamente all'avvio sessione
-2. Verifica che tutti i fix funzionino con `npm run dev`
-3. Testa navigazione nested boards
-4. Verifica persistenza dopo refresh
-5. Controlla console per errori
+2. **Atelier Routine Agent**: Testa `/routine` dashboard e agent functionality
+3. Verifica health checks automatici con `window.__atelierRoutineAgent.runRoutine()`
+4. Controlla scheduled maintenance alerts
+5. Testa checklist execution (daily, weekly, critical)
+6. Verifica integrazione con Module Registry, Event Bus, Error Tracker
+7. Controlla console per errori e performance
 
 ## 📌 Keywords per Ricerca
 
@@ -433,6 +479,9 @@ Quando riprendi il lavoro:
 - Pan Zoom, Mouse Controls, Keyboard Shortcuts
 - React DnD Kit, Framer Motion, Tailwind CSS
 - Atelier Save, Version Control, Backup System
+- Atelier Routine Agent, Health Checks, Maintenance Checklists
+- Module Registry, Event Bus, Error Tracking, Adapters
+- Automated Monitoring, System Health, Performance Analysis
 
 ## 🔍 Comandi Dinamici Critici
 
@@ -546,11 +595,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 17/07/2025 00:24
-**Ultimo commit:** d8aa667 📚 ENTERPRISE DOCUMENTATION COMPLETE: Comprehensive architecture, developer guide, and visual documentation system
+**Data:** 17/07/2025 12:11
+**Ultimo commit:** 14ef13d 🤖 ATELIER ROUTINE AGENT COMPLETE: Autonomous system maintenance with daily/weekly checklists, health monitoring, and visual dashboard
 **Branch:** feature/project-architecture-ai
-**Commit totali:** 172
-**Snapshots:** 78 | **Backups:** 0
+**Commit totali:** 174
+**Snapshots:** 79 | **Backups:** 0
 
-**Ultima modifica:** 📚 ENTERPRISE DOCUMENTATION COMPLETE: Comprehensive architecture, developer guide, and visual documentation system
+**Ultima modifica:** 🤖 ATELIER ROUTINE AGENT COMPLETE: Autonomous system maintenance with daily/weekly checklists, health monitoring, and visual dashboard
 

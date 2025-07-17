@@ -497,11 +497,192 @@ window.__errorTracker.getStats() // Error statistics
 3. **Integration Tests** - Automated testing per module interactions
 4. **Health Checks** - Automated module health monitoring
 
+---
+
+## 🤖 **ATELIER ROUTINE AGENT SYSTEM**
+
+### **🎯 Agent Overview**
+Sistema autonomo per manutenzione automatizzata dell'ecosistema Atelier. Implementa un pattern agentico per eseguire controlli di sistema, generare report strutturati e fornire recommendations actionable.
+
+### **🏗️ Architecture Components**
+
+#### **1. AtelierRoutineAgent.js**
+```javascript
+// AUTONOMOUS SYSTEM MAINTENANCE AGENT
+class AtelierRoutineAgent {
+  constructor() {
+    this.logger = alertLogger.child({ agent: 'routine-agent' });
+    this.config = {
+      checkTimeout: 30000,
+      maxRetries: 3,
+      enabledChecks: ['modules', 'events', 'errors', 'storage', 'adapters']
+    };
+  }
+
+  // COMPREHENSIVE SYSTEM HEALTH CHECK
+  async runRoutine() {
+    const checks = await Promise.allSettled([
+      this.checkModuleHealth(),
+      this.checkEventBus(),
+      this.checkErrorTracking(),
+      this.checkLocalStorage(),
+      this.checkAdapters(),
+      this.checkPerformance()
+    ]);
+    
+    return this.generateReport(checks);
+  }
+
+  // CHECKLIST-BASED MAINTENANCE
+  async runChecklist(frequency = 'daily') {
+    const checklist = getChecklistByFrequency(frequency);
+    // Execute automated checks + user action reminders
+  }
+}
+```
+
+#### **2. Routine Checklists System**
+```javascript
+// STRUCTURED MAINTENANCE CHECKLISTS
+export const DailyChecklist = {
+  id: 'daily-routine',
+  name: 'Daily System Check',
+  frequency: 'daily',
+  checks: [
+    { id: 'module-health', automated: true, critical: true },
+    { id: 'error-count', automated: true, threshold: { maxErrors: 10 } },
+    { id: 'event-flow', automated: true },
+    { id: 'storage-check', automated: true, threshold: { maxSizeMB: 5 } },
+    { id: 'backup-reminder', automated: false, requiresUserAction: true }
+  ]
+};
+
+export const WeeklyChecklist = {
+  id: 'weekly-routine',
+  checks: [
+    { id: 'dependency-updates', requiresUserAction: true },
+    { id: 'performance-review', automated: true },
+    { id: 'code-quality', automated: true, commands: ['npm run lint', 'npm run typecheck'] },
+    { id: 'documentation-sync', requiresUserAction: true }
+  ]
+};
+```
+
+#### **3. Routine Agent Dashboard**
+```javascript
+// VISUAL MONITORING INTERFACE
+export default function RoutineAgentDashboard() {
+  const [lastReport, setLastReport] = useState(null);
+  const [scheduledChecks, setScheduledChecks] = useState([]);
+  
+  // SCHEDULED MAINTENANCE ALERTS
+  const scheduledChecks = getNextScheduledChecklist();
+  
+  // QUICK CHECKLIST EXECUTION
+  const runChecklist = async (frequency) => {
+    const report = await atelierRoutineAgent.runChecklist(frequency);
+    // Update UI with results
+  };
+}
+```
+
+### **🔧 Key Features**
+
+#### **Automated Health Checks**
+- **Module Health**: Verifica tutti i moduli del Module Registry
+- **Event Bus**: Controlla integrità communication patterns
+- **Error Tracking**: Analizza trend errori e soglie critiche
+- **Storage Health**: Monitora localStorage usage e cleanup
+- **Adapter Communication**: Testa tutti gli adapter methods
+- **Performance**: Analizza response times e bottlenecks
+
+#### **Checklist-Based Maintenance**
+- **Daily Routine**: Controlli automatici + reminder backup
+- **Weekly Routine**: Dependency review, performance analysis, code quality
+- **Critical Routine**: Validazione contratti, test comunicazione, integrità dati
+- **Scheduled Alerts**: Notifiche automatiche per maintenance dovuta
+
+#### **Visual Dashboard**
+- **Real-Time Status**: Overall system health con color coding
+- **Check History**: Storico esecuzioni con drill-down details
+- **Scheduled Maintenance**: Alert per routine dovute
+- **Quick Actions**: Pulsanti per eseguire checklist specifiche
+- **Recommendations**: Actionable insights per miglioramenti
+
+### **📊 Integration Points**
+
+#### **Module Registry Integration**
+```javascript
+// HEALTH CHECK INTEGRATION
+async checkModuleHealth() {
+  const modules = moduleRegistry.getRegisteredModules();
+  const results = await Promise.allSettled(
+    modules.map(async (module) => {
+      const adapter = moduleRegistry.getAdapter(module.name);
+      return adapter.healthCheck();
+    })
+  );
+  return this.analyzeHealthResults(results);
+}
+```
+
+#### **Event Bus Monitoring**
+```javascript
+// EVENT FLOW VERIFICATION
+async checkEventBus() {
+  const eventStats = eventBus.getStats();
+  const healthStatus = this.analyzeEventFlow(eventStats);
+  return {
+    status: healthStatus,
+    details: eventStats,
+    recommendations: this.generateEventRecommendations(eventStats)
+  };
+}
+```
+
+#### **Error Tracking Analysis**
+```javascript
+// ERROR TREND ANALYSIS
+async checkErrorTracking() {
+  const errorStats = errorTracker.getStats();
+  const recentErrors = errorTracker.getRecentErrors(24 * 60 * 60 * 1000);
+  
+  return {
+    status: this.determineErrorStatus(errorStats),
+    trends: this.analyzeErrorTrends(recentErrors),
+    recommendations: this.generateErrorRecommendations(errorStats)
+  };
+}
+```
+
+### **🎯 Usage Patterns**
+
+#### **Console Testing**
+```javascript
+// MANUAL TESTING VIA CONSOLE
+window.__atelierRoutineAgent.runRoutine().then(report => {
+  console.log('System Health:', report.overallStatus);
+  console.log('Issues Found:', report.recommendations.length);
+});
+
+// CHECKLIST EXECUTION
+window.__atelierRoutineAgent.runChecklist('daily').then(result => {
+  console.log('Daily Check Complete:', result.summary);
+});
+```
+
+#### **Dashboard Access**
+- **URL**: `http://localhost:5173/routine`
+- **Menu**: "Routine Agent" nella sidebar
+- **Features**: Run routine, view history, scheduled checks
+
 ### **🚀 Future Enhancements**
 1. **Performance Monitoring** - Response time tracking
 2. **Load Testing** - Stress testing per production
 3. **Advanced Analytics** - Pattern recognition nei logs
 4. **Automated Alerts** - Notification system per errori critici
+5. **Automated Remediation** - Self-healing system actions
+6. **Predictive Maintenance** - ML-based issue prediction
 
 ---
 
@@ -516,12 +697,15 @@ window.__errorTracker.getStats() // Error statistics
 - ✅ Event Monitoring Dashboard
 - ✅ Test Utilities Suite
 - ✅ Event Documentation Matrix
+- ✅ **Atelier Routine Agent System**
+- ✅ Automated Health Checks System
+- ✅ Daily/Weekly/Critical Checklists
+- ✅ Routine Agent Dashboard UI
 
 ### **🔄 IN PROGRESS**
 - 🔄 Visual Architecture Documentation
 - 🔄 Developer Experience README
 - 🔄 Integration Tests
-- 🔄 Health Checks System
 
 ### **🎯 NEXT PHASE**
 - 🎯 Performance Monitoring
@@ -533,7 +717,7 @@ window.__errorTracker.getStats() // Error statistics
 
 ## 🏆 **PROFESSIONAL ACHIEVEMENT**
 
-**Blueprint v6.2 Status**: **PROFESSIONAL MODULE SYSTEM COMPLETE**
+**Blueprint v6.2 Status**: **PROFESSIONAL MODULE SYSTEM + ATELIER ROUTINE AGENT COMPLETE**
 
 Implementato sistema modulare enterprise-grade con:
 - **Module Registry** per gestione centralizzata
@@ -541,10 +725,17 @@ Implementato sistema modulare enterprise-grade con:
 - **Event Bus** per disaccoppiamento
 - **Error Tracking** centralizzato
 - **Real-Time Monitoring** dashboard
+- **🤖 Atelier Routine Agent** per manutenzione autonoma
+
+**Routine Agent Capabilities**:
+- **Automated Health Checks**: Module, Event Bus, Error Tracking, Storage, Adapters
+- **Structured Checklists**: Daily, Weekly, Critical maintenance routines
+- **Visual Dashboard**: Real-time monitoring con scheduled alerts
+- **Predictive Intelligence**: Trend analysis e actionable recommendations
 
 **Zero Breaking Changes Demonstrated**: Orchestra rinominato da "content-studio" senza impatti sul sistema.
 
-**Ready for Production**: Sistema di monitoraggio e error tracking completo per deployment enterprise.
+**Ready for Production**: Sistema di monitoraggio, error tracking e manutenzione autonoma completo per deployment enterprise.
 
 **Next**: Visual documentation, developer experience enhancements, automated testing suite.
 
