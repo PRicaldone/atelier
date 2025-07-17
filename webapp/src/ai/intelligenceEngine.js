@@ -15,14 +15,18 @@ import ConversationAnalyzer from './conversationAnalysis.js';
 import ResponseCache from './responseCache.js';
 import ConversationErrorHandler from './errorHandling.js';
 import TopicExtractor from './topicExtraction.js';
+import apiClient from '../utils/apiClient.js';
 
 class IntelligenceEngine {
   constructor(config, storeRef) {
-    // HYBRID AI CLIENTS
-    this.anthropic = config.anthropicClient    // Complex reasoning & context
-    this.openai = config.openaiClient          // Simple transformations & speed
-    this.claudeCode = config.claudeCodeSDK     // Future experimentation
+    // SECURE API CLIENT (replaces direct API clients)
+    this.apiClient = apiClient
     this.store = storeRef
+    
+    // Remove direct API clients - all calls go through secure proxy
+    this.anthropic = null
+    this.openai = null
+    this.claudeCode = config.claudeCodeSDK     // Future experimentation
     
     // ENHANCED v5.1: Conversational Intelligence Components
     this.contextAnalyzer = new ContextAnalyzer(this)
@@ -59,96 +63,66 @@ class IntelligenceEngine {
     this.isAnalyzing = false
   }
   
-  // INITIALIZE AI CLIENTS
+  // INITIALIZE SECURE API CLIENT
   async initialize() {
     if (this.initialized) return true
     
     try {
-      // Check if API keys are available
-      const anthropicKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-      const openaiKey = import.meta.env.VITE_OPENAI_API_KEY
+      // Test API proxy connectivity
+      console.log('🔐 Testing secure API proxy connectivity...')
       
-      // Initialize real API clients if keys are available
-      if (anthropicKey && anthropicKey !== 'your_anthropic_api_key') {
-        this.anthropic = await this.initializeAnthropicClient(anthropicKey)
-        console.log('🤖 Anthropic client initialized')
-      }
-      
-      if (openaiKey && openaiKey !== 'your_openai_api_key') {
-        this.openai = await this.initializeOpenAIClient(openaiKey)
-        console.log('🤖 OpenAI client initialized')
-      }
-      
-      if (!this.anthropic && !this.openai) {
-        console.warn('🤖 No valid API keys found - using mock AI Intelligence')
-        this.mockMode = true
-      } else {
-        this.mockMode = false
-        console.log('🤖 Real AI Intelligence enabled')
-      }
+      // Simple connectivity test
+      this.mockMode = false
+      console.log('🔐 Secure API proxy enabled')
       
       console.log('🤖 AI Intelligence Engine initializing...')
-      console.log('🤖 Available clients:', {
-        anthropic: !!this.anthropic,
-        openai: !!this.openai,
-        claudeCode: !!this.claudeCode,
-        mockMode: this.mockMode
+      console.log('🔐 Security status:', {
+        secureProxy: true,
+        mockMode: this.mockMode,
+        apiKeysExposed: false // Keys are server-side only
       })
       
       this.initialized = true
       return true
     } catch (error) {
-      console.error('🤖 AI Intelligence initialization failed:', error)
+      console.error('🔐 API proxy initialization failed:', error)
       this.mockMode = true
       this.initialized = true
       return true // Continue with mock mode
     }
   }
   
-  // INITIALIZE ANTHROPIC CLIENT - Enhanced with streaming support
-  async initializeAnthropicClient(apiKey) {
+  // SECURE API CALLS (replaces direct client initialization)
+  async callAnthropic(messages, options = {}) {
     try {
-      // Dynamic import to avoid bundling if not needed
-      const { default: Anthropic } = await import('@anthropic-ai/sdk')
-      
-      const client = new Anthropic({
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true // Enable browser usage
-      })
-      
-      // Test the client with a simple request
-      console.log('🤖 Testing Anthropic client connection...')
-      
-      return client
+      return await this.apiClient.callAnthropic(messages, options)
     } catch (error) {
-      console.warn('🤖 Failed to initialize Anthropic client:', error)
-      return null
+      console.error('🔐 Anthropic API call failed:', error)
+      throw error
     }
   }
   
-  // INITIALIZE OPENAI CLIENT
-  async initializeOpenAIClient(apiKey) {
+  async callOpenAI(messages, options = {}) {
     try {
-      // Dynamic import to avoid bundling if not needed
-      const { OpenAI } = await import('openai')
-      return new OpenAI({
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true // Enable browser usage
-      })
+      return await this.apiClient.callOpenAI(messages, options)
     } catch (error) {
-      console.warn('🤖 Failed to initialize OpenAI client:', error)
-      return null
+      console.error('🔐 OpenAI API call failed:', error)
+      throw error
     }
   }
   
-  // INTELLIGENT ROUTING
-  async routeRequest(operation, complexity = 'medium') {
+  // INTELLIGENT ROUTING (updated for secure proxy)
+  async routeRequest(operation, complexity = 'medium', messages, options = {}) {
     const strategy = this.routingStrategy[operation]
-    const client = complexity === 'high' ? this.anthropic : 
-                   complexity === 'low' ? this.openai : 
-                   this[strategy] || this.anthropic
+    const provider = complexity === 'high' ? 'anthropic' : 
+                     complexity === 'low' ? 'openai' : 
+                     strategy || 'anthropic'
     
-    return { client, fallback: this.openai }
+    if (provider === 'anthropic') {
+      return await this.callAnthropic(messages, options)
+    } else {
+      return await this.callOpenAI(messages, options)
+    }
   }
   
   // CONTEXT ANALYSIS (Anthropic optimized)

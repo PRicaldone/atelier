@@ -7,6 +7,7 @@ import {
   STORAGE_KEYS 
 } from './types.js';
 import { useProjectStore } from '../../store/projectStore.js';
+import secureStorage from '../../utils/secureStorage.js';
 
 // Canvas store with drag & drop and persistence
 export const useCanvasStore = create(
@@ -420,7 +421,7 @@ export const useCanvasStore = create(
         return null;
       };
       
-      const rootElements = JSON.parse(localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || '[]');
+      const rootElements = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || [];
       const completePath = findBoardPath(rootElements, boardId);
       
       if (!completePath) {
@@ -499,7 +500,7 @@ export const useCanvasStore = create(
     // Helper method for clean exit to root
     exitToRoot: (viewports = {}) => {
       // Load fresh root elements from localStorage 
-      const rootElements = JSON.parse(localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || '[]');
+      const rootElements = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || [];
       console.log('🚪 🏠 Going to root with', rootElements.length, 'elements');
       
       set({
@@ -590,7 +591,7 @@ export const useCanvasStore = create(
       if (!state.currentBoardId) {
         // We're at root - simply replace root elements
         console.log('💾 Saving to root level with', state.elements.length, 'elements');
-        localStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, JSON.stringify(state.elements));
+        secureStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, state.elements);
         return;
       }
 
@@ -627,7 +628,7 @@ export const useCanvasStore = create(
       const updatedHierarchy = updateHierarchy(rootElements, state.currentBoardId, state.elements);
       
       // Save the complete updated hierarchy
-      localStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, JSON.stringify(updatedHierarchy));
+      secureStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, updatedHierarchy);
       console.log('💾 ✅ Hierarchy saved successfully');
       
       // Verification - make sure our board can be found
@@ -661,7 +662,7 @@ export const useCanvasStore = create(
       console.log('findBoardInHierarchy - searching for:', boardId);
       
       // Search in full hierarchy (always use fresh data from localStorage)
-      const rootElements = JSON.parse(localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || '[]');
+      const rootElements = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || [];
       console.log('findBoardInHierarchy - searching in rootElements:', rootElements.length);
       
       const findInElements = (elements, path = []) => {
@@ -690,7 +691,7 @@ export const useCanvasStore = create(
       const state = get();
       
       // Get fresh root elements from localStorage
-      const rootElements = JSON.parse(localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || '[]');
+      const rootElements = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || [];
       
       console.log('getHierarchicalStructure - rootElements:', rootElements.length, 'currentBoardId:', state.currentBoardId, 'boardHistory:', state.boardHistory);
       
@@ -817,14 +818,14 @@ export const useCanvasStore = create(
         // For backward compatibility, also save to localStorage if no project
         const projectStore = useProjectStore.getState();
         if (!projectStore.currentProjectId) {
-          localStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, JSON.stringify(state.settings));
-          localStorage.setItem(STORAGE_KEYS.CANVAS_STATE, JSON.stringify({
+          secureStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, state.settings);
+          secureStorage.setItem(STORAGE_KEYS.CANVAS_STATE, {
             viewport: state.viewport,
             selectedIds: state.selectedIds,
             currentBoardId: state.currentBoardId,
             boardHistory: state.boardHistory,
             boardViewports: state.boardViewports
-          }));
+          });
         }
       } catch (error) {
         console.error('Failed to save canvas to storage:', error);
@@ -921,9 +922,9 @@ export const useCanvasStore = create(
       
       // Fallback to localStorage for backward compatibility
       try {
-        const elementsData = localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS);
-        const settingsData = localStorage.getItem(STORAGE_KEYS.CANVAS_SETTINGS);
-        const stateData = localStorage.getItem(STORAGE_KEYS.CANVAS_STATE);
+        const elementsData = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS);
+        const settingsData = secureStorage.getItem(STORAGE_KEYS.CANVAS_SETTINGS);
+        const stateData = secureStorage.getItem(STORAGE_KEYS.CANVAS_STATE);
 
         const updates = {};
 
@@ -950,7 +951,7 @@ export const useCanvasStore = create(
 
         // Load elements based on current board context
         if (elementsData) {
-          const rootElements = JSON.parse(elementsData);
+          const rootElements = elementsData;
           
           if (updates.currentBoardId) {
             // We're in a nested board - find and load its elements
@@ -1008,7 +1009,7 @@ export const useCanvasStore = create(
       const state = get();
       
       // Get fresh data from localStorage
-      const rootElements = JSON.parse(localStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || '[]');
+      const rootElements = secureStorage.getItem(STORAGE_KEYS.CANVAS_ELEMENTS) || [];
       
       // Find target board in hierarchy
       const findBoard = (elements, boardId) => {
@@ -1057,7 +1058,7 @@ export const useCanvasStore = create(
       targetBoard.data.elements.push(newElement);
       
       // Save updated hierarchy immediately
-      localStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, JSON.stringify(rootElements));
+      secureStorage.setItem(STORAGE_KEYS.CANVAS_ELEMENTS, rootElements);
       
       // Trigger tree refresh
       set((state) => ({
@@ -1105,7 +1106,7 @@ useCanvasStore.subscribe(
   (state) => state.settings,
   (settings) => {
     try {
-      localStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, JSON.stringify(settings));
+      secureStorage.setItem(STORAGE_KEYS.CANVAS_SETTINGS, settings);
     } catch (error) {
       console.error('Failed to save settings:', error);
     }

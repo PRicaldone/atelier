@@ -12,7 +12,8 @@ import {
   BusinessSwitcher,
   UnifiedStoreTest,
   MindGarden,
-  Orchestra
+  Orchestra,
+  Ideas
 } from './modules'
 import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
 import { initializeModules } from './modules/shared/moduleInit'
@@ -24,7 +25,9 @@ import AlertingConfigurationUI from './components/AlertingConfigurationUI'
 import RoutineAgentDashboard from './components/RoutineAgentDashboard'
 import IntelligenceSystemDashboard from './components/IntelligenceSystemDashboard'
 import AnalyticsDashboard from './components/AnalyticsDashboard'
+import SecurityStatus from './components/SecurityStatus'
 import './modules/shared/analytics'  // Initialize analytics system
+import { autoMigrateOnStartup } from './utils/migrationSecureStorage'
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -45,7 +48,10 @@ function NavigationSync() {
     '/mind-garden': 'mind-garden',
     '/tracker': 'projects',
     '/orchestra': 'orchestra',
-    '/content-studio': 'orchestra' // Backward compatibility
+    '/content-studio': 'orchestra', // Backward compatibility
+    '/ideas': 'ideas',
+    '/roadmap': 'ideas', // Backward compatibility
+    '/commercial-ideas': 'ideas' // Backward compatibility
   };
   
   const moduleToRoute = {
@@ -121,6 +127,9 @@ function App() {
   // Initialize module system
   useEffect(() => {
     if (initialized && !modulesInitialized) {
+      // Auto-migrate to secure storage first
+      autoMigrateOnStartup();
+      
       initializeModules().then(() => {
         setModulesInitialized(true);
         console.log('🎯 Module system initialized');
@@ -183,7 +192,13 @@ function App() {
           <Route path="/routine" element={<RoutineAgentDashboard />} />
           <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
           <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/ideas" element={<Ideas />} />
+          <Route path="/roadmap" element={<Ideas />} />
+          <Route path="/commercial-ideas" element={<Ideas />} />
         </Routes>
+        
+        {/* Security Status (Development Only) */}
+        <SecurityStatus />
       </Layout>
     </MigrationManager>
   )

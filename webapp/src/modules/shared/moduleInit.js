@@ -5,9 +5,11 @@
 import moduleRegistry from './registry/ModuleRegistry.js';
 import { canvasAdapter } from './adapters/CanvasAdapter.js';
 import { mindGardenAdapter } from './adapters/MindGardenAdapter.js';
+import { ideasAdapter } from './adapters/IdeasAdapter.js';
 import { eventBus, ModuleEvents } from './events/EventBus.js';
 import { ICanvas, ICanvas_v2 } from './contracts/ICanvas.js';
 import { IMindGarden } from './contracts/IMindGarden.js';
+import { IIdeas } from './contracts/IIdeas.js';
 import { initializeHealthChecking } from './health/HealthCheckIntegration.js';
 
 /**
@@ -22,7 +24,7 @@ export async function initializeModules() {
     moduleRegistry.register(
       'scriptorium',
       async () => {
-        const { useCanvasStore } = await import('../visual-canvas/store.js');
+        const { useCanvasStore } = await import('../scriptorium/store.js');
         return useCanvasStore;
       },
       {
@@ -60,9 +62,24 @@ export async function initializeModules() {
       }
     );
     
+    // Register Ideas module (Ideas & Commercial Roadmap)
+    moduleRegistry.register(
+      'ideas',
+      async () => {
+        const { useIdeasStore } = await import('../ideas/store.js');
+        return useIdeasStore;
+      },
+      {
+        aliases: ['roadmap', 'commercial-ideas'],
+        adapter: ideasAdapter,
+        contract: IIdeas
+      }
+    );
+    
     // Initialize adapters
     await canvasAdapter.init();
     await mindGardenAdapter.init();
+    // Note: ideasAdapter doesn't need init() method as it's stateless
     
     // Setup cross-module event handlers
     setupEventHandlers();
@@ -150,6 +167,10 @@ export function getModuleAdapter(moduleName) {
     case 'mindgarden':
     case 'mind-garden':
       return mindGardenAdapter;
+    case 'ideas':
+    case 'roadmap':
+    case 'commercial-ideas':
+      return ideasAdapter;
     default:
       return moduleRegistry.getAdapter(moduleName);
   }
@@ -179,4 +200,4 @@ export async function invokeModule(moduleName, method, ...args) {
 }
 
 // Export everything for convenience
-export { moduleRegistry, eventBus, ModuleEvents, canvasAdapter, mindGardenAdapter };
+export { moduleRegistry, eventBus, ModuleEvents, canvasAdapter, mindGardenAdapter, ideasAdapter };

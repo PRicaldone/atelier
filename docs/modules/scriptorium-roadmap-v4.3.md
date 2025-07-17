@@ -1,17 +1,17 @@
-# Creative Atelier Roadmap v4.3 - Templates & Export Evolution
+# Scriptorium Roadmap v4.3 - Templates & Export Evolution
 **Foundation Enhancement for Advanced Creative Workflows**
 
 ## 🎯 **Module Vision v4.3**
 
 **Evolution Goal**: From stable foundation → **Template-Driven Export Powerhouse**
 
-**Strategic Position**: Creative Atelier becomes the **output and organization layer** for Mind Garden's conversational intelligence, with powerful templates and export capabilities.
+**Strategic Position**: Scriptorium becomes the **output and organization layer** for Mind Garden's conversational intelligence, with powerful templates and export capabilities.
 
 ## 🏗️ **CURRENT STATUS v4.2**
 
 ### **✅ Stable Foundation Achievements**
 ```javascript
-const CanvasV42Status = {
+const ScriptoriumV42Status = {
   coreFeatures: {
     dragDropSystem: "✅ Multi-type elements (note, image, link, AI, board)",
     navigation: "✅ Pan (Alt+drag), Zoom (right-click+drag), Tree View",
@@ -160,7 +160,7 @@ const ExportSystemV43 = {
         pageSize: "A4 | A3 | Letter | Custom",
         orientation: "Portrait | Landscape",
         resolution: "300dpi | 600dpi | Print-ready",
-        styling: "Preserve Canvas styling | Clean presentation mode"
+        styling: "Preserve Scriptorium styling | Clean presentation mode"
       }
     },
     
@@ -206,8 +206,8 @@ const ExportSystemV43 = {
 ```javascript
 const IntelligentExport = {
   contentAnalysis: {
-    async analyzeCanvasForExport(canvasId) {
-      const elements = getCanvasElements(canvasId);
+    async analyzeScriptoriumForExport(canvasId) {
+      const elements = getScriptoriumElements(canvasId);
       
       return {
         contentType: detectContentType(elements), // presentation, documentation, planning
@@ -269,7 +269,7 @@ const AIIntegrationV43 = {
     mindGardenIntegration: {
       description: "AI understands Mind Garden conversation context",
       features: [
-        "Suggest Canvas organization based on conversation topics",
+        "Suggest Scriptorium organization based on conversation topics",
         "Recommend templates that match conversation intent",
         "Auto-categorize exported Mind Garden content",
         "Suggest follow-up elements based on conversation insights"
@@ -371,7 +371,7 @@ Week 3: Export Intelligence
 
 Week 4: Export Workflow Integration
 - Seamless export from templates
-- Mind Garden → Canvas → Export pipeline
+- Mind Garden → Scriptorium → Export pipeline
 - Export history and management
 - Quality assurance and validation
 ```
@@ -449,7 +449,7 @@ const ExportKPIs = {
   },
   
   workflow: {
-    target: "< 2 minutes from Canvas to professional deliverable",
+    target: "< 2 minutes from Scriptorium to professional deliverable",
     measurement: "Export process timing and efficiency"
   }
 }
@@ -477,21 +477,21 @@ const AIIntegrationKPIs = {
 
 ## 🔗 **CROSS-MODULE INTEGRATION STRATEGY**
 
-### **Mind Garden → Canvas Enhanced Workflow**
+### **Mind Garden → Scriptorium Enhanced Workflow**
 ```javascript
 const MindGardenIntegration = {
   conversationExport: {
-    current: "Basic export of conversation threads to Canvas notes",
+    current: "Basic export of conversation threads to Scriptorium notes",
     enhanced: "Template-based export with intelligent structure generation",
-    intelligence: "AI analyzes conversation type and suggests optimal Canvas template"
+    intelligence: "AI analyzes conversation type and suggests optimal Scriptorium template"
   },
   
   continuousWorkflow: {
     description: "Seamless transition from exploration to organization",
     features: [
       "Export specific conversation branches to targeted board sections",
-      "Maintain conversation context in Canvas element metadata",
-      "Enable reverse flow: Canvas insights → Mind Garden conversations",
+      "Maintain conversation context in Scriptorium element metadata",
+      "Enable reverse flow: Scriptorium insights → Mind Garden conversations",
       "Template selection based on conversation analysis"
     ]
   }
@@ -523,14 +523,14 @@ const BusinessSwitcherIntegration = {
 ```javascript
 const ProjectTrackerIntegration = {
   canvasToProject: {
-    description: "Transform Canvas boards into project plans",
-    workflow: "Canvas elements → Project tasks and milestones",
+    description: "Transform Scriptorium boards into project plans",
+    workflow: "Scriptorium elements → Project tasks and milestones",
     intelligence: "AI identifies actionable items and dependencies"
   },
   
   progressVisualization: {
-    description: "Canvas representations of project status",
-    implementation: "Dynamic Canvas boards that reflect project completion",
+    description: "Scriptorium representations of project status",
+    implementation: "Dynamic Scriptorium boards that reflect project completion",
     value: "Visual project communication for clients and team"
   }
 }
@@ -555,9 +555,9 @@ const TemplateIntelligenceV44 = {
 }
 ```
 
-### **v4.5: Collaborative Canvas (Q1 2026)**
+### **v4.5: Collaborative Scriptorium (Q1 2026)**
 ```javascript
-const CollaborativeCanvasV45 = {
+const CollaborativeScriptoriumV45 = {
   realTimeEditing: {
     description: "Multiple users editing simultaneously",
     features: ["Live cursors", "Conflict resolution", "Change attribution"]
@@ -570,11 +570,11 @@ const CollaborativeCanvasV45 = {
 }
 ```
 
-### **v5.0: Canvas Intelligence Platform (Q2 2026)**
+### **v5.0: Scriptorium Intelligence Platform (Q2 2026)**
 ```javascript
-const CanvasIntelligencePlatform = {
+const ScriptoriumIntelligencePlatform = {
   aiAssistant: {
-    description: "Dedicated AI assistant for Canvas workflows",
+    description: "Dedicated AI assistant for Scriptorium workflows",
     capabilities: [
       "Natural language canvas creation",
       "Intelligent content generation",
@@ -592,4 +592,4 @@ const CanvasIntelligencePlatform = {
 
 ---
 
-**Visual Canvas v4.3 Status**: Comprehensive roadmap defined for template system and export enhancement. Strategic position as output layer for Mind Garden intelligence with professional deliverable capabilities. Ready for 3-month development cycle with clear success metrics and integration strategy.
+**Scriptorium v4.3 Status**: Comprehensive roadmap defined for template system and export enhancement. Strategic position as output layer for Mind Garden intelligence with professional deliverable capabilities. Ready for 3-month development cycle with clear success metrics and integration strategy.

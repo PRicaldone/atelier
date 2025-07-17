@@ -9,12 +9,14 @@ import {
   Bell,
   Shield,
   Brain,
-  BarChart3
+  BarChart3,
+  Lightbulb
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 const menuItems = [
   { id: 'start', label: 'Project Start', icon: Rocket, path: '/start' },
+  { id: 'ideas', label: 'Ideas & Roadmap', icon: Lightbulb, path: '/ideas' },
   { id: 'intelligence', label: 'Intelligence System', icon: Brain, path: '/intelligence' },
   { id: 'analytics', label: 'Analytics Dashboard', icon: BarChart3, path: '/analytics' },
   { id: 'monitoring', label: 'Event Monitor', icon: Activity, path: '/monitoring' },

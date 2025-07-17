@@ -1,6 +1,6 @@
 /**
  * Canvas Adapter - Safe interface for canvas operations
- * Handles multiple canvas implementations (scriptorium, visual-canvas, creative-atelier, etc.)
+ * Handles multiple canvas implementations (scriptorium, creative-atelier, etc.)
  * Primary module: scriptorium (formerly creative-atelier)
  */
 import moduleRegistry from '../registry/ModuleRegistry.js';

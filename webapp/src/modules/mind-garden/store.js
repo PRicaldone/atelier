@@ -8,6 +8,7 @@ import {
   getNextState
 } from './types/conversationTypes';
 import { useProjectStore } from '../../store/projectStore.js';
+import secureStorage from '../../utils/secureStorage.js';
 
 // Initial demo data
 const initialNodes = [
@@ -591,7 +592,7 @@ export const useMindGardenStore = create(
       };
       
       try {
-        localStorage.setItem('ATELIER_MIND_GARDEN', JSON.stringify(data));
+        secureStorage.setItem('ATELIER_MIND_GARDEN', data);
       } catch (error) {
         console.error('🌱 Failed to save to localStorage:', error);
       }
@@ -641,9 +642,8 @@ export const useMindGardenStore = create(
       
       // Fallback to localStorage for backward compatibility
       try {
-        const saved = localStorage.getItem('ATELIER_MIND_GARDEN');
-        if (saved) {
-          const data = JSON.parse(saved);
+        const data = secureStorage.getItem('ATELIER_MIND_GARDEN');
+        if (data) {
           set({
             nodes: data.nodes || initialNodes,
             edges: data.edges || initialEdges,

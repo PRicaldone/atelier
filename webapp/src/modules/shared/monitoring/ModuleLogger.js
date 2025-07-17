@@ -172,6 +172,13 @@ export const alertLogger = createModuleLogger('alerting-system', {
   component: 'alerting'
 });
 
+// Export ModuleLogger class-like interface for backward compatibility
+export class ModuleLogger {
+  constructor(moduleName, defaultContext = {}) {
+    return createModuleLogger(moduleName, defaultContext);
+  }
+}
+
 /**
  * Console replacement for gradual migration
  * Drop-in replacement for console.log/error/warn

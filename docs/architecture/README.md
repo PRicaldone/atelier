@@ -32,6 +32,7 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | **🧠 Intelligence System** | `/intelligence` | Automated task routing & orchestration | ✅ Production |
 | **🤖 AI Command Bar** | `All Modules` | Natural language interface for AI interaction | ✅ Production |
 | **🔬 Analytics System** | `/analytics` | Usage tracking, pattern recognition & ROI metrics | ✅ Production |
+| **💡 Ideas & Roadmap** | `/ideas` | Commercial strategy & innovation pipeline management | ✅ Production |
 
 ### 🔄 Backward Compatibility
 
@@ -40,6 +41,8 @@ Atelier is a **creative command center** built with enterprise-grade architectur
 | `/atelier` | `/scriptorium` | ✅ Supported |
 | `/canvas` | `/scriptorium` | ✅ Supported |
 | `/content-studio` | `/orchestra` | ✅ Supported |
+| `/roadmap` | `/ideas` | ✅ Supported |
+| `/commercial-ideas` | `/ideas` | ✅ Supported |
 
 ---
 
@@ -738,6 +741,206 @@ git reset --hard <commit-hash>
 
 ---
 
+## 💡 **Ideas & Commercial Roadmap Module**
+
+### **Innovation Pipeline Management**
+
+**Location**: `/ideas`
+
+The Ideas & Commercial Roadmap Module provides enterprise-grade management of commercial strategies, feature innovations, and business development initiatives. Designed for creative polymorphs who frequently change direction and need transparent ROI validation.
+
+#### **Core Components**
+
+1. **Ideas Store** - Professional Zustand-based state management
+2. **IdeasAdapter** - Safe cross-module communication adapter
+3. **IIdeas Contract** - Formal interface for Module Registry integration
+4. **Ideas Dashboard** - Comprehensive UI with table and kanban views
+
+#### **Professional Features**
+
+**CRUD Operations**:
+- Create, read, update, delete ideas with validation
+- Status transition workflows with business rules
+- Bulk operations for efficient management
+- Soft delete with archive functionality
+
+**Advanced Filtering**:
+- Filter by status, category, priority, author, modules
+- Full-text search across title, description, notes
+- Tag-based organization and discovery
+- Related modules correlation
+
+**Export Capabilities**:
+- JSON export for API integration
+- CSV export for spreadsheet analysis  
+- Markdown export for documentation
+- Automated filename generation with timestamps
+
+**AI Integration**:
+- Natural language command processing via AI Command Bar
+- Context-aware idea suggestions based on current module
+- Cross-module idea correlation and recommendations
+- Automated categorization and tagging
+
+#### **Data Schema**
+
+```javascript
+// Professional idea object structure
+{
+  id: 'idea-YYYY-MM-DD-XXX',           // Unique identifier
+  title: 'Micro-subscription login model', // Short title
+  description: 'Detailed description...',   // Full description
+  category: 'pricing',                      // Feature/Pricing/Strategy/UX/Integration/Misc
+  status: 'brainstorming',                  // Lifecycle status
+  priority: 'medium',                       // Low/Medium/High/Critical
+  author: 'User',                           // Creator
+  source: 'user',                          // User/AI/Analytics/Feedback/Brainstorm
+  createdAt: '2025-07-17T...',             // ISO timestamp
+  updatedAt: '2025-07-17T...',             // ISO timestamp
+  relatedModules: ['scriptorium', 'orchestra'], // Associated modules
+  notes: 'Additional context...',           // Extended notes
+  votes: 5,                                 // Community voting
+  tags: ['login', 'subscription'],         // Free-form tags
+  roiMetrics: {                             // ROI tracking
+    estimatedTimeSaved: 7200000,            // Milliseconds
+    implementationCost: 40,                 // Hours
+    confidenceScore: 0.8                    // 0-1 confidence
+  },
+  archived: false                           // Soft delete flag
+}
+```
+
+#### **Status Lifecycle**
+
+Professional status transition workflow with validation:
+
+```
+brainstorming → to-validate → planned → roadmap → in-progress → implemented
+                     ↓              ↓           ↓
+                 discarded      discarded   discarded
+```
+
+#### **UI/UX Features**
+
+**Table View**:
+- Sortable columns with advanced filtering
+- Bulk selection with multi-actions
+- Inline editing and quick status changes
+- Export selected or filtered ideas
+
+**Kanban Board**:
+- Visual status workflow representation
+- Drag & drop status transitions (future enhancement)
+- Color-coded categories and priorities
+- Card-based idea display with metadata
+
+**Add/Edit Modal**:
+- Professional form validation
+- Smart categorization suggestions
+- Related modules selection
+- Tag management with autocomplete
+
+#### **Cross-Module Integration**
+
+**Mind Garden**:
+- Import mind garden nodes as feature ideas
+- Export ideas to mind garden for visualization
+- Context correlation for related concept discovery
+
+**Scriptorium**:
+- Generate documentation from idea descriptions
+- Create visual boards from idea collections
+- Dashboard creation with idea-driven layouts
+
+**Orchestra**:
+- Campaign ideas for marketing strategies
+- Content strategy development from commercial ideas
+- Workflow automation based on idea implementations
+
+**Analytics System**:
+- Track idea engagement and interaction patterns
+- ROI validation with time-saved metrics
+- Pattern recognition for successful idea characteristics
+- Conversion analytics from brainstorm to implementation
+
+#### **Console API Access**
+
+```javascript
+// Core operations
+window.__ideasAdapter.addIdea({...})
+window.__ideasAdapter.getIdeas({ status: 'planned', category: 'feature' })
+window.__ideasAdapter.updateIdeaStatus('idea-123', 'roadmap')
+window.__ideasAdapter.exportIdeas('markdown', true)
+
+// Analytics and insights
+window.__ideasAdapter.getStats()
+window.__ideasAdapter.suggestRelatedIdeas({ module: 'scriptorium', category: 'feature' })
+window.__ideasAdapter.searchIdeas('login subscription')
+
+// Cross-module integration
+window.__ideasAdapter.getIdeasByModule('mind-garden')
+window.__ideasAdapter.addIdeaFromModule('analytics', {...})
+
+// Health and monitoring
+window.__ideasAdapter.healthCheck()
+```
+
+#### **Event Bus Integration**
+
+Structured events for cross-module communication:
+
+```javascript
+// Emitted events
+'ideas:idea:created'         // New idea added
+'ideas:idea:updated'         // Idea modified
+'ideas:idea:status:changed'  // Status transition
+'ideas:idea:deleted'         // Idea archived
+'ideas:bulk:update'          // Bulk operations
+'ideas:exported'             // Export completed
+```
+
+#### **Quality Standards**
+
+**Performance**:
+- <200ms response time for CRUD operations
+- <5s for export operations with large datasets
+- Efficient lazy loading and pagination
+- Optimized filtering and search
+
+**Reliability**:
+- Graceful error handling and recovery
+- Data integrity with validation
+- localStorage persistence with backup
+- Contract compliance validation
+
+**Security**:
+- Input sanitization and XSS protection
+- Structured data validation
+- Safe cross-module communication
+- No sensitive data exposure
+
+#### **Professional Benefits**
+
+**For Creative Polymorphs**:
+- Rapid idea capture without interrupting creative flow
+- Visual progression tracking from concept to implementation
+- Context switching support with module correlation
+- ROI validation for decision-making confidence
+
+**For Business Development**:
+- Commercial strategy pipeline management
+- Structured innovation process
+- Cross-functional collaboration tools
+- Transparent progress tracking and reporting
+
+**For Development Teams**:
+- Feature request management and prioritization
+- Technical debt and improvement tracking
+- Roadmap planning with stakeholder visibility
+- Integration with existing module ecosystem
+
+---
+
 ## 🔮 Future Roadmap
 
 ### Phase 4: Advanced Features
@@ -788,9 +991,10 @@ git reset --hard <commit-hash>
 - ✅ **🤖 Autonomous Maintenance**: Routine Agent for proactive system care
 - ✅ **🧠 Intelligence System**: Automated task routing and orchestration
 - ✅ **🤖 AI Command Bar**: Natural language interface across all modules
+- ✅ **💡 Ideas & Roadmap Module**: Enterprise-grade innovation pipeline management
 
 ---
 
 *Generated by Atelier Professional Architecture System*  
 *Last Updated: 2025-07-17*  
-*Version: 1.1.0 - Intelligence System Integration*
+*Version: 1.2.0 - Ideas & Commercial Roadmap Module*
