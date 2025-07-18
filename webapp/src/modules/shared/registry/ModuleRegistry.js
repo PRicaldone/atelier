@@ -10,6 +10,8 @@ class ModuleRegistry {
     this.adapters = new Map();
     this.contracts = new Map();
     this.initPromises = new Map();
+    this.aiAgents = new Map();
+    this.aiContracts = new Map();
     this.logger = moduleRegistryLogger;
   }
 
@@ -121,13 +123,114 @@ class ModuleRegistry {
   }
 
   /**
-   * Clear all modules (useful for testing)
+   * Register an AI agent
+   * @param {string} name - Agent name
+   * @param {Object} agent - AI agent instance
+   * @param {Object} options - Registration options
+   */
+  registerAIAgent(name, agent, options = {}) {
+    const { contract, aliases = [], capabilities = [] } = options;
+    
+    // Store the AI agent
+    this.aiAgents.set(name, {
+      instance: agent,
+      capabilities,
+      registeredAt: Date.now()
+    });
+    
+    // Register aliases
+    aliases.forEach(alias => {
+      this.aiAgents.set(alias, this.aiAgents.get(name));
+    });
+    
+    // Store contract for validation
+    if (contract) {
+      this.aiContracts.set(name, contract);
+    }
+    
+    this.logger.info(
+      { message: `Registered AI agent: ${name}`, aliases, capabilities, hasContract: !!contract },
+      'registerAIAgent',
+      { name, aliases, capabilities, contract: !!contract }
+    );
+  }
+
+  /**
+   * Get an AI agent
+   * @param {string} name - Agent name
+   * @returns {Object|null} AI agent instance
+   */
+  getAIAgent(name) {
+    const agentInfo = this.aiAgents.get(name);
+    return agentInfo ? agentInfo.instance : null;
+  }
+
+  /**
+   * Check if an AI agent is registered
+   * @param {string} name - Agent name
+   * @returns {boolean}
+   */
+  hasAIAgent(name) {
+    return this.aiAgents.has(name);
+  }
+
+  /**
+   * Get AI agent capabilities
+   * @param {string} name - Agent name
+   * @returns {Array} Agent capabilities
+   */
+  getAIAgentCapabilities(name) {
+    const agentInfo = this.aiAgents.get(name);
+    return agentInfo ? agentInfo.capabilities : [];
+  }
+
+  /**
+   * Invoke AI agent method with safety checks
+   * @param {string} agentName - AI agent name
+   * @param {string} method - Method to invoke
+   * @param {...any} args - Method arguments
+   * @returns {Promise<any>} Method result
+   */
+  async invokeAIAgent(agentName, method, ...args) {
+    try {
+      const agent = this.getAIAgent(agentName);
+      if (!agent) {
+        throw new Error(`AI agent "${agentName}" not found`);
+      }
+
+      if (typeof agent[method] !== 'function') {
+        throw new Error(`Method "${method}" not found in AI agent "${agentName}"`);
+      }
+
+      // Validate against contract if exists
+      const contract = this.aiContracts.get(agentName);
+      if (contract && contract.methods && !contract.methods.includes(method)) {
+        throw new Error(`Method "${method}" not allowed by AI agent contract`);
+      }
+
+      this.logger.info(
+        { message: `Invoking AI agent method: ${agentName}.${method}` },
+        'invokeAIAgent',
+        { agentName, method, argsCount: args.length }
+      );
+
+      return await agent[method](...args);
+    } catch (error) {
+      this.logger.error(error, 'invokeAIAgent', { agentName, method, args: args.length });
+      throw error;
+    }
+  }
+
+  /**
+   * Clear all modules and AI agents (useful for testing)
    */
   clear() {
     this.modules.clear();
     this.adapters.clear();
     this.contracts.clear();
     this.initPromises.clear();
+    this.aiAgents.clear();
+    this.aiContracts.clear();
   }
 
   /**
@@ -205,7 +308,9 @@ class ModuleRegistry {
       registeredModules: Array.from(this.modules.keys()),
       adapters: Array.from(this.adapters.keys()),
       contracts: Array.from(this.contracts.keys()),
-      initialized: Array.from(this.initPromises.keys())
+      initialized: Array.from(this.initPromises.keys()),
+      aiAgents: Array.from(this.aiAgents.keys()),
+      aiContracts: Array.from(this.aiContracts.keys())
     };
   }
 }
@@ -257,8 +362,41 @@ const registerIntelligenceSystem = async () => {
   }
 };
 
-// Auto-register intelligence system on load
+// Register AI agents
+const registerAIAgents = async () => {
+  try {
+    // Register SuperClaude AI Agent
+    const { superClaudeAgent } = await import('../ai/agents/SuperClaudeAgent.js');
+    moduleRegistry.registerAIAgent('superclaude', superClaudeAgent, {
+      aliases: ['ai-agent', 'claude-ai', 'board-generator'],
+      capabilities: [
+        'board_generation',
+        'content_analysis',
+        'workflow_automation',
+        'content_generation',
+        'knowledge_organization',
+        'connection_suggestions'
+      ],
+      contract: {
+        methods: [
+          'generateBoard',
+          'analyzeContent',
+          'generateWorkflow',
+          'getStats',
+          'reset'
+        ]
+      }
+    });
+
+    moduleRegistry.logger.info('AI agents registered successfully', 'registerAIAgents');
+  } catch (error) {
+    moduleRegistry.logger.error(error, 'registerAIAgents');
+  }
+};
+
+// Auto-register intelligence system and AI agents on load
 registerIntelligenceSystem();
+registerAIAgents();
 
 // For debugging in console
 if (typeof window !== 'undefined') {

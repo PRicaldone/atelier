@@ -16,6 +16,7 @@ import { CanvasToolbar } from './components/CanvasToolbar.jsx';
 import { PropertiesPanel } from './components/PropertiesPanel.jsx';
 import { AISuggestions } from './components/AISuggestions.jsx';
 import { DraggableElement } from './components/DraggableElement.jsx';
+import AIBoardGenerator from './components/AIBoardGenerator.jsx';
 import TreeViewSidebar from './components/TreeViewSidebar.jsx';
 import HoudiniTreeView from './components/HoudiniTreeView.jsx';
 import PathBreadcrumb from './components/PathBreadcrumb.jsx';
@@ -821,6 +822,15 @@ const CreativeAtelier = () => {
       
       {/* AI Suggestions */}
       <AISuggestions />
+      
+      {/* AI Board Generator */}
+      <AIBoardGenerator 
+        onBoardGenerated={(result) => {
+          console.log('🤖 Board generated:', result);
+          // Optional: Show notification or trigger analytics
+        }}
+        className="fixed top-20 right-4 w-80 z-30"
+      />
       
       {/* Path Breadcrumb */}
       <PathBreadcrumb />

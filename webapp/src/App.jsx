@@ -33,10 +33,13 @@ import CryptoMigrationDashboard from './components/CryptoMigrationDashboard'
 import WIPProtectionIndicator from './components/WIPProtectionIndicator'
 import WIPProtectionDashboard from './components/WIPProtectionDashboard'
 import AuditLogsDashboard from './components/AuditLogsDashboard'
+import AITransparencyDashboard from './components/AITransparencyDashboard'
 import './modules/shared/analytics'  // Initialize analytics system
 import './utils/alertSystem'  // Initialize alert system
 import './utils/wipProtection'  // Initialize WIP protection
 import './utils/auditLogger'  // Initialize audit logging
+import './modules/shared/ai'  // Initialize AI system
+import './utils/addMicroSubscriptionIdea'  // Add business model idea
 import { autoMigrateOnStartup } from './utils/migrationSecureStorage'
 
 // Navigation sync component - ROBUST version to prevent loops
@@ -207,6 +210,7 @@ function App() {
           <Route path="/crypto-migration" element={<CryptoMigrationDashboard />} />
           <Route path="/wip-protection" element={<WIPProtectionDashboard />} />
           <Route path="/audit-logs" element={<AuditLogsDashboard />} />
+          <Route path="/ai-transparency" element={<AITransparencyDashboard />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/roadmap" element={<Ideas />} />
           <Route path="/commercial-ideas" element={<Ideas />} />
