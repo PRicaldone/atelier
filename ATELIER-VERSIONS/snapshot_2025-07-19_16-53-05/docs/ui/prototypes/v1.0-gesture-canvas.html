@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier Gesture UI v1.0 - Original Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #FAFAF9;
+            --bg-secondary: #FFFFFF;
+            --bg-hover: #F5F5F4;
+            --border-light: #E8E8E8;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent: #5E5CE6;
+            --accent-light: #7A78FF;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* Minimal header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: rgba(250, 250, 249, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+        
+        .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+        
+        .nav-minimal {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        /* Clean canvas */
+        .canvas-container {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            cursor: crosshair;
+        }
+        
+        .canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0,0,0,0.012) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        
+        .nav-separator {
+            color: var(--text-tertiary);
+            font-size: 16px;
+            margin: 0 8px;
+        }
+        
+        .nav-user {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            position: relative;
+        }
+        
+        .nav-user:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        /* User dropdown (hidden by default) */
+        .user-dropdown {
+            position: absolute;
+            top: 48px;
+            right: 48px;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            padding: 8px;
+            display: none;
+            z-index: 200;
+        }
+        
+        .user-dropdown.active {
+            display: block;
+            animation: dropdownSlide 0.2s ease-out;
+        }
+        
+        @keyframes dropdownSlide {
+            0% { 
+                opacity: 0; 
+                transform: translateY(-10px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .dropdown-separator {
+            height: 1px;
+            background: var(--border-light);
+            margin: 8px 0;
+        }
+        
+        /* Dark theme variables */
+        body.dark-theme {
+            --bg-primary: #0A0A0C;
+            --bg-secondary: #16161A;
+            --bg-hover: #1F1F25;
+            --border-light: rgba(255, 255, 255, 0.06);
+            --text-primary: #F7F7F8;
+            --text-secondary: #9CA3AF;
+            --text-tertiary: #6B7280;
+            --accent: #6B69D6;
+            --accent-light: #8583E1;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
+        }
+        
+        body.dark-theme .header {
+            background: rgba(10, 10, 12, 0.95);
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        body.dark-theme .canvas {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 1px, transparent 1px);
+        }
+        
+        /* Canvas elements */
+        .canvas-element {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            cursor: move;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-light);
+            user-select: none;
+        }
+        
+        .canvas-element:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        
+        body.dark-theme .canvas-element {
+            background: #1A1A1F;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 4px 16px rgba(0,0,0,0.6),
+                0 1px 3px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        
+        body.dark-theme .canvas-element:hover {
+            background: #1E1E23;
+            border-color: rgba(107, 105, 214, 0.8);
+            box-shadow: 
+                0 8px 32px rgba(107, 105, 214, 0.12),
+                0 2px 8px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        
+        .element-image {
+            width: 300px;
+            padding: 4px;
+        }
+        
+        .element-image img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+            pointer-events: none;
+        }
+        
+        .element-note {
+            width: 280px;
+            padding: 24px;
+        }
+        
+        .element-note h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+        
+        .element-note p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        body.dark-theme .element-note h3 {
+            color: #E5E5E8;
+        }
+        
+        body.dark-theme .element-note p {
+            color: #9CA3AF;
+        }
+        
+        .element-board {
+            width: 320px;
+            padding: 20px;
+            background: linear-gradient(135deg, white 0%, var(--bg-hover) 100%);
+        }
+        
+        body.dark-theme .element-board {
+            background: linear-gradient(135deg, #1A1A1F 0%, rgba(107, 105, 214, 0.04) 100%);
+        }
+        
+        .element-board h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        
+        body.dark-theme .element-board h3 {
+            color: #E5E5E8;
+        }
+        
+        .board-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .board-preview-item {
+            height: 60px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+        }
+        
+        body.dark-theme .board-preview-item {
+            background: #131316;
+            border-color: rgba(255, 255, 255, 0.03);
+        }
+        
+        /* Radial menu - appears on double click */
+        .radial-menu {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            display: none;
+            pointer-events: none;
+            z-index: 200;
+        }
+        
+        .radial-menu.active {
+            display: block;
+            animation: radialOpen 0.3s ease-out;
+        }
+        
+        @keyframes radialOpen {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+        }
+        
+        .radial-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 1px solid var(--border-light);
+        }
+        
+        body.dark-theme .radial-center {
+            background: #1E1E23;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 6px 24px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        
+        .radial-option {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+        
+        .radial-option:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        body.dark-theme .radial-option {
+            background: #1E1E23;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 6px 24px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        
+        body.dark-theme .radial-option:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 6px 32px rgba(107, 105, 214, 0.25);
+        }
+        
+        .radial-option.top {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .radial-option.right {
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+        }
+        
+        .radial-option.bottom {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .radial-option.left {
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+        
+        .radial-option.top-right {
+            top: 20px;
+            right: 20px;
+        }
+        
+        .radial-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        .radial-label {
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        
+        /* AI Prompt - appears on long press */
+        .ai-prompt {
+            position: absolute;
+            width: 320px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+            display: none;
+            z-index: 300;
+            animation: promptSlide 0.3s ease-out;
+        }
+        
+        .ai-prompt.active {
+            display: block;
+        }
+        
+        @keyframes promptSlide {
+            0% { 
+                opacity: 0; 
+                transform: translateY(10px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        body.dark-theme .ai-prompt {
+            background: #1A1A1F;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 20px 64px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(107, 105, 214, 0.15),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        
+        .ai-prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .ai-prompt-icon {
+            font-size: 18px;
+        }
+        
+        .ai-prompt-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        body.dark-theme .ai-prompt-title {
+            color: #E5E5E8;
+        }
+        
+        .ai-prompt-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            resize: none;
+            min-height: 80px;
+            transition: all 0.2s ease;
+        }
+        
+        .ai-prompt-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        body.dark-theme .ai-prompt-input {
+            background: #131316;
+            border-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        body.dark-theme .ai-prompt-input:focus {
+            background: #0F0F12;
+            border-color: var(--accent);
+            box-shadow: inset 0 0 0 1px var(--accent);
+        }
+        
+        .ai-prompt-shortcuts {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .ai-shortcut {
+            padding: 6px 12px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        
+        .ai-shortcut:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        body.dark-theme .ai-shortcut {
+            background: #0F0F12;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        body.dark-theme .ai-shortcut:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .ai-prompt-submit {
+            margin-top: 16px;
+            width: 100%;
+            padding: 10px;
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .ai-prompt-submit:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
+        }
+        
+        /* Floating hints */
+        .hint {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 26, 26, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        body.dark-theme .hint {
+            background: rgba(22, 22, 26, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .hint.fade-out {
+            opacity: 0;
+        }
+        
+        /* Corner info */
+        .corner-info {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-dot {
+            width: 6px;
+            height: 6px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        
+        /* Sidebar collapsed */
+        .sidebar-toggle {
+            position: fixed;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 90;
+        }
+        
+        .sidebar-toggle:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-50%) translateX(2px);
+        }
+        
+        body.dark-theme .sidebar-toggle {
+            background: #1A1A1F;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 4px 16px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        
+        /* Mobile touch indicator */
+        .touch-indicator {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .touch-indicator.active {
+            opacity: 0.3;
+            transform: scale(1.2);
+        }
+        
+        body.dark-theme .user-dropdown {
+            background: #1A1A1F;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 12px 48px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        
+        body.dark-theme .dropdown-separator {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        
+        /* Add subtle glow to interactive elements in dark mode */
+        body.dark-theme .nav-item.active {
+            color: var(--accent-light);
+            text-shadow: 0 0 8px rgba(107, 105, 214, 0.3);
+        }
+        
+        body.dark-theme .theme-toggle:hover {
+            box-shadow: 0 0 16px rgba(107, 105, 214, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Atelier</div>
+            <nav class="nav-minimal">
+                <div class="nav-item active">[canvas]</div>
+                <div class="nav-item">[start]</div>
+                <div class="nav-item">[tracker]</div>
+                <div class="nav-item">[nft]</div>
+                <div class="nav-separator">|</div>
+                <div class="nav-user">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <circle cx="9" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M3 15c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="theme-toggle">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="theme-icon-light">
+                        <circle cx="9" cy="9" r="4" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.5 3.5l1.5 1.5M13 13l1.5 1.5M14.5 3.5l-1.5 1.5M5 13L3.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="theme-icon-dark" style="display: none;">
+                        <path d="M16 10c-.5 3.5-3.5 6-7 6-4 0-7.5-3.5-7.5-7.5S5 1 9 1c.5 0 1 .1 1.5.2-1 1-1.5 2.4-1.5 3.8 0 3 2.5 5.5 5.5 5.5.2 0 .3 0 .5-.1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="canvas-container">
+        <div class="canvas" id="canvas">
+            <!-- Existing elements -->
+            <div class="canvas-element element-image" style="left: 200px; top: 150px;">
+                <img src="https://via.placeholder.com/300x220/f5f5f5/666?text=Houdini+Render" alt="">
+            </div>
+            
+            <div class="canvas-element element-note" style="left: 550px; top: 180px;">
+                <h3>Particle System</h3>
+                <p>Explore organic particle behaviors using VEX. Combine with Nuke for post-processing.</p>
+            </div>
+            
+            <div class="canvas-element element-board" style="left: 300px; top: 420px;">
+                <h3>References //</h3>
+                <div class="board-preview">
+                    <div class="board-preview-item"></div>
+                    <div class="board-preview-item"></div>
+                    <div class="board-preview-item"></div>
+                    <div class="board-preview-item"></div>
+                </div>
+            </div>
+            
+            <!-- Radial menu (hidden by default) -->
+            <div class="radial-menu" id="radialMenu">
+                <div class="radial-center">+</div>
+                <div class="radial-option top">
+                    <span class="radial-icon">📝</span>
+                    <span class="radial-label">note</span>
+                </div>
+                <div class="radial-option right">
+                    <span class="radial-icon">📎</span>
+                    <span class="radial-label">file</span>
+                </div>
+                <div class="radial-option bottom">
+                    <span class="radial-icon">🔗</span>
+                    <span class="radial-label">link</span>
+                </div>
+                <div class="radial-option left">
+                    <span class="radial-icon">📁</span>
+                    <span class="radial-label">ref</span>
+                </div>
+                <div class="radial-option top-right">
+                    <span class="radial-icon">📋</span>
+                    <span class="radial-label">board</span>
+                </div>
+            </div>
+            
+            <!-- AI Prompt (hidden by default) -->
+            <div class="ai-prompt" id="aiPrompt">
+                <div class="ai-prompt-header">
+                    <span class="ai-prompt-icon">✨</span>
+                    <span class="ai-prompt-title">Cosa vuoi creare qui?</span>
+                </div>
+                <textarea class="ai-prompt-input" placeholder="Descrivi cosa vorresti generare in questo punto del canvas..." autofocus></textarea>
+                <div class="ai-prompt-shortcuts">
+                    <button class="ai-shortcut">/board</button>
+                    <button class="ai-shortcut">/idea</button>
+                    <button class="ai-shortcut">/ref</button>
+                    <button class="ai-shortcut">/brief</button>
+                </div>
+                <button class="ai-prompt-submit">[generate]</button>
+            </div>
+            
+            <!-- Touch indicator for mobile -->
+            <div class="touch-indicator" id="touchIndicator"></div>
+        </div>
+    </div>
+    
+    <!-- Collapsed sidebar toggle -->
+    <div class="sidebar-toggle">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M5 3l5 5l-5 5" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+    </div>
+    
+    <!-- Hint message -->
+    <div class="hint" id="hint">
+        Double-click to add • Long press for AI
+    </div>
+    
+    <!-- Corner info -->
+    <div class="corner-info">
+        <div class="info-item">
+            <span>100%</span>
+        </div>
+        <div class="info-item">
+            <span class="info-dot"></span>
+            <span>synced</span>
+        </div>
+    </div>
+    
+    <!-- User dropdown menu -->
+    <div class="user-dropdown" id="userDropdown">
+        <div class="dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>[settings]</span>
+        </div>
+        <div class="dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="3" y="3" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 7h2v4H7z" fill="currentColor"/>
+                <circle cx="8" cy="5" r="0.5" fill="currentColor"/>
+            </svg>
+            <span>[shortcuts]</span>
+        </div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 2L2 8l4 6M10 2l4 6-4 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>[api keys]</span>
+        </div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M10 8v6H2V2h6M8 1h6v6M14 1L7 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>[logout]</span>
+        </div>
+    </div>
+    
+    <script>
+        // Demo interactions
+        const canvas = document.getElementById('canvas');
+        const radialMenu = document.getElementById('radialMenu');
+        const aiPrompt = document.getElementById('aiPrompt');
+        const hint = document.getElementById('hint');
+        let longPressTimer;
+        
+        // Hide hint after 5 seconds
+        setTimeout(() => {
+            hint.classList.add('fade-out');
+        }, 5000);
+        
+        // Double click handler
+        canvas.addEventListener('dblclick', (e) => {
+            if (e.target === canvas) {
+                radialMenu.style.left = (e.clientX - 120) + 'px';
+                radialMenu.style.top = (e.clientY - 120) + 'px';
+                radialMenu.classList.add('active');
+                
+                // Hide after clicking elsewhere
+                setTimeout(() => {
+                    document.addEventListener('click', hideRadialMenu);
+                }, 100);
+            }
+        });
+        
+        function hideRadialMenu() {
+            radialMenu.classList.remove('active');
+            document.removeEventListener('click', hideRadialMenu);
+        }
+        
+        // Long press handler
+        canvas.addEventListener('mousedown', (e) => {
+            if (e.target === canvas) {
+                longPressTimer = setTimeout(() => {
+                    // Position prompt almost on top of cursor
+                    let left = e.clientX - 160; // Center horizontally on cursor
+                    let top = e.clientY - 10; // Just 10px above cursor
+                    
+                    // Temporarily show to get dimensions
+                    aiPrompt.style.display = 'block';
+                    const rect = aiPrompt.getBoundingClientRect();
+                    aiPrompt.style.display = '';
+                    
+                    // Adjust position if too close to edges
+                    if (left < 20) {
+                        left = 20; // Keep 20px from left edge
+                    }
+                    if (left + 320 > window.innerWidth - 20) {
+                        left = window.innerWidth - 340; // Keep 20px from right edge
+                    }
+                    if (top < 70) { // Too close to header
+                        top = e.clientY + 10; // Show 10px below cursor instead
+                    }
+                    if (top + rect.height > window.innerHeight - 20) {
+                        top = e.clientY - rect.height - 10; // Show above
+                    }
+                    
+                    aiPrompt.style.left = left + 'px';
+                    aiPrompt.style.top = top + 'px';
+                    aiPrompt.classList.add('active');
+                    aiPrompt.querySelector('textarea').focus();
+                }, 500);
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            clearTimeout(longPressTimer);
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            clearTimeout(longPressTimer);
+        });
+        
+        // Close AI prompt on escape or submit
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                aiPrompt.classList.remove('active');
+            }
+        });
+        
+        // Touch support
+        let touchTimer;
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.target === canvas) {
+                touchTimer = setTimeout(() => {
+                    const touch = e.touches[0];
+                    
+                    // Position prompt almost on touch point
+                    let left = touch.clientX - 160; // Center horizontally
+                    let top = touch.clientY - 10; // Just 10px above touch point
+                    
+                    // Temporarily show to get dimensions
+                    aiPrompt.style.display = 'block';
+                    const rect = aiPrompt.getBoundingClientRect();
+                    aiPrompt.style.display = '';
+                    
+                    // Adjust position if too close to edges
+                    if (left < 20) {
+                        left = 20;
+                    }
+                    if (left + 320 > window.innerWidth - 20) {
+                        left = window.innerWidth - 340;
+                    }
+                    if (top < 70) { // Too close to header
+                        top = touch.clientY + 10; // Show below instead
+                    }
+                    if (top + rect.height > window.innerHeight - 20) {
+                        top = touch.clientY - rect.height - 10;
+                    }
+                    
+                    aiPrompt.style.left = left + 'px';
+                    aiPrompt.style.top = top + 'px';
+                    aiPrompt.classList.add('active');
+                }, 500);
+            }
+        });
+        
+        // Theme toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        const lightIcon = document.querySelector('.theme-icon-light');
+        const darkIcon = document.querySelector('.theme-icon-dark');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            lightIcon.style.display = isDark ? 'none' : 'block';
+            darkIcon.style.display = isDark ? 'block' : 'none';
+            // Save preference
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            lightIcon.style.display = 'none';
+            darkIcon.style.display = 'block';
+        }
+        
+        // User dropdown
+        const userIcon = document.querySelector('.nav-user');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        userIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.remove('active');
+        });
+        
+        canvas.addEventListener('touchend', () => {
+            clearTimeout(touchTimer);
+        });
+    </script>
+</body>
+</html>
