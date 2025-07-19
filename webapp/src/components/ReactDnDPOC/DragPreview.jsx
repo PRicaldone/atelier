@@ -6,8 +6,6 @@
 import React from 'react';
 import { useDragLayer } from 'react-dnd';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DraggableBoard } from './DraggableBoard';
-import { DraggableElement } from './DraggableElement';
 
 export function DragPreview({ boards, elements }) {
   const {

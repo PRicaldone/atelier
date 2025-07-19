@@ -81,7 +81,7 @@ export function DraggableElement({ element, parentBoardId }) {
         rounded-lg shadow-md hover:shadow-lg
         cursor-move
         transition-all duration-200
-        ${isDragging ? 'opacity-0' : 'opacity-100'}
+        ${isDragging ? 'opacity-0 pointer-events-none' : 'opacity-100'}
         ${element.selected ? 'ring-2 ring-blue-500' : ''}
       `}
       style={{

@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import BoardDnDContext from './BoardDnDContext';
 import { DraggableBoard } from './DraggableBoard';
 import { DraggableElement } from './DraggableElement';
-import { DragPreview } from './DragPreview';
+import DragPreviewLayer from './DragPreviewLayer';
 
 export default function ReactDnDDemo() {
   // Mock data structure with nested boards
@@ -208,8 +208,51 @@ export default function ReactDnDDemo() {
             </div>
           </div>
 
-          {/* Custom Drag Preview */}
-          <DragPreview boards={boards} elements={elements} />
+          {/* Enhanced Drag Preview Layer */}
+          <DragPreviewLayer
+            renderPreview={({ item, itemType }) => {
+              if (itemType === 'board' && boards[item.id]) {
+                const board = boards[item.id];
+                return (
+                  <div 
+                    className="shadow-2xl opacity-90 transform scale-105"
+                    style={{ 
+                      pointerEvents: 'none',
+                      cursor: 'grabbing'
+                    }}
+                  >
+                    <DraggableBoard 
+                      board={board} 
+                      onDropItem={() => {}} 
+                      onMoveBoard={() => {}}
+                    >
+                      {/* Empty for preview */}
+                    </DraggableBoard>
+                  </div>
+                );
+              }
+              
+              if (itemType === 'element' && elements[item.id]) {
+                const element = elements[item.id];
+                return (
+                  <div 
+                    className="shadow-2xl opacity-90 transform scale-105"
+                    style={{ 
+                      pointerEvents: 'none',
+                      cursor: 'grabbing'
+                    }}
+                  >
+                    <DraggableElement 
+                      element={element} 
+                      parentBoardId={null}
+                    />
+                  </div>
+                );
+              }
+              
+              return null;
+            }}
+          />
         </div>
       </div>
     </BoardDnDContext>

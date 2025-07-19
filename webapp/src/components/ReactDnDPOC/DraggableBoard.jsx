@@ -65,7 +65,7 @@ export function DraggableBoard({ board, onDropItem, onMoveBoard, children }) {
       className={`
         relative p-4 rounded-xl
         ${board.data?.backgroundColor || 'bg-white dark:bg-gray-800'}
-        ${isDragging ? 'opacity-0' : 'opacity-100'}
+        ${isDragging ? 'opacity-0 pointer-events-none' : 'opacity-100'}
         ${isOver && canDrop ? 'ring-4 ring-blue-400 bg-blue-50 dark:bg-blue-900/20' : ''}
         border-2 border-gray-200 dark:border-gray-700
         cursor-move

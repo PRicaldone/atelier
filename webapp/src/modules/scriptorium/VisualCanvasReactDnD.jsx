@@ -1,37 +1,31 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  DndContext, 
-  useSensor, 
-  useSensors, 
-  PointerSensor,
-  KeyboardSensor,
-  DragOverlay,
-  useDraggable
-} from '@dnd-kit/core';
 import { useCanvasStore } from './store.js';
 import { useUnifiedStore, useCanvasState } from '../../store/unifiedStore.js';
 import { useProjectStore } from '../../store/projectStore.js';
 import { CanvasToolbar } from './components/CanvasToolbar.jsx';
 import { PropertiesPanel } from './components/PropertiesPanel.jsx';
 import { AISuggestions } from './components/AISuggestions.jsx';
-import { DraggableElement } from './components/DraggableElement.jsx';
 import AIBoardGenerator from './components/AIBoardGenerator.jsx';
 import TreeViewSidebar from './components/TreeViewSidebar.jsx';
 import HoudiniTreeView from './components/HoudiniTreeView.jsx';
 import PathBreadcrumb from './components/PathBreadcrumb.jsx';
-import { GRID_SIZE } from './types.js';
+import { GRID_SIZE, ELEMENT_TYPES } from './types.js';
 import { Lightbulb, Brain, Save } from 'lucide-react';
 import ConsolidationPanel from '../mind-garden/components/ConsolidationPanel';
 import IntelligenceCommandBar from '../../components/IntelligenceCommandBar';
 import { moduleContext } from '../shared/intelligence/ModuleContext';
 
+// React DnD Components
+import ReactDnDProvider from './components/ReactDnDProvider.jsx';
+import { DraggableBoard } from './components/DraggableBoard.jsx';
+import { DraggableElementNew } from './components/DraggableElementNew.jsx';
+import { CanvasDragPreview } from './components/CanvasDragPreview.jsx';
+
 const CreativeAtelier = () => {
-  console.log('CreativeAtelier rendering - full functionality without gestures');
+  console.log('CreativeAtelier rendering - React DnD Enterprise Edition');
   
   const canvasRef = useRef(null);
-  const [draggedElement, setDraggedElement] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionBox, setSelectionBox] = useState(null);
   const [selectionStart, setSelectionStart] = useState(null);
@@ -80,7 +74,9 @@ const CreativeAtelier = () => {
     updateViewport,
     initialize,
     addElement,
-    addCompleteElement
+    addCompleteElement,
+    updateElement,
+    navigateToBoard
   } = useCanvasStore();
 
   // Initialize atelier on mount
@@ -186,245 +182,80 @@ const CreativeAtelier = () => {
     }
   }, [elements, selectedIds, clearSelection, addElement, centerViewport, moveElement]);
 
-  // Drag & Drop sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor)
-  );
+  // React DnD Drop Handler
+  const handleDropElement = useCallback((draggedItem, targetBoardId) => {
+    console.log('🎯 React DnD Drop:', draggedItem.id, '→', targetBoardId);
+    
+    const store = useCanvasStore.getState();
+    
+    // Handle board dropping into another board
+    if (draggedItem.type === 'board') {
+      const success = store.moveElementToBoard(draggedItem.element, targetBoardId);
+      if (success) {
+        store.removeElement(draggedItem.id);
+        console.log('✅ Board moved to board', targetBoardId);
+      }
+    } else {
+      // Handle element dropping into board
+      const success = store.moveElementToBoard(draggedItem.element, targetBoardId);
+      if (success) {
+        store.removeElement(draggedItem.id);
+        console.log('✅ Element moved to board', targetBoardId);
+      }
+    }
+  }, []);
 
-  // Handle drag start
-  const handleDragStart = useCallback((event) => {
-    const { active } = event;
-    console.log('🎨 handleDragStart called:', active.id);
+  // AI Callback Handler
+  const handleAICallback = useCallback((action, data) => {
+    console.log('🤖 AI Callback:', action, data);
     
-    // Check if dragging from tree
-    if (active.data.current?.source === 'tree') {
-      const treeElement = active.data.current.element;
-      setDraggedElement(treeElement);
-      setDragOffset({ x: 0, y: 0 });
-      return;
-    }
-    
-    // Regular canvas element drag
-    const element = elements.find(el => el.id === active.id);
-    if (element) {
-      console.log('🎨 Setting draggedElement:', element);
-      setDraggedElement(element);
-      
-      // Calculate mouse offset relative to element's top-left corner
-      const rect = event.active.rect.current.translated;
-      if (rect) {
-        const mouseX = event.activatorEvent.clientX;
-        const mouseY = event.activatorEvent.clientY;
-        const elementScreenX = rect.left;
-        const elementScreenY = rect.top;
-        
-        setDragOffset({
-          x: mouseX - elementScreenX,
-          y: mouseY - elementScreenY
-        });
-      }
-    }
-  }, [elements]);
-
-  // Handle drag end
-  const handleDragEnd = useCallback((event) => {
-    const { active, delta, activatorEvent, over } = event;
-    
-    console.log('🎯 handleDragEnd called:', {
-      activeId: active?.id,
-      overId: over?.id,
-      overType: over?.data?.current?.type,
-      draggedElement: draggedElement,
-      draggedElementId: draggedElement?.id
-    });
-    
-    // Check if dropping on tree drop zone
-    if (over && over.data.current?.type === 'tree-drop-zone') {
-      const targetBoardId = over.data.current.boardId;
-      
-      console.log('📦 Dropping element', draggedElement?.id, 'into board', targetBoardId);
-      console.log('📦 Full draggedElement:', draggedElement);
-      
-      // Move element to target board
-      if (draggedElement) {
-        const store = useCanvasStore.getState();
-        
-        console.log('🚀 Moving element to board...');
-        // Move element to target board
-        const success = store.moveElementToBoard(draggedElement, targetBoardId);
-        
-        if (success) {
-          // Only remove from current location if move was successful
-          store.removeElement(draggedElement.id);
-          console.log('✅ Element moved to board', targetBoardId);
-        } else {
-          console.error('❌ Failed to move element to board');
-        }
-      } else {
-        console.error('❌ No draggedElement found!');
-      }
-      
-      setDraggedElement(null);
-      setDragOffset({ x: 0, y: 0 });
-      return;
-    }
-    
-    // Check if dragging from tree to canvas
-    if (active.data.current?.source === 'tree') {
-      const treeElement = active.data.current.element;
-      
-      // Calculate drop position in canvas coordinates
-      const canvasBounds = canvasRef.current?.getBoundingClientRect();
-      if (canvasBounds && activatorEvent) {
-        const dropX = (activatorEvent.clientX - canvasBounds.left - viewport.x) / viewport.zoom;
-        const dropY = (activatorEvent.clientY - canvasBounds.top - viewport.y) / viewport.zoom;
-        
-        // Create a copy of the element at the drop position
-        const newElement = {
-          ...treeElement,
-          id: `${treeElement.id}_copy_${Date.now()}`,
-          position: {
-            x: settings.snapToGrid ? Math.round(dropX / GRID_SIZE) * GRID_SIZE : dropX,
-            y: settings.snapToGrid ? Math.round(dropY / GRID_SIZE) * GRID_SIZE : dropY
-          },
-          // If it's a board, preserve its children
-          data: treeElement.type === 'board' ? {
-            ...treeElement.data,
-            elements: treeElement.data?.elements || []
-          } : treeElement.data
-        };
-        
-        // Add element to current board
-        addCompleteElement(newElement);
-      }
-      
-      setDraggedElement(null);
-      setDragOffset({ x: 0, y: 0 });
-      return;
-    }
-    
-    // Check if dropping on a board (for canvas elements)
-    if (!active.data.current?.source && activatorEvent) {
-      const draggedElement = elements.find(el => el.id === active.id);
-      if (draggedElement) {  // Allow all element types including boards
-        // Calculate final drop position
-        const canvasBounds = canvasRef.current?.getBoundingClientRect();
-        if (canvasBounds) {
-          const dropX = (activatorEvent.clientX - canvasBounds.left - viewport.x) / viewport.zoom;
-          const dropY = (activatorEvent.clientY - canvasBounds.top - viewport.y) / viewport.zoom;
-          
-          // Find if dropping on a board
-          const targetBoard = elements.find(el => {
-            if (el.type !== 'board' || el.id === active.id) return false;
-            
-            // Check if drop position is within board bounds
-            const elementCenterX = draggedElement.position.x + draggedElement.size.width / 2 + delta.x / viewport.zoom;
-            const elementCenterY = draggedElement.position.y + draggedElement.size.height / 2 + delta.y / viewport.zoom;
-            
-            return elementCenterX >= el.position.x && 
-                   elementCenterX <= el.position.x + el.size.width &&
-                   elementCenterY >= el.position.y && 
-                   elementCenterY <= el.position.y + el.size.height;
+    // Handle AI-specific actions
+    switch (action) {
+      case 'element_moved_to_board':
+        // Track AI element movements for learning
+        if (window.__eventBus) {
+          window.__eventBus.emit('ai.element.moved', {
+            elementId: data.elementId,
+            boardId: data.boardId,
+            timestamp: Date.now()
           });
-          
-          if (targetBoard) {
-            console.log('📦 Dropping element onto board in canvas:', targetBoard.id);
-            const store = useCanvasStore.getState();
-            
-            // ATOMIC OPERATION: Disable auto-save during operation
-            console.log('🔒 Disabling auto-save for atomic operation...');
-            useCanvasStore.setState({ autoSaveEnabled: false });
-            
-            try {
-              // First move element to board (this updates localStorage)
-              const result = store.moveElementToBoard(draggedElement, targetBoard.id);
-              
-              if (result) {
-                console.log('🎯 ✅ Element successfully moved to board');
-                
-                // CRITICAL: Now remove from current state AND save to localStorage
-                console.log('🗑️ Removing element from current canvas level...');
-                store.removeElement(draggedElement.id); // This will save to localStorage
-                
-                console.log('✅ Element moved and removed from source');
-              } else {
-                console.error('🎯 ❌ Move operation failed!');
-              }
-            } finally {
-              // CRITICAL: Re-enable auto-save after operation
-              console.log('🔓 Re-enabling auto-save after operation');
-              useCanvasStore.setState({ autoSaveEnabled: true });
-            }
-            
-            console.log('✅ Atomic move operation completed');
-            
-            setDraggedElement(null);
-            setDragOffset({ x: 0, y: 0 });
-            return;
-          }
         }
-      }
-    }
-    
-    // Regular canvas drag
-    if (delta.x !== 0 || delta.y !== 0) {
-      const scaledDelta = {
-        x: delta.x / viewport.zoom,
-        y: delta.y / viewport.zoom
-      };
+        break;
       
-      // Apply snap-to-grid if enabled and not holding shift
-      const shiftHeld = activatorEvent?.shiftKey;
-      
-      if (selectedIds.includes(active.id) && selectedIds.length > 1) {
-        // Move all selected elements
-        selectedIds.forEach(id => {
-          const element = elements.find(el => el.id === id);
-          if (element && settings.snapToGrid && !shiftHeld) {
-            // Calculate final position with snap
-            const finalPosition = {
-              x: Math.round((element.position.x + scaledDelta.x) / GRID_SIZE) * GRID_SIZE,
-              y: Math.round((element.position.y + scaledDelta.y) / GRID_SIZE) * GRID_SIZE
-            };
-            // Calculate actual delta to snap position
-            const snapDelta = {
-              x: finalPosition.x - element.position.x,
-              y: finalPosition.y - element.position.y
-            };
-            moveElement(id, snapDelta);
-          } else {
-            moveElement(id, scaledDelta);
-          }
-        });
-      } else {
-        // Move only the dragged element
-        const element = elements.find(el => el.id === active.id);
-        if (element && settings.snapToGrid && !shiftHeld) {
-          // Calculate final position with snap
-          const finalPosition = {
-            x: Math.round((element.position.x + scaledDelta.x) / GRID_SIZE) * GRID_SIZE,
-            y: Math.round((element.position.y + scaledDelta.y) / GRID_SIZE) * GRID_SIZE
-          };
-          // Calculate actual delta to snap position
-          const snapDelta = {
-            x: finalPosition.x - element.position.x,
-            y: finalPosition.y - element.position.y
-          };
-          moveElement(active.id, snapDelta);
-        } else {
-          moveElement(active.id, scaledDelta);
+      case 'ai_element_drag_end':
+        // Track AI element drag patterns
+        if (window.__eventBus) {
+          window.__eventBus.emit('ai.element.drag_pattern', {
+            elementId: data.elementId,
+            didDrop: data.didDrop,
+            timestamp: Date.now()
+          });
         }
-      }
+        break;
     }
-    
-    setDraggedElement(null);
-    setDragOffset({ x: 0, y: 0 });
-  }, [selectedIds, viewport.zoom, moveElement, elements, settings.snapToGrid, selectElement, addElement, viewport.x, viewport.y, draggedElement]);
+  }, []);
+
+  // EventBus Emit Handler
+  const handleEventBusEmit = useCallback((eventType, data) => {
+    if (window.__eventBus) {
+      window.__eventBus.emit(eventType, data);
+    }
+  }, []);
+
+  // Element Click Handler
+  const handleElementClick = useCallback((elementId, multiSelect) => {
+    selectElement(elementId, multiSelect);
+  }, [selectElement]);
+
+  // Element Double Click Handler
+  const handleElementDoubleClick = useCallback((element) => {
+    if (element.type === ELEMENT_TYPES.NOTE) {
+      updateElement(element.id, { editing: true });
+    } else if (element.type === ELEMENT_TYPES.BOARD) {
+      console.log('🖱️ Double-click navigation to board:', element.id);
+      navigateToBoard(element.id);
+    }
+  }, [updateElement, navigateToBoard]);
 
   // Handle canvas click and double-click
   const handleCanvasClick = useCallback((e) => {
@@ -691,59 +522,90 @@ const CreativeAtelier = () => {
     backgroundPosition: `0px 0px`
   };
 
-  return (
-    <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900" style={{ top: '0px', left: '-24px', right: '-24px', bottom: '0px' }}>
-      <CanvasToolbar />
-      
-      {/* Intelligence Command Bar - Top Center */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 w-96">
-        <IntelligenceCommandBar
-          module="scriptorium"
-          onExecute={handleIntelligenceExecution}
-          className="shadow-lg"
+  // Render draggable element based on type
+  const renderDraggableElement = (element) => {
+    if (element.type === ELEMENT_TYPES.BOARD) {
+      return (
+        <DraggableBoard
+          key={element.id}
+          element={element}
+          onUpdate={updateElement}
+          onDelete={(id) => useCanvasStore.getState().removeElement(id)}
+          onDropElement={handleDropElement}
+          onAICallback={handleAICallback}
+          onEventBusEmit={handleEventBusEmit}
+        >
+          {/* Render nested elements */}
+          {element.data?.elements?.map(nestedElement => 
+            renderDraggableElement(nestedElement)
+          )}
+        </DraggableBoard>
+      );
+    } else {
+      return (
+        <DraggableElementNew
+          key={element.id}
+          element={element}
+          onUpdate={updateElement}
+          onDelete={(id) => useCanvasStore.getState().removeElement(id)}
+          onAICallback={handleAICallback}
+          onEventBusEmit={handleEventBusEmit}
+          onClick={handleElementClick}
+          onDoubleClick={handleElementDoubleClick}
         />
-      </div>
-      
-      {/* Temporary Project Badge */}
-      {isTemporaryProject && (
-        <div className="absolute top-20 left-4 z-50">
-          <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-              Creative Atelier
-            </span>
+      );
+    }
+  };
+
+  return (
+    <ReactDnDProvider>
+      <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900" style={{ top: '0px', left: '-24px', right: '-24px', bottom: '0px' }}>
+        <CanvasToolbar />
+        
+        {/* Intelligence Command Bar - Top Center */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 w-96">
+          <IntelligenceCommandBar
+            module="scriptorium"
+            onExecute={handleIntelligenceExecution}
+            className="shadow-lg"
+          />
+        </div>
+        
+        {/* Temporary Project Badge */}
+        {isTemporaryProject && (
+          <div className="absolute top-20 left-4 z-50">
+            <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                Creative Atelier - React DnD
+              </span>
+            </div>
           </div>
-        </div>
-      )}
-      
-      {/* Action Buttons for temporary projects */}
-      {isTemporaryProject && (
-        <div className="absolute top-20 right-4 z-50 flex items-center gap-3">
-          <button
-            onClick={() => setConsolidationOpen(true)}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
-            title="Save as permanent project"
-          >
-            <Save className="w-4 h-4" />
-            <span className="text-sm font-medium">Save as Project</span>
-          </button>
-          
-          <button
-            onClick={() => navigateToModule('mind-garden')}
-            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
-            title="Back to Mind Garden"
-          >
-            <Brain className="w-4 h-4" />
-            <span className="text-sm font-medium">Back to Ideas</span>
-          </button>
-        </div>
-      )}
-      
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
+        )}
+        
+        {/* Action Buttons for temporary projects */}
+        {isTemporaryProject && (
+          <div className="absolute top-20 right-4 z-50 flex items-center gap-3">
+            <button
+              onClick={() => setConsolidationOpen(true)}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
+              title="Save as permanent project"
+            >
+              <Save className="w-4 h-4" />
+              <span className="text-sm font-medium">Save as Project</span>
+            </button>
+            
+            <button
+              onClick={() => navigateToModule('mind-garden')}
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-colors"
+              title="Back to Mind Garden"
+            >
+              <Brain className="w-4 h-4" />
+              <span className="text-sm font-medium">Back to Ideas</span>
+            </button>
+          </div>
+        )}
+        
         {/* Canvas */}
         <div
           ref={canvasRef}
@@ -768,12 +630,7 @@ const CreativeAtelier = () => {
           >
             {/* Canvas elements */}
             <AnimatePresence>
-              {elements.map((element) => (
-                <DraggableElement
-                  key={element.id}
-                  element={element}
-                />
-              ))}
+              {elements.map(element => renderDraggableElement(element))}
             </AnimatePresence>
 
             {/* Selection box */}
@@ -794,60 +651,53 @@ const CreativeAtelier = () => {
           </motion.div>
         </div>
 
-        {/* Drag overlay - Disabilitato per usare transform nativo
-        <DragOverlay>
-          {draggedElement && (
-            <DraggableElement
-              element={{...draggedElement, selected: false}}
-            />
-          )}
-        </DragOverlay> */}
-        {/* Tree View Sidebar - inside DndContext */}
+        {/* Enterprise Drag Preview Layer */}
+        <CanvasDragPreview />
+        
+        {/* Tree View Sidebar */}
         <HoudiniTreeView />
-      </DndContext>
 
-
-
-      {/* Properties Panel */}
-      <PropertiesPanel />
-      
-      {/* AI Suggestions */}
-      <AISuggestions />
-      
-      {/* AI Board Generator */}
-      <AIBoardGenerator 
-        onBoardGenerated={(result) => {
-          console.log('🤖 Board generated:', result);
-          // Optional: Show notification or trigger analytics
-        }}
-        className="fixed top-20 right-4 w-80 z-30"
-      />
-      
-      {/* Path Breadcrumb */}
-      <PathBreadcrumb />
-      
-      {/* Consolidation Panel for temporary projects */}
-      {isTemporaryProject && (
-        <ConsolidationPanel
-          isOpen={consolidationOpen}
-          onClose={() => setConsolidationOpen(false)}
-          nodes={elements.map(element => ({
-            id: element.id,
-            data: {
-              title: element.type === 'note' ? element.content?.substring(0, 50) || 'Note' : element.type,
-              content: element.type === 'note' ? element.content || '' : `${element.type} element`,
-              type: element.type,
-              created: element.created || new Date().toISOString(),
-              modified: element.modified || new Date().toISOString()
-            },
-            position: { x: element.position?.x || 0, y: element.position?.y || 0 },
-            type: 'card'
-          }))}
-          edges={[]}
-          tempProjectId={currentProject?.id}
+        {/* Properties Panel */}
+        <PropertiesPanel />
+        
+        {/* AI Suggestions */}
+        <AISuggestions />
+        
+        {/* AI Board Generator */}
+        <AIBoardGenerator 
+          onBoardGenerated={(result) => {
+            console.log('🤖 Board generated:', result);
+            // Optional: Show notification or trigger analytics
+          }}
+          className="fixed top-20 right-4 w-80 z-30"
         />
-      )}
-    </div>
+        
+        {/* Path Breadcrumb */}
+        <PathBreadcrumb />
+        
+        {/* Consolidation Panel for temporary projects */}
+        {isTemporaryProject && (
+          <ConsolidationPanel
+            isOpen={consolidationOpen}
+            onClose={() => setConsolidationOpen(false)}
+            nodes={elements.map(element => ({
+              id: element.id,
+              data: {
+                title: element.type === 'note' ? element.content?.substring(0, 50) || 'Note' : element.type,
+                content: element.type === 'note' ? element.content || '' : `${element.type} element`,
+                type: element.type,
+                created: element.created || new Date().toISOString(),
+                modified: element.modified || new Date().toISOString()
+              },
+              position: { x: element.position?.x || 0, y: element.position?.y || 0 },
+              type: 'card'
+            }))}
+            edges={[]}
+            tempProjectId={currentProject?.id}
+          />
+        )}
+      </div>
+    </ReactDnDProvider>
   );
 };
 

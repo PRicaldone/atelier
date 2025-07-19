@@ -56,7 +56,6 @@ export const DraggableElement = ({ element }) => {
   const isDropping = isOver && canDrop;
 
   const style = {
-    // No transform here - handled by DragOverlay
     zIndex: isDragging ? 9999 : element.zIndex,
     cursor: isDragging ? 'grabbing' : 'grab'
   };
@@ -386,7 +385,7 @@ export const DraggableElement = ({ element }) => {
       className={`
         cursor-move select-none
         ${element.selected ? 'ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-2' : ''}
-        ${isDragging ? 'opacity-0' : ''}
+        ${isDragging ? 'opacity-80 scale-105' : ''}
         ${element.locked ? 'cursor-not-allowed' : 'cursor-move'}
       `}
       onClick={handleClick}
