@@ -38,10 +38,12 @@ export const ResponseTypes = {
 export class SuperClaudeAgent {
   constructor(options = {}) {
     this.options = {
-      apiEndpoint: options.apiEndpoint || '/api/ai/superclaude',
-      timeout: options.timeout || 15000,
-      maxRetries: options.maxRetries || 3,
-      enableCaching: options.enableCaching !== false,
+      apiEndpoint: options.apiEndpoint || import.meta.env.VITE_SUPERCLAUDE_API_ENDPOINT || '/api/ai/superclaude',
+      timeout: options.timeout || parseInt(import.meta.env.VITE_AI_TIMEOUT) || 15000,
+      maxRetries: options.maxRetries || parseInt(import.meta.env.VITE_AI_MAX_RETRIES) || 3,
+      enableCaching: options.enableCaching !== false && (import.meta.env.VITE_AI_CACHE_ENABLED !== 'false'),
+      enabled: import.meta.env.VITE_SUPERCLAUDE_ENABLED !== 'false',
+      fallbackEnabled: import.meta.env.VITE_AI_FALLBACK_ENABLED !== 'false',
       ...options
     };
 

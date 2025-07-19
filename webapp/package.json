@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "dev-stable": "vite --host 0.0.0.0 --clearScreen false --force",
+    "dev:server": "node server.js",
+    "dev:full": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -17,7 +19,10 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@use-gesture/react": "^10.3.1",
+    "concurrently": "^9.1.1",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "express": "^4.21.2",
     "framer-motion": "^12.23.0",
     "lucide-react": "^0.525.0",
     "openai": "^5.9.0",
