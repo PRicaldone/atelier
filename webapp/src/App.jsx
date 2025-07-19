@@ -28,6 +28,7 @@ import AnalyticsDashboard from './components/AnalyticsDashboard'
 import SecurityStatus from './components/SecurityStatus'
 import RecoveryTestDashboard from './components/RecoveryTestDashboard'
 import AlertNotifications from './components/AlertNotifications'
+import ReactDnDDemo from './components/ReactDnDPOC/ReactDnDDemo'
 import AlertManagementDashboard from './components/AlertManagementDashboard'
 import CryptoMigrationDashboard from './components/CryptoMigrationDashboard'
 import WIPProtectionIndicator from './components/WIPProtectionIndicator'
@@ -214,6 +215,7 @@ function App() {
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/roadmap" element={<Ideas />} />
           <Route path="/commercial-ideas" element={<Ideas />} />
+          <Route path="/dnd-poc" element={<ReactDnDDemo />} />
         </Routes>
         
         {/* Security Status (Development Only) */}

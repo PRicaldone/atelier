@@ -242,6 +242,7 @@ const GestureLayout = ({ children, onOpenProjectSelector }) => {
           <SidebarToggle />
           <CornerInfo syncStatus={syncStatus} />
           
+          {/* Disabilitato - gestito da VisualCanvas
           <DragOverlay>
             {activeElement ? (
               <motion.div
@@ -259,7 +260,7 @@ const GestureLayout = ({ children, onOpenProjectSelector }) => {
                 Dragging element...
               </motion.div>
             ) : null}
-          </DragOverlay>
+          </DragOverlay> */}
         </div>
       </DndContext>
     </ThemeProvider>
