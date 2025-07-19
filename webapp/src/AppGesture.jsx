@@ -51,6 +51,10 @@ import WIPProtectionDashboard from './components/WIPProtectionDashboard';
 import AuditLogsDashboard from './components/AuditLogsDashboard';
 import AITransparencyDashboard from './components/AITransparencyDashboard';
 import WIPProtectionIndicator from './components/WIPProtectionIndicator';
+import CustomDragTest from './pages/CustomDragTest';
+import SimpleDragTest from './pages/SimpleDragTest';
+import VisualCanvasCustom from './modules/scriptorium/VisualCanvasCustom';
+import VisualCanvasStandalone from './modules/scriptorium/VisualCanvasStandalone';
 
 function AppGesture() {
   const [showProjectSelector, setShowProjectSelector] = useState(false);
@@ -117,58 +121,65 @@ function AppGesture() {
 
   return (
     <MigrationManager>
-      <GestureLayout onOpenProjectSelector={() => setShowProjectSelector(true)}>
-        {/* Project Selector Modal */}
-        <ProjectSelector
-          isOpen={showProjectSelector}
-          onClose={() => setShowProjectSelector(false)}
-        />
+      {/* Project Selector Modal - Global */}
+      <ProjectSelector
+        isOpen={showProjectSelector}
+        onClose={() => setShowProjectSelector(false)}
+      />
+      
+      {/* Global System Components */}
+      <SecurityStatus />
+      <AlertNotifications />
+      <WIPProtectionIndicator />
+      
+      {/* Main Routes */}
+      <Routes>
+        {/* Standalone test routes - NO GestureLayout */}
+        <Route path="/simple-drag" element={<SimpleDragTest />} />
+        <Route path="/drag-test" element={<CustomDragTest />} />
         
-        {/* Main Routes */}
-        <Routes>
-          {/* Default route */}
-          <Route path="/" element={<Navigate to="/scriptorium" replace />} />
-          
-          {/* Main modules */}
-          <Route path="/scriptorium" element={<CreativeAtelier />} />
-          <Route path="/atelier" element={<CreativeAtelier />} />
-          <Route path="/canvas" element={<CreativeAtelier />} />
-          <Route path="/start" element={<ProjectStart />} />
-          <Route path="/mind-garden" element={<MindGarden />} />
-          <Route path="/tracker" element={<ProjectTracker />} />
-          <Route path="/business" element={<BusinessSwitcher />} />
-          <Route path="/orchestra" element={<Orchestra />} />
-          <Route path="/content-studio" element={<Orchestra />} />
-          <Route path="/ideas" element={<Ideas />} />
-          <Route path="/roadmap" element={<Ideas />} />
-          <Route path="/commercial-ideas" element={<Ideas />} />
-          
-          {/* Development & Admin Routes */}
-          <Route path="/module-demo" element={<ModuleSystemDemo />} />
-          <Route path="/error-demo" element={<ErrorTrackingDemo />} />
-          <Route path="/monitoring" element={<EventMonitoringDashboard />} />
-          <Route path="/tests" element={<IntegrationTestDashboard />} />
-          <Route path="/alerts" element={<AlertingConfigurationUI />} />
-          <Route path="/routine" element={<RoutineAgentDashboard />} />
-          <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
-          <Route path="/analytics" element={<AnalyticsDashboard />} />
-          <Route path="/recovery" element={<RecoveryTestDashboard />} />
-          <Route path="/alerts-mgmt" element={<AlertManagementDashboard />} />
-          <Route path="/crypto-migration" element={<CryptoMigrationDashboard />} />
-          <Route path="/wip-protection" element={<WIPProtectionDashboard />} />
-          <Route path="/audit-logs" element={<AuditLogsDashboard />} />
-          <Route path="/ai-transparency" element={<AITransparencyDashboard />} />
-        </Routes>
+        {/* ⚠️ SCRIPTORIUM - STANDALONE (NO GestureLayout) 
+            Using proven working drag system from StandaloneDragTest */}
+        <Route path="/scriptorium" element={<VisualCanvasStandalone />} />
+        <Route path="/atelier" element={<VisualCanvasStandalone />} />
+        <Route path="/canvas" element={<VisualCanvasStandalone />} />
         
-        {/* Security Status (Development Only) */}
-        <SecurityStatus />
+        {/* Default route */}
+        <Route path="/" element={<Navigate to="/scriptorium" replace />} />
         
-        {/* Alert Notifications System */}
-        <AlertNotifications />
-        
-        {/* WIP Protection Indicator */}
-        <WIPProtectionIndicator />
-      </GestureLayout>
+        {/* All other routes - WITH GestureLayout */}
+        <Route path="/*" element={
+          <GestureLayout onOpenProjectSelector={() => setShowProjectSelector(true)}>
+            <Routes>
+              <Route path="/start" element={<ProjectStart />} />
+              <Route path="/mind-garden" element={<MindGarden />} />
+              <Route path="/tracker" element={<ProjectTracker />} />
+              <Route path="/business" element={<BusinessSwitcher />} />
+              <Route path="/orchestra" element={<Orchestra />} />
+              <Route path="/content-studio" element={<Orchestra />} />
+              <Route path="/ideas" element={<Ideas />} />
+              <Route path="/roadmap" element={<Ideas />} />
+              <Route path="/commercial-ideas" element={<Ideas />} />
+              
+              {/* Development & Admin Routes */}
+              <Route path="/module-demo" element={<ModuleSystemDemo />} />
+              <Route path="/error-demo" element={<ErrorTrackingDemo />} />
+              <Route path="/monitoring" element={<EventMonitoringDashboard />} />
+              <Route path="/tests" element={<IntegrationTestDashboard />} />
+              <Route path="/alerts" element={<AlertingConfigurationUI />} />
+              <Route path="/routine" element={<RoutineAgentDashboard />} />
+              <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/recovery" element={<RecoveryTestDashboard />} />
+              <Route path="/alerts-mgmt" element={<AlertManagementDashboard />} />
+              <Route path="/crypto-migration" element={<CryptoMigrationDashboard />} />
+              <Route path="/wip-protection" element={<WIPProtectionDashboard />} />
+              <Route path="/audit-logs" element={<AuditLogsDashboard />} />
+              <Route path="/ai-transparency" element={<AITransparencyDashboard />} />
+            </Routes>
+          </GestureLayout>
+        } />
+      </Routes>
     </MigrationManager>
   );
 }

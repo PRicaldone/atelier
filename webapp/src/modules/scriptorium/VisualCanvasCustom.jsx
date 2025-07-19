@@ -238,11 +238,45 @@ const CreativeAtelierCustom = () => {
     }
   }, [updateElement, navigateToBoard]);
 
+  // Custom element creation (bypasses GestureLayout)
+  const createCustomElement = useCallback((type, position) => {
+    const newElement = {
+      id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: type || 'note',
+      position: position || { x: 100, y: 100 },
+      size: { width: 200, height: 150 },
+      data: {
+        content: type === 'note' ? 'New note' : `New ${type}`,
+        title: type === 'note' ? 'New note' : `New ${type}`
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      source: 'custom-creation'
+    };
+    
+    console.log('🎯 Creating custom element:', newElement.id, newElement.type);
+    
+    // Add to store using the original store method
+    addCompleteElement(newElement);
+    
+    // Emit EventBus event
+    if (window.__eventBus) {
+      window.__eventBus.emit('canvas.element.created_custom', {
+        elementId: newElement.id,
+        elementType: newElement.type,
+        position: newElement.position,
+        timestamp: Date.now()
+      });
+    }
+    
+    return newElement;
+  }, [addCompleteElement]);
+
   // Handle canvas click and double-click
   const handleCanvasClick = useCallback((e) => {
     if (e.target === canvasRef.current) {
       if (e.detail === 2) {
-        // Double click - create new note at mouse position
+        // Double click - create new note at mouse position using custom creation
         const canvasBounds = canvasRef.current.getBoundingClientRect();
         const canvasX = (e.clientX - canvasBounds.left - viewport.x) / viewport.zoom;
         const canvasY = (e.clientY - canvasBounds.top - viewport.y) / viewport.zoom;
@@ -253,13 +287,13 @@ const CreativeAtelierCustom = () => {
           y: Math.round(canvasY / GRID_SIZE) * GRID_SIZE
         } : { x: canvasX, y: canvasY };
         
-        addElement('note', position);
+        createCustomElement('note', position);
       } else {
         // Single click - clear selection
         clearSelection();
       }
     }
-  }, [clearSelection, addElement, viewport, settings.snapToGrid]);
+  }, [clearSelection, createCustomElement, viewport, settings.snapToGrid]);
 
   // Handle mouse down for selection box, panning, and zooming
   const handleMouseDown = useCallback((e) => {
@@ -486,6 +520,36 @@ const CreativeAtelierCustom = () => {
           onExecute={handleIntelligenceExecution}
           className="shadow-lg"
         />
+      </div>
+      
+      {/* Custom Element Creation Panel - Top Left */}
+      <div className="absolute top-4 left-4 z-50">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3">
+          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Custom Drag Test</div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => createCustomElement('note', { x: 100 + Math.random() * 300, y: 100 + Math.random() * 200 })}
+              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors"
+              title="Create note with custom drag system"
+            >
+              📝 Note
+            </button>
+            <button
+              onClick={() => createCustomElement('board', { x: 200 + Math.random() * 300, y: 150 + Math.random() * 200 })}
+              className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition-colors"
+              title="Create board with custom drag system"
+            >
+              📋 Board
+            </button>
+            <button
+              onClick={() => createCustomElement('link', { x: 300 + Math.random() * 300, y: 200 + Math.random() * 200 })}
+              className="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded transition-colors"
+              title="Create link with custom drag system"
+            >
+              🔗 Link
+            </button>
+          </div>
+        </div>
       </div>
       
       {/* Temporary Project Badge */}
