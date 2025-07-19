@@ -8,7 +8,7 @@
  * optimization through data-driven insights.
  */
 
-import UsageTracker from './UsageTracker.js';
+import { UsageTracker } from './UsageTracker.js';
 import PatternRecognition from './PatternRecognition.js';
 import TimeSavedMetrics from './TimeSavedMetrics.js';
 

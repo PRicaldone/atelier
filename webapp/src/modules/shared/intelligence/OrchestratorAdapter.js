@@ -8,7 +8,7 @@
  * - Error handling and rollback capabilities
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 import { eventBus } from '../events/EventBus.js';
 import { moduleRegistry } from '../registry/ModuleRegistry.js';
 
@@ -321,7 +321,7 @@ export class Workflow {
  */
 export class OrchestratorAdapter {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'orchestrator' });
+    this.logger = createModuleLogger('orchestrator');
     this.workflows = new Map();
     this.workflowQueue = [];
     this.runningWorkflows = new Map();

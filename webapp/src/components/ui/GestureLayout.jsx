@@ -73,7 +73,9 @@ const GestureLayout = ({ children, onOpenProjectSelector }) => {
     };
 
     setCanvasElements(prev => [...prev, newElement]);
-    addElement(newElement);
+    
+    // Fix: Call addElement with proper signature (type, position, customData)
+    addElement(element.type, element.position, element.data);
 
     // Emit event for other modules
     if (window.__eventBus) {

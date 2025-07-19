@@ -8,7 +8,7 @@
  * - Provides unified response handling
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 import { eventBus } from '../events/EventBus.js';
 import { taskAnalyzer, ExecutionRoutes } from './TaskAnalyzer.js';
 import { claudeConnectorsAdapter } from './ClaudeConnectorsAdapter.js';
@@ -161,7 +161,7 @@ export class ExecutionResult {
  */
 export class TaskCoordinator {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'task-coordinator' });
+    this.logger = createModuleLogger('task-coordinator');
     this.tasks = new Map();
     this.taskHistory = [];
     this.executionStats = {

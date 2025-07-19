@@ -11,7 +11,7 @@
  * - Time-saved metrics for ROI validation
  */
 
-class UsageTracker {
+export class UsageTracker {
   constructor() {
     this.sessionId = this.generateSessionId();
     this.startTime = Date.now();

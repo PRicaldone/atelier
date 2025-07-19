@@ -797,18 +797,9 @@ const CreativeAtelier = () => {
         {/* Drag overlay */}
         <DragOverlay>
           {draggedElement && (
-            <div
-              className="opacity-60 bg-blue-200 dark:bg-blue-800 border-2 border-blue-400 dark:border-blue-600 rounded-lg flex items-center justify-center"
-              style={{
-                width: draggedElement.size.width,
-                height: draggedElement.size.height,
-                cursor: 'grabbing'
-              }}
-            >
-              <span className="text-sm text-blue-800 font-medium">
-                {draggedElement.type}
-              </span>
-            </div>
+            <DraggableElement
+              element={{...draggedElement, selected: false}}
+            />
           )}
         </DragOverlay>
         {/* Tree View Sidebar - inside DndContext */}

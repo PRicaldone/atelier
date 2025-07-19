@@ -385,7 +385,7 @@ export const DraggableElement = ({ element }) => {
       className={`
         cursor-move select-none
         ${element.selected ? 'ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-2' : ''}
-        ${isDragging ? 'opacity-80 scale-105' : ''}
+        ${isDragging ? 'opacity-0 !important' : ''}
         ${element.locked ? 'cursor-not-allowed' : 'cursor-move'}
       `}
       onClick={handleClick}

@@ -7,7 +7,7 @@
  * - Hybrid tasks → Claude-first with escalation
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 
 // Task complexity levels
 export const ComplexityLevels = {
@@ -77,7 +77,7 @@ export const ActionWeights = {
  */
 export class TaskAnalyzer {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'task-analyzer' });
+    this.logger = createModuleLogger('task-analyzer');
     this.analysisHistory = [];
     this.learningData = new Map();
   }

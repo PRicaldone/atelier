@@ -7,7 +7,7 @@
  * - Provides unified interface for all connector operations
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 import { eventBus } from '../events/EventBus.js';
 
 // Supported Claude connectors
@@ -83,7 +83,7 @@ export const OperationTypes = {
  */
 export class ClaudeConnectorsAdapter {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'claude-connectors' });
+    this.logger = createModuleLogger('claude-connectors');
     this.connections = new Map();
     this.rateLimits = new Map();
     this.operationHistory = [];

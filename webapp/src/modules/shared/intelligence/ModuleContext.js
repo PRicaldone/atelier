@@ -5,7 +5,7 @@
  * based on current module and user state.
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 
 // Module types
 export const ModuleTypes = {
@@ -233,7 +233,7 @@ export const ModulePatterns = {
  */
 export class ModuleContext {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'module-context' });
+    this.logger = createModuleLogger('module-context');
     this.currentModule = ModuleTypes.GENERAL;
     this.contextHistory = [];
     this.userPreferences = new Map();

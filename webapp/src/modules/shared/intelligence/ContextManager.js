@@ -8,7 +8,7 @@
  * - Cross-system communication
  */
 
-import { ModuleLogger } from '../monitoring/ModuleLogger.js';
+import { createModuleLogger } from '../monitoring/ModuleLogger.js';
 import { eventBus } from '../events/EventBus.js';
 
 // Context scope levels
@@ -101,7 +101,7 @@ export class ContextEntry {
  */
 export class ContextManager {
   constructor() {
-    this.logger = ModuleLogger.child({ module: 'context-manager' });
+    this.logger = createModuleLogger('context-manager');
     this.contexts = new Map(); // In-memory storage
     this.listeners = new Map(); // Event listeners for context changes
     this.config = {
