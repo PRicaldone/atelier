@@ -2,6 +2,16 @@
 
 > **Required for ALL Pull Requests affecting user interaction**
 
+## 🚨 **BIFLOW COMPLIANCE VERIFICATION**
+
+**🔒 MANDATORY CHECK**: This PR complies with the single source of truth specification:
+
+- [ ] **Reviewed BIFLOW-COMPLETE-TYPES.md v2.0.1**: All changes respect Mind Garden (FMG/PMG/BMG) and Scriptorium (FS/PS) flows
+- [ ] **No Structural Violations**: No changes break 1:1 Board ↔ BMG relationship or Scriptorium home concept  
+- [ ] **Spec Updated If Needed**: If this PR introduces new flows, BIFLOW-COMPLETE-TYPES.md has been updated first
+
+**Link to relevant section in BIFLOW-COMPLETE-TYPES.md**: `/docs/BIFLOW-COMPLETE-TYPES.md#[section]`
+
 ## ✅ **CORE REQUIREMENTS CHECKLIST**
 
 ### **Gesture Integration** (ALL must pass for CORE features)
@@ -132,6 +142,6 @@ By submitting this PR, I confirm that:
 
 ---
 
-*Template Version: 1.0*  
-*Reference: Gesture Gate Protocol v1.0*  
-*Authority: Trinity+Gesture Manifesto v1.2*
+*Template Version: 1.1*  
+*Reference: Gesture Gate Protocol v1.0 + BIFLOW-COMPLETE-TYPES.md v2.0.1*  
+*Authority: Trinity+Gesture Manifesto v1.6*

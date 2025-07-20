@@ -1,6 +1,12 @@
 /**
  * 🌱 BIFLOW STORE EXTENSION - Board ↔ Mind Garden Operations
  * 
+ * 🚨 POLICY: All code, data models, UX/UI flows and architecture
+ * MUST comply with the single specification at /docs/BIFLOW-COMPLETE-TYPES.md (current version: v2.0.1).
+ * In case of any doubt or discrepancy between code, comments, chat, or other docs,
+ * the latest version of this document ALWAYS TAKES PRECEDENCE.
+ * No structural changes may be made without reviewing and updating the spec.
+ * 
  * This module extends the Canvas store with BiFlow operations,
  * maintaining the sacred 1:1 Board ↔ Mind Garden relationship.
  */

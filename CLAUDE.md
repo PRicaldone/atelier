@@ -710,6 +710,24 @@ Two-finger pan         → Canvas Navigation (touch-only)
 - **Flussi definitivi** con diagrammi e regole complete
 - **Version tracking** per future updates basate su user feedback
 
+### 🚨 **CODE POLICY ENFORCEMENT**
+
+**Tutti i file chiave ora hanno questa policy nei commenti:**
+```javascript
+// 🚨 POLICY: All code, data models, UX/UI flows and architecture
+// MUST comply with the single specification at /docs/BIFLOW-COMPLETE-TYPES.md (current version: v2.0.1).
+// In case of any doubt or discrepancy between code, comments, chat, or other docs,
+// the latest version of this document ALWAYS TAKES PRECEDENCE.
+// No structural changes may be made without reviewing and updating the spec.
+```
+
+**Files with BiFlow Policy:**
+- `biflow-types.js` - Core data model definitions
+- `biflow-store.js` - Store operations and validation  
+- `store.js` (Scriptorium) - Main canvas store
+- `store.js` (Mind Garden) - Mind Garden store
+- `.github/PULL_REQUEST_TEMPLATE.md` - PR compliance verification
+
 ### 💡 Note Tecniche Importanti
 
 1. **Trinity+Gesture+Mobile Architecture (v1.6)**:
