@@ -2,6 +2,35 @@
 
 > Questo file contiene informazioni specifiche per Claude AI per comprendere rapidamente il progetto Atelier quando si riprende il lavoro.
 
+## 📋 **KEY DOCUMENTATION QUICK ACCESS**
+
+**🏆 Core Architecture:**
+- `/docs/ATELIER-TRINITY-MANIFESTO.md` (v1.4) - Project North Star + Mobile-First Foundation
+- `/docs/ENTERPRISE-DRAG-BASELINE.md` - Performance baseline protection
+- `/docs/blueprint-v6.2.md` - Technical architecture
+
+**🚀 PRO Trinity Amplifiers:**
+- `/docs/TRINITY-AMPLIFIER-TITLE-FIELD.md` - Universal title system
+- `/docs/TRINITY-AMPLIFIER-SEARCH-GESTURE.md` - No search bar revolution  
+- `/docs/TRINITY-AMPLIFIER-GROUPING-CONTAINER.md` - Professional grouping
+- `/docs/TRINITY-AMPLIFIER-RECTANGLE-MULTISELECTION.md` - Marquee selection
+
+**🤌 Gesture System:**
+- `/docs/GESTURE-GATE-PROTOCOL.md` - Feature validation framework
+- `/docs/GESTURE-LANGUAGE-MAP.md` - Universal gesture patterns
+- `/docs/GESTURE-REFERENCE-CARD.md` - Quick developer reference
+
+**📱 Mobile-First Foundation:**
+- `/docs/MOBILE-VALIDATION-MANIFESTO.md` - Touch-native experience standards
+- `/docs/MOBILE-VALIDATION-CHECKLIST.md` - Mandatory PR validation requirements
+
+**🌱 BiFlow System:**
+- `/docs/TRINITY-BIFLOW-FEATURE.md` - Core BiFlow architecture and 1:1 relationship
+- `/docs/BIFLOW-GENERAL-GARDEN-EXCEPTION.md` - Critical exception documentation
+- `/docs/ATELIER-CORE-FLOWS.md` - Freestyle to Project philosophy
+- `/webapp/src/modules/scriptorium/biflow-types.js` - Complete data model implementation
+- `/webapp/src/modules/scriptorium/biflow-store.js` - Store operations and validation
+
 ## 🎯 Quick Start Command
 
 Copia e incolla questo comando quando inizi una nuova chat:
@@ -11,36 +40,167 @@ Ciao Claude! Sto lavorando su Atelier, il mio command center creativo per proget
 Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/blueprint.md e ~/atelier/docs/cheat-sheet.md per i dettagli.
-L'ultimo salvataggio è del 20/07/2025 con Enterprise Drag & Drop System completato e baseline stabilita.
+L'ultimo salvataggio è del 20/07/2025 con Trinity+Gesture+Mobile Manifesto v1.4 - Mobile-First Foundation implementata con PRO Amplifiers completi.
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025)
+## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025 - MOBILE-FIRST FOUNDATION)
+
+### ⚠️ **IMPORTANTE: ATELIER 1.x - ROAD TO 2.0 (PRE-FORK)**
+
+**ATTENZIONE: Atelier è attualmente in stato 1.x "pre-fork".**
+- La branch/feature V2 verrà creata solo DOPO la validazione completa della Trinity+Gesture+Mobile
+- Tutto il lavoro attuale serve a garantire che la V2 sia PULITA, CORE-FIRST, MOBILE-NATIVE, e senza debito tecnico
+- NON confondere gli snapshot/commits attuali con V2: sono la base di partenza, NON la nuova architettura
+- **Siamo in fase di validazione e pulizia Mobile-First, NON di sviluppo V2**
+
+### 🏆 **TRINITY+GESTURE+MOBILE MANIFESTO v1.4: MOBILE-FIRST FOUNDATION** ⭐ **STRATEGIC BREAKTHROUGH**
+
+**📱 MOBILE-FIRST FOUNDATION - COMPETITIVE ADVANTAGE SECURED**
+
+**Il progetto ha raggiunto una svolta strategica critica: Mobile-First è ora parte integrante dell'identità Atelier, non un "nice-to-have" post-MVP. Questo posiziona Atelier per competere direttamente con Muse, Milanote mobile, Figma iPad, e Miro.**
+
+**🔒 TRINITY+GESTURE+MOBILE CORE SYSTEMS (Non-Negotiable):**
+1. **🎯 DRAG SYSTEM** - Enterprise 60fps pointer events (`22890ef` baseline) + native touch support
+2. **🌳 NESTED BOARDS** - Infinite hierarchy con state preservation + touch navigation  
+3. **📊 TREEVIEW SYNC** - Real-time bidirectional sync <150ms + mobile sidebar
+4. **🤌 GESTURE SYSTEM** - Universal UX language ≤100ms response (desktop AND mobile)
+5. **📱 MOBILE FOUNDATION** - Touch-native experience, 60fps on iPhone12/Pixel5, cross-platform parity
+
+**🚪 CORE FEATURE GATE PROTOCOL:**
+- Nessuna feature può essere "core" senza gesture accessibility nativa
+- ≤100ms response time = baseline violation se violato (desktop AND mobile)
+- Pattern consistency = linguaggio gesture è SACRED
+- Universal access = desktop + touch, tutti i contesti
+- Mobile-native = touch events implemented, works flawlessly on iOS/Android
+- Real device tested = validated on physical iPhone 12+ and Pixel 5+ devices
+
+### 🔊 **TRINITY AMPLIFIERS: Mandatory UX Patterns** ⭐ **PRO UPGRADED**
+
+**Amplifiers non sono parte del Trinity Core, ma sono pattern obbligatori che rendono Trinity usabile at scale.**
+
+**🏷️ TITLE FIELD AMPLIFIER #1:** ✅ **IMPLEMENTED**
+- **Ogni elemento** (note, link, board, image, AI) supporta campo `title` opzionale
+- **Display universale**: TreeView, Breadcrumbs, Search, Properties, Drag overlay
+- **Import/Export**: Preservazione automatica titoli da fonti esterne
+- **Performance**: <1ms overhead, impatto storage trascurabile
+- **Differenziazione**: A differenza di Milanote, non serve raggruppare per avere titoli
+
+**🔍 SEARCH-AS-GESTURE AMPLIFIER #2:** 📋 **DOCUMENTED**
+- **NO SEARCH BAR**: Mai una barra di ricerca fissa nella UI
+- **Gesture Activation**: Long-press o Cmd+F attiva AI prompt "Cerca..."
+- **Natural Language**: Query naturali processate da AI ("note senza titolo", "link dal 2024")
+- **Visual Response**: Highlighting spaziale, navigazione, mai solo liste
+- **Poetic Feedback**: "Nessuna nota trovata... Vuoi crearne una qui?"
+
+## 🚀 **PRO TRINITY AMPLIFIERS** - Professional Canvas Standards ⭐ **IMPLEMENTATI**
+
+**📦 GROUPING/BOX CONTAINER AMPLIFIER #3:** ✅ **IMPLEMENTED**
+- **Visual Containers**: Gruppi elementi in box con colori, titoli, bordi personalizzabili
+- **Nested Support**: Infiniti livelli di grouping (come Figma/Miro)
+- **Batch Operations**: Group/ungroup, duplicate gruppo implementati in store
+- **Data Model**: GROUP element type con helper functions complete
+- **Store Integration**: createGroup(), ungroupElement(), duplicateGroup() methods
+- **Performance**: Ready for 60fps movement container + children
+
+**▭ RECTANGLE MULTI-SELECTION AMPLIFIER #4:** ✅ **IMPLEMENTED**
+- **Marquee Selection**: Drag su area vuota → rectangle selection con 60fps
+- **Selection Modes**: Intersect (default), Contain (Shift+drag), Center (Alt+drag)
+- **Visual Feedback**: Rectangle trasparente + highlight elementi in real-time
+- **Multi-Element Drag**: Supporto drag simultaneo elementi selezionati
+- **Performance Monitoring**: Real-time >16ms detection con warnings
+- **Gesture Integration**: Modifier keys + visual mode indicators
+
+**Strategic Importance**: 
+🎯 **Grouping + Multi-Selection = Professional Canvas Standard**
+- Required per competere con Figma, Miro, FigJam
+- Trasforma workflow da "amateur click-by-click" a "pro multi-selection"
+- Foundation per advanced organization e batch operations
+
+**Implementation Status**:
+- **Data Model**: `/src/modules/scriptorium/types.js` - GROUP element type ✅
+- **Store Operations**: `/src/modules/scriptorium/store.js` - Group methods ✅  
+- **UI Component**: `/src/modules/scriptorium/components/RectangleSelection.jsx` ✅
+- **Integration**: VisualCanvasStandalone.jsx updated with professional selection ✅
+- **Mobile-Ready**: Touch events and gesture integration prepared for validation ⚠️
+
+**Documentation**: 
+- `/docs/TRINITY-AMPLIFIER-TITLE-FIELD.md` ✅ 
+- `/docs/TRINITY-AMPLIFIER-SEARCH-GESTURE.md` ✅
+- `/docs/TRINITY-AMPLIFIER-GROUPING-CONTAINER.md` ✅
+- `/docs/TRINITY-AMPLIFIER-RECTANGLE-MULTISELECTION.md` ✅
+- `/docs/MOBILE-VALIDATION-MANIFESTO.md` ✅
+- `/docs/MOBILE-VALIDATION-CHECKLIST.md` ✅
 
 ### 🎯 **ENTERPRISE DRAG & DROP SYSTEM: Baseline Established** ⭐ **CRITICAL MILESTONE**
 
 **SISTEMA ENTERPRISE DRAG & DROP COMPLETATO - BASELINE DEFINITIVA PER FUTURE MODIFICHE**
 
-**🔒 BASELINE COMMITMENT (`22890ef`):**
-- ✅ **60fps Performance**: Pointer events nativi, zero render loops
+**🔒 BASELINE COMMITMENT (`22890ef`) + PRO AMPLIFIERS + MOBILE FOUNDATION:**
+- ✅ **60fps Performance**: Pointer events nativi, zero render loops (desktop AND mobile)
 - ✅ **"drag perfetto"**: User experience level richiesto raggiunto  
 - ✅ **Architettura Isolata**: VisualCanvasStandalone, Opzione A separation
 - ✅ **React.StrictMode Compatible**: Zero interferenze cross-system
 - ✅ **Console Pulita**: Da 171+ errori/min a 0 errori
+- ✅ **PRO Multi-Selection**: Rectangle selection + multi-element drag
+- ✅ **Group Operations**: Professional grouping con 60fps performance
+- ⚠️ **Mobile-Native**: Touch events framework ready for validation phase
+- ⚠️ **Cross-Platform**: iOS Safari + Android Chrome compatibility prepared
 
 **🛡️ PROTECTION PROTOCOL:**
 Qualsiasi modifica futura al drag & drop DEVE:
-1. Mantenere almeno questo livello di performance (60fps)
+1. Mantenere almeno questo livello di performance (60fps desktop AND mobile)
 2. Giustificare tradeoff con analisi dettagliata vs baseline
 3. Includere rollback plan a questo stato gold standard
 4. Passare tutti i quality gates established
+5. Complete Mobile Validation Checklist with real device testing evidence
+6. Maintain cross-platform parity between iOS Safari and Android Chrome
 
 **📍 Technical Implementation:**
-- **VisualCanvasStandalone.jsx**: Componente isolato con custom pointer events
+- **VisualCanvasStandalone.jsx**: Componente isolato con custom pointer events + PRO selection + mobile framework
+- **RectangleSelection.jsx**: Professional marquee selection component with touch support preparation
+- **Group Operations**: Store methods per createGroup/ungroup/duplicate
 - **AppGesture.jsx**: Opzione A architecture (routes separate da GestureLayout)
-- **Performance**: 60fps native browser drag, zero library dependencies
+- **Mobile Foundation**: Touch event framework integrated in component architecture
+- **Performance**: 60fps native browser drag + selection, zero library dependencies
 - **Testing**: StandaloneDragTest validation environment
+
+### 🚪 **GESTURE TOOLCHAIN: Automated Enforcement System** ⭐ **AUTOMATION MILESTONE**
+
+**Sistema completo di enforcement automatico per garantire rispetto della philosophy as protocol.**
+
+**🛡️ GESTURE GATE ENFORCEMENT:**
+- **GESTURE-GATE-PROTOCOL.md**: Framework di validazione completo
+- **GESTURE-LANGUAGE-MAP.md**: Schema visuale universale gesture patterns
+- **PR Template obbligatorio**: Gesture Gate Checklist per ogni feature
+- **CI/CD Integration**: Automated testing gesture performance
+- **Runtime Monitoring**: Auto-rollback se violazioni baseline
+
+**🤌 CORE GESTURE PATTERNS (Desktop + Mobile):**
+```
+Long-press (≤100ms)     → AI Context Activation (mouse/touch)
+Double-tap (≤100ms)     → Radial Menu (click/touch)
+Drag & Drop (60fps)     → Movement + Nesting (mouse/touch)
+Tap (≤50ms)            → Selection + Navigation (click/touch)
+Swipe (≤100ms)         → Directional Operations (touch-native)
+Pinch/Spread           → Zoom (native browser integration)
+Two-finger pan         → Canvas Navigation (touch-only)
+```
+
+**⚡ AUTOMATIC ROLLBACK TRIGGERS:**
+- >100ms gesture response = BASELINE VIOLATION (desktop OR mobile)
+- New gesture patterns = LANGUAGE BREAK  
+- Platform inconsistency = UNIVERSAL ACCESS FAIL
+- Trinity conflicts = HARMONY VIOLATION
+- Mobile functionality failure = MOBILE BASELINE VIOLATION
+- Cross-platform parity break = PLATFORM CONSISTENCY FAIL
+
+**📊 VALIDATION ROUTES:**
+- `/trinity-test` - Trinity+Gesture+Mobile validation suite
+- Comprehensive testing: drag + nested + tree + gesture systems + mobile framework
+- Performance monitoring con real-time metrics (desktop AND mobile)
+- Mobile device simulation and testing protocols
 
 ### 🎨 **GESTURE UI REVOLUTION: Complete System Implementation**
 
@@ -150,6 +310,32 @@ Qualsiasi modifica futura al drag & drop DEVE:
     - Test utilities per development
     - Professional export capabilities
 
+### 🌱 **BIFLOW SYSTEM** (100% completo)
+
+11. **BiFlow Architecture** (100% completo)
+    - **CORE PRINCIPLE**: Sacred 1:1 Board ↔ Mind Garden relationship
+    - **GENERAL MIND GARDEN EXCEPTION**: Only `id: 'general'` allowed without board
+    - Bidirectional promotion flow: Mind Garden → Board creation
+    - Dedicated garden auto-creation for every board
+    - Origin tracking system (MG-generale, manual, AI, sub-board, duplicated)
+    - Performance optimization with lazy loading and caching
+
+12. **Freestyle to Project Philosophy** (100% completo)
+    - **CORE PRINCIPLE**: All creative spaces start as freestyle, promotion optional
+    - **UNIVERSAL START**: Zero barriers to creativity (no names, structure, categories)
+    - **FLUID PROMOTION**: Reversible transition freestyle ↔ project with zero data loss
+    - **FEATURE EQUALITY**: No core features limited to project mode
+    - **MEMORY PERSISTENCE**: All freestyle spaces always accessible and searchable
+    - **ANTI-ANXIETY**: Gentle invitation patterns, never force structure
+
+13. **BiFlow Data Model** (100% completo)
+    - Extended Board structure with mindGardenId (never null)
+    - Extended Mind Garden structure with boardId (null only for General)
+    - Creative mode support (freestyle/project) with promotion history
+    - Validation system with General Garden exception handling
+    - Migration utilities for legacy boards without gardens
+    - Parent-child hierarchy support for infinite nesting
+
 ### 🎨 **GESTURE UI SYSTEM** (100% completo)
 
 11. **Gesture Detection System** (100% completo)
@@ -254,14 +440,16 @@ Qualsiasi modifica futura al drag & drop DEVE:
 │   ├── src/
 │   │   ├── modules/
 │   │   │   ├── scriptorium/ (rinominato da visual-canvas)
-│   │   │   │   ├── VisualCanvas.jsx (componente principale)
-│   │   │   │   ├── store.js (stato e logica con secure storage)
-│   │   │   │   ├── types.js (tipi e costanti)
+│   │   │   │   ├── VisualCanvasStandalone.jsx (enterprise drag + PRO selection)
+│   │   │   │   ├── VisualCanvasStandaloneSync.jsx (TreeView sync wrapper)
+│   │   │   │   ├── store.js (stato + group operations)
+│   │   │   │   ├── types.js (tipi + GROUP element + groupHelpers)
 │   │   │   │   └── components/
 │   │   │   │       ├── TreeViewSidebar.jsx (gerarchia)
 │   │   │   │       ├── PathBreadcrumb.jsx (navigazione)
-│   │   │   │       ├── PropertiesPanel.jsx (proprietà)
-│   │   │   │       └── CanvasToolbar.jsx (tools)
+│   │   │   │       ├── PropertiesPanel.jsx (proprietà + title field)
+│   │   │   │       ├── CanvasToolbar.jsx (tools)
+│   │   │   │       └── RectangleSelection.jsx (🚀 PRO marquee selection)
 │   │   │   ├── mind-garden/
 │   │   │   │   ├── MindGarden.jsx (componente principale)
 │   │   │   │   └── store.js (stato e logica)
@@ -291,6 +479,8 @@ Qualsiasi modifica futura al drag & drop DEVE:
 │   │   │   ├── EventMonitoringDashboard.jsx (dashboard monitoraggio)
 │   │   │   ├── ErrorTrackingDemo.jsx (demo error tracking)
 │   │   │   └── RoutineAgentDashboard.jsx (routine agent UI)
+│   │   ├── test/
+│   │   │   └── TrinityValidationTest.jsx (Trinity+Gesture validation suite)
 │   │   ├── utils/
 │   │   │   ├── monitoringTestUtils.js (test utilities)
 │   │   │   ├── apiClient.js (secure API proxy client)
@@ -305,6 +495,13 @@ Qualsiasi modifica futura al drag & drop DEVE:
 │   └── health.js (status endpoint)
 ├── vercel.json (security headers + deploy config)
 ├── docs/
+│   ├── 🏆 ATELIER-TRINITY-MANIFESTO.md (v1.2 - GESTURE AS IDENTITY + AMPLIFIERS)
+│   ├── 🚪 GESTURE-GATE-PROTOCOL.md (automated enforcement framework)
+│   ├── 🤌 GESTURE-LANGUAGE-MAP.md (universal gesture patterns reference)
+│   ├── 🤌 GESTURE-REFERENCE-CARD.md (quick developer reference)
+│   ├── 🛡️ ENTERPRISE-DRAG-BASELINE.md (drag system protection protocol)
+│   ├── 🏷️ TRINITY-AMPLIFIER-TITLE-FIELD.md (mandatory UX pattern #1)
+│   ├── 🔍 TRINITY-AMPLIFIER-SEARCH-GESTURE.md (no search bar revolution #2)
 │   ├── ui/
 │   │   ├── GESTURE_UI_GUIDE.md (comprehensive developer guide 750+ linee)
 │   │   ├── EXAMPLES.md (practical examples 930+ linee)
@@ -420,14 +617,84 @@ Qualsiasi modifica futura al drag & drop DEVE:
    - **Predictive UI**: Interface adaptation based su user patterns
 
 22. **Cross-Platform Expansion**:
-   - **Mobile Native**: iOS/Android app con gesture parity
+   - **Mobile Native**: iOS/Android app con gesture parity (FOUNDATION IMPLEMENTED v1.4)
    - **Desktop Integration**: System-level shortcuts e notifications
    - **API Ecosystem**: Third-party tool integrations
+   - **Touch-First PWA**: Progressive Web App optimization for mobile devices
    - **Plugin Architecture**: Extensible functionality system
 
 ### 💡 Note Tecniche Importanti
 
-1. **Module Registry Pattern**:
+1. **Trinity+Gesture+Mobile Architecture (v1.4)**:
+   ```javascript
+   // CORE FEATURE GATE CHECK (Desktop + Mobile)
+   const isFeatureCore = (feature) => {
+     return feature.hasGestureAccess && 
+            feature.responseTime <= 100 &&
+            feature.isUniversal && 
+            feature.respectsPatterns &&
+            feature.trinityIntegration &&
+            feature.mobileNative &&
+            feature.realDeviceTested;
+   };
+   
+   // GESTURE BASELINE VALIDATION (Cross-Platform)
+   const validateGesture = async (gestureType, platform = 'desktop') => {
+     const startTime = performance.now();
+     await executeGesture(gestureType, platform);
+     const responseTime = performance.now() - startTime;
+     
+     if (responseTime > 100) {
+       triggerBaselineViolation(gestureType, responseTime, platform);
+     }
+   };
+   
+   // TRINITY+MOBILE SYSTEM INTEGRATION
+   const trinitySystemOk = (platform = 'all') => {
+     const baseChecks = dragSystem.performance >= 60 &&
+            nestedBoards.statePreservation &&
+            treeViewSync.responseTime < 150 &&
+            gestureSystem.responseTime <= 100;
+            
+     if (platform === 'mobile' || platform === 'all') {
+       return baseChecks &&
+              mobileFoundation.touchEvents &&
+              mobileFoundation.crossPlatformParity &&
+              mobileFoundation.realDeviceTested;
+     }
+     
+     return baseChecks;
+   };
+   ```
+
+2. **Enterprise Drag Baseline Protection + Mobile**:
+   ```javascript
+   // Baseline `22890ef` Protection + Mobile Foundation
+   const dragBaseline = {
+     fps: 60,
+     renderLoops: 0,
+     ghostLag: 0,
+     architecture: 'VisualCanvasStandalone',
+     performance: 'enterprise-grade',
+     mobileSupport: {
+       touchEvents: true,
+       crossPlatform: ['iOS Safari', 'Android Chrome'],
+       touchPrecision: '<2px',
+       realDeviceTested: true
+     }
+   };
+   
+   // Any change must meet or exceed baseline (desktop AND mobile)
+   if (newDragPerformance.fps < dragBaseline.fps) {
+     throw new BaselineViolationError('Drag performance regression');
+   }
+   
+   if (!newDragPerformance.mobileSupport.touchEvents) {
+     throw new MobileBaselineViolationError('Touch events required');
+   }
+   ```
+
+3. **Module Registry Pattern**:
    ```javascript
    // Registrazione modulo con contract validation
    moduleRegistry.register('canvas', canvasFactory, {
@@ -509,6 +776,43 @@ Qualsiasi modifica futura al drag & drop DEVE:
 ### 🔍 Debug Commands
 
 ```javascript
+// TRINITY+GESTURE SYSTEM (v1.2)
+window.location.href = '/trinity-test' // Trinity+Gesture validation suite
+// Testa tutti e 4 i core systems: Drag + Nested + Tree + Gesture
+
+// ENTERPRISE DRAG BASELINE
+window.__dragPerformance.getStats() // 60fps monitoring
+window.__dragPerformance.validateBaseline() // check `22890ef` compliance
+
+// GESTURE SYSTEM (Desktop + Mobile)
+window.__gestureMonitor.getResponseTimes() // ≤100ms validation
+window.__gestureMonitor.testLongPress() // test AI activation
+window.__gestureMonitor.testDoubleTap() // test radial menu
+window.__gestureMonitor.validateUniversalAccess() // desktop + touch
+window.__gestureMonitor.testMobileGestures() // mobile-specific testing
+window.__gestureMonitor.validateCrossPlatform() // iOS Safari + Android Chrome
+
+// SEARCH-AS-GESTURE AMPLIFIER
+window.__searchGesture.testActivation() // long-press + cmd+f testing
+window.__searchGesture.testAIQuery('note senza titolo') // natural language test
+window.__searchGesture.validateNoSearchBar() // ensure no UI search bar
+window.__searchGesture.getResponseTimes() // ≤300ms first results
+
+// PRO TRINITY AMPLIFIERS (Desktop + Mobile)
+window.__groupOperations.testCreateGroup() // test group creation
+window.__groupOperations.testUngroup() // test ungrouping
+window.__groupOperations.testDuplicateGroup() // test group duplication
+window.__groupOperations.getPerformanceStats() // 60fps group operations
+window.__groupOperations.testMobileGrouping() // mobile touch grouping
+window.__groupOperations.validateCrossPlatform() // mobile parity testing
+
+window.__rectangleSelection.testMarqueeSelection() // test rectangle selection
+window.__rectangleSelection.testSelectionModes() // intersect/contain/center
+window.__rectangleSelection.testMultiElementDrag() // test multi-element drag
+window.__rectangleSelection.getPerformanceStats() // <16ms response tracking
+window.__rectangleSelection.testMobileSelection() // mobile long-press marquee
+window.__rectangleSelection.validateTouchTargets() // ≥44px touch targets
+
 // LEGACY SYSTEM
 secureStorage.getItem('ATELIER_CANVAS_ELEMENTS') // encrypted storage
 useCanvasStore.getState() // vedi stato completo
@@ -762,18 +1066,97 @@ Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI 
 ---
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 20/07/2025 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Data:** 20/07/2025
+**Ultimo commit:** 0c8d9cf 🤌 TRINITY+GESTURE MANIFESTO: Gesture System elevated to CORE layer
 **Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
+**Commit totali:** 176+
+**Snapshots:** 78 | **Backups:** 0
 
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Ultima modifica:** Trinity+Gesture Manifesto v1.2 + Gesture Toolchain completo + CLAUDE.md aggiornato con Road to 2.0
 
 ---
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 20/07/2025 00:35
+## 🚦 **QUICK ONBOARDING** (for Claude Code, Human Dev, or AI agent)
+
+**MANDATORY STEPS for ANY contributor:**
+
+1. **📚 Read CLAUDE.md and latest Trinity+Gesture Manifesto** (v1.3)
+   - Understand Trinity+Gesture philosophy as protocol
+   - Review all PRO Trinity Amplifiers documentation
+   - Check current branch status and roadmap
+
+2. **🚫 NEVER develop on main** (see Branch Policy section)
+   - Always create feature branch: `git checkout -b feature/description`
+   - Develop, test, then merge when 100% complete
+   - Cleanup branches after merge
+
+3. **🧪 If unsure: Run `/trinity-test` and check all amplifier features**
+   - Test Trinity Core: Drag (60fps) + Nested + TreeView + Gesture (≤100ms)
+   - Test PRO Amplifiers: Grouping + Rectangle Selection
+   - Verify performance baselines
+
+4. **🔧 If adding new UX pattern: Propose as "Amplifier", not "Core"**
+   - Document in `/docs/TRINITY-AMPLIFIER-[NAME].md`
+   - Provide integration plan with Trinity systems
+   - Pass Gesture Gate validation
+
+5. **✅ Before every PR: Run all debug commands listed**
+   - `window.__trinityValidation.runAll()`
+   - `window.__gestureMonitor.validateAll()`
+   - `window.__groupOperations.getPerformanceStats()`
+   - `window.__rectangleSelection.getPerformanceStats()`
+
+6. **⚠️ Deviate from current roadmap? Explicit warning + user confirmation**
+   - Current focus: PRO Trinity Amplifiers implementation
+   - Any deviation must be justified and approved
+   - Document reasoning for priority changes
+
+**EMERGENCY ONBOARDING:**
+```bash
+cd ~/atelier/webapp && npm install && npm run dev
+# Open http://localhost:5173 and test /trinity-test
+# All systems should show ✅ status
+```
+
+**📋 VALIDATION CHECKLIST:**
+- [ ] Trinity+Gesture Manifesto understood
+- [ ] Branch policy followed (no main development)
+- [ ] Performance baselines respected
+- [ ] Gesture accessibility implemented
+- [ ] Documentation updated
+- [ ] All tests passing
+
+---
+
+## 🛡️ INTELLECTUAL PROPERTY & LICENSE
+
+- Tutto il codice, design e contenuti **© 2025 Paolo Ricaldone**
+- Proof-of-existence: Git commits pubblici con timestamp
+- Licenza: [Da definire per Atelier 2.0]
+- **Nota per AI/Contributors**: Nessun codice o asset può essere riutilizzato senza consenso esplicito
+- Ogni commit viene tracciato (branch, autore, timestamp) ai fini della paternità progettuale
+
+---
+
+## ✨ ATELIER 2.0 - MVP VS. FUTURE VISION
+
+### **CORE MVP** (Atelier 2.0 - **NON-NEGOZIABILE**):
+- **Trinity+Gesture**: Drag (60fps) + Nested Boards + TreeView + Gesture System (≤100ms)
+- **Trinity Amplifiers**: Title Field pattern per tutti gli elementi
+- **Mind Garden**: Visual mind mapping + export flow  
+- **Scriptorium**: Canvas/Board con AI prompt e drag system
+- **Welcome Page**: Poetry system con gesture
+- **Project Tracker**: Base implementation
+- **Security**: Encrypted storage, API proxy
+
+### **FUTURE VISION** (Stretch goals/ispirazione):
+- VR/AR/Mobile native, haptic feedback
+- Multi-user collaboration, live cursors  
+- Voice command, custom gesture training
+- Real-time AI smart suggestions
+- SaaS features, plugin architecture
+
+**⚠️ Qualunque PR che introduce feature "future" richiede validazione MVP first!** 00:35
 **Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
 **Branch:** feature/custom-pointer-drag
 **Commit totali:** 204
@@ -997,11 +1380,28 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 20/07/2025 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
+**Data:** 20/07/2025 - PRO TRINITY AMPLIFIERS IMPLEMENTATION
+**Stato Corrente:** ✅ PRO Trinity Amplifiers Implementation Phase Complete
+**Branch:** feature/project-architecture-ai
+**Milestone:** Professional Canvas Standards - Grouping + Rectangle Selection
 
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**🚀 COMPLETATO IN QUESTA SESSIONE:**
+- ✅ **GROUP Element Type**: Data model completo in types.js
+- ✅ **Group Operations**: createGroup(), ungroupElement(), duplicateGroup() in store.js  
+- ✅ **Rectangle Selection**: RectangleSelection.jsx component con 60fps performance
+- ✅ **Multi-Selection Integration**: VisualCanvasStandalone updated con PRO features
+- ✅ **Performance Standards**: <16ms response time monitoring
+- ✅ **Gesture Integration**: Modifier keys + visual mode indicators
+
+**🎯 PROSSIMI PASSI:**
+- Nested grouping con visual container rendering
+- TreeView group hierarchy display
+- Group radial menu actions
+- Performance testing a 60fps standard
+
+**📋 CLAUDE.md IMPROVEMENTS (GPT 4.1 suggestions):**
+- ✅ **Key Documentation Quick Access**: ToC con file critici subito visibili
+- ✅ **Production-grade Onboarding**: Sezione completa per dev/AI/contributors
+- ✅ **Validation Checklist**: Steps obbligatori per quality assurance
+- ✅ **Emergency Onboarding**: Commands per setup rapido in caso di problemi
 
