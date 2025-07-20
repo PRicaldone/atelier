@@ -515,6 +515,8 @@ Two-finger pan         → Canvas Navigation (touch-only)
 │   │   │   │   ├── VisualCanvasStandaloneSync.jsx (TreeView sync wrapper)
 │   │   │   │   ├── store.js (stato + group operations)
 │   │   │   │   ├── types.js (tipi + GROUP element + groupHelpers)
+│   │   │   │   ├── biflow-types.js (🌱 BiFlow v2.0 - FMG/PMG/BMG types)
+│   │   │   │   ├── biflow-store.js (🌱 BiFlow operations + validation)
 │   │   │   │   └── components/
 │   │   │   │       ├── TreeViewSidebar.jsx (gerarchia)
 │   │   │   │       ├── PathBreadcrumb.jsx (navigazione)
@@ -566,7 +568,11 @@ Two-finger pan         → Canvas Navigation (touch-only)
 │   └── health.js (status endpoint)
 ├── vercel.json (security headers + deploy config)
 ├── docs/
-│   ├── 🏆 ATELIER-TRINITY-MANIFESTO.md (v1.2 - GESTURE AS IDENTITY + AMPLIFIERS)
+│   ├── 🏆 ATELIER-TRINITY-MANIFESTO.md (v1.6 - BiFlow v2.0 Complete Types)
+│   ├── 🌳 BIFLOW-COMPLETE-TYPES.md (v2.0 - FMG/PMG/BMG + FS/PS definitive spec)
+│   ├── 🌱 TRINITY-BIFLOW-FEATURE.md (Core BiFlow architecture)
+│   ├── 🌿 BIFLOW-GENERAL-GARDEN-EXCEPTION.md (FMG exception rules)
+│   ├── 🎯 ATELIER-CORE-FLOWS.md (Freestyle to Project philosophy)
 │   ├── 🚪 GESTURE-GATE-PROTOCOL.md (automated enforcement framework)
 │   ├── 🤌 GESTURE-LANGUAGE-MAP.md (universal gesture patterns reference)
 │   ├── 🤌 GESTURE-REFERENCE-CARD.md (quick developer reference)
@@ -1135,17 +1141,6 @@ npm run typecheck
 Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI i file di documentazione prima del commit finale.
 
 ---
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
-
-**Data:** 20/07/2025
-**Ultimo commit:** 0c8d9cf 🤌 TRINITY+GESTURE MANIFESTO: Gesture System elevated to CORE layer
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 176+
-**Snapshots:** 78 | **Backups:** 0
-
-**Ultima modifica:** Trinity+Gesture Manifesto v1.2 + Gesture Toolchain completo + CLAUDE.md aggiornato con Road to 2.0
-
----
 
 ## 🚦 **QUICK ONBOARDING** (for Claude Code, Human Dev, or AI agent)
 
@@ -1227,43 +1222,7 @@ cd ~/atelier/webapp && npm install && npm run dev
 - Real-time AI smart suggestions
 - SaaS features, plugin architecture
 
-**⚠️ Qualunque PR che introduce feature "future" richiede validazione MVP first!** 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
-
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
-
-**Data:** 20/07/2025 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
-
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
-
-**Data:** 20/07/2025 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
-
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
-
-**Data:** 20/07/2025 00:35
-**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
-**Branch:** feature/custom-pointer-drag
-**Commit totali:** 204
-**Snapshots:** 86 | **Backups:** 0
-
-**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**⚠️ Qualunque PR che introduce feature "future" richiede validazione MVP first!**
 
 ## 🚨 Roadmap Adherence System (CRITICAL)
 
@@ -1451,24 +1410,24 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 20/07/2025 - PRO TRINITY AMPLIFIERS IMPLEMENTATION
-**Stato Corrente:** ✅ PRO Trinity Amplifiers Implementation Phase Complete
-**Branch:** feature/project-architecture-ai
-**Milestone:** Professional Canvas Standards - Grouping + Rectangle Selection
+**Data:** 20/07/2025 - BIFLOW v2.0 COMPLETE TERMINOLOGY
+**Stato Corrente:** ✅ BiFlow v2.0 Documentation Complete with FMG/PMG/BMG + FS/PS
+**Branch:** feature/custom-pointer-drag
+**Milestone:** Complete BiFlow terminology alignment + Scriptorium home concept
 
 **🚀 COMPLETATO IN QUESTA SESSIONE:**
-- ✅ **GROUP Element Type**: Data model completo in types.js
-- ✅ **Group Operations**: createGroup(), ungroupElement(), duplicateGroup() in store.js  
-- ✅ **Rectangle Selection**: RectangleSelection.jsx component con 60fps performance
-- ✅ **Multi-Selection Integration**: VisualCanvasStandalone updated con PRO features
-- ✅ **Performance Standards**: <16ms response time monitoring
-- ✅ **Gesture Integration**: Modifier keys + visual mode indicators
+- ✅ **BIFLOW-COMPLETE-TYPES.md**: Definitive v2.0 specification created
+- ✅ **Mind Garden Types**: FMG (Freestyle), PMG (Project), BMG (Board) fully documented
+- ✅ **Scriptorium Types**: FS (Freestyle), PS (Project) workspace concept clarified
+- ✅ **Scriptorium Home**: Ogni FS/PS ha home locale per elementi promossi
+- ✅ **CLAUDE.md Updates**: Product-grade with philosophy manifesto + BiFlow diagram
+- ✅ **Trinity Manifesto**: Updated to v1.6 with BiFlow v2.0 complete types
 
 **🎯 PROSSIMI PASSI:**
-- Nested grouping con visual container rendering
-- TreeView group hierarchy display
-- Group radial menu actions
-- Performance testing a 60fps standard
+- Extend data model with new Mind Garden/Scriptorium types
+- Implement Scriptorium home concept in code
+- Add FMG/PMG/BMG type badges to UI
+- Update code comments with v2.0 terminology
 
 **📋 CLAUDE.md IMPROVEMENTS (GPT 4.1 suggestions):**
 - ✅ **Key Documentation Quick Access**: ToC con file critici subito visibili
