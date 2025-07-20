@@ -4,7 +4,7 @@
 
 **Status**: 🔒 **ACTIVE PROJECT NORTH STAR**  
 **Date**: 20 Luglio 2025  
-**Version**: 1.5 (+ Bidirectional Flow - Mind Garden ↔ Scriptorium Core System)  
+**Version**: 1.6 (+ BiFlow v2.0 - Complete FMG/PMG/BMG + FS/PS Types)  
 **Authority**: GPT 4.1 Strategic Analysis + Claude Implementation + User Strategic PRO Vision + Mobile-First Manifesto + BiFlow Architecture  
 
 ---
@@ -138,12 +138,13 @@
 **Validation**: Real device testing mandatory for all PRs
 **Protection Level**: 🛡️ **ABSOLUTE** - Mobile is primary, not secondary
 
-### **🌱 6. BIDIRECTIONAL FLOW** - "THE CREATIVE CYCLE"
-**Standard**: Every Board has a Mind Garden, every Mind Garden has a Board
-**1:1 Relationship**: Board ↔ Mind Garden pairing is mandatory
-**Promote Flow**: Ideas from garden → boards, boards can return to garden
-**Infinite Ramification**: Any garden can spawn sub-boards with their own gardens
-**Origin Tracking**: Visual badges show provenance (MG-generale, manual, AI, sub-board)
+### **🌱 6. BIDIRECTIONAL FLOW v2.0** - "THE CREATIVE CYCLE"
+**Mind Garden Types**: FMG (Freestyle), PMG (Project), BMG (Board) - complete ecosystem
+**Scriptorium Types**: FS (Freestyle workspace), PS (Project workspace) - not just boards
+**Core Relationships**: BMG⇄Board (sempre 1:1), FMG↔FS, PMG↔PS (collegabili)
+**Scriptorium Home**: Ogni FS/PS ha home locale dove arrivano elementi promossi
+**Promote Flows**: FMG→FS→PS, elementi sempre arrivano in home poi organizzabili
+**Origin Tracking**: Visual badges mostrano tipologia e provenienza
 **Protection Level**: 🛡️ **ABSOLUTE** - The cycle defines Atelier's identity  
 
 **Universal Access Contract**:
@@ -275,7 +276,7 @@ IF Trinity+Gesture+Mobile+BiFlow Performance <90% OR Major UX Issues:
 5. **"Is this gesture-accessible and touch-native?"** - Universal access test
 6. **"Can this be 'core' without native touch/gesture support?"** - Core Feature Gate test
 7. **"Does this work flawlessly on iPhone/Android?"** - Mobile-First test
-8. **"Does this respect the Board↔Garden bidirectional cycle?"** - BiFlow test
+8. **"Does this respect FMG↔FS, PMG↔PS, BMG⇄Board flows?"** - BiFlow v2.0 test
 
 ### **🚪 CORE FEATURE GATE PROTOCOL**
 **Ogni nuova feature candidata "core" DEVE:**

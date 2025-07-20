@@ -35,28 +35,37 @@ Non costruiamo solo tool, ma habitat dove il pensiero può propagarsi, cambiare 
 - `/docs/MOBILE-VALIDATION-CHECKLIST.md` - Mandatory PR validation requirements
 
 **🌱 BiFlow System:**
+- `/docs/BIFLOW-COMPLETE-TYPES.md` - **NEW v2.0** Complete FMG/PMG/BMG + FS/PS types
 - `/docs/TRINITY-BIFLOW-FEATURE.md` - Core BiFlow architecture and 1:1 relationship
-- `/docs/BIFLOW-GENERAL-GARDEN-EXCEPTION.md` - Critical exception documentation
+- `/docs/BIFLOW-GENERAL-GARDEN-EXCEPTION.md` - FMG exception documentation
 - `/docs/ATELIER-CORE-FLOWS.md` - Freestyle to Project philosophy
 - `/webapp/src/modules/scriptorium/biflow-types.js` - Complete data model implementation
 - `/webapp/src/modules/scriptorium/biflow-store.js` - Store operations and validation
 
 ### 🌳 **BIFLOW CORE FLOW DIAGRAM**
 ```
-   🌱 Mind Garden (Ramificazione)    ↔    🏛️ Scriptorium (Radicamento)
-        ↓                                       ↓
-   💭 Freestyle Ideas                      📋 Freestyle Boards
-   🎯 Project Gardens                      🚀 Project Boards
-        ↓                                       ↓
-   ┌─────────────────────────────────────────────────────────┐
-   │  🌟 SACRED 1:1 RELATIONSHIP (except General Garden)     │
-   │  Every Board MUST have Mind Garden                      │
-   │  Every Mind Garden MUST have Board                      │
-   │  ⚠️  EXCEPTION: General Mind Garden (id='general')      │
-   └─────────────────────────────────────────────────────────┘
-        ↓                                       ↓
-   🔄 Promotion Flow: Ideas → Boards → Sub-boards → Sub-gardens
-   ♻️  Mode Flow: Freestyle ↔ Project (reversible, zero data loss)
+                    🏠 WELCOME PAGE
+                          ↓
+    ┌──────────┬──────────┬──────────┬──────────┐
+    ↓          ↓          ↓          ↓          ↓
+💭 FMG    🎯 PMG    📋 FS     🚀 PS    🌿 BMG
+Freestyle  Project   Freestyle Project  Board
+Mind       Mind      Scriptorium Scriptorium Mind
+Garden     Garden    (workspace) (workspace) Garden
+
+                RELAZIONI E FLUSSI
+    ┌─────────────────────────────────────────────┐
+    │  FMG ↔ FS: Collegamenti e promozioni       │
+    │  PMG ↔ PS: Brainstorming → Execution       │
+    │  BMG ⇄ Board: SEMPRE 1:1 (mai orfani)      │
+    │  FS ⇄ PS: Solo cambio status/tag           │
+    │                                             │
+    │  ⚠️ SPECIAL: FMG può esistere senza board  │
+    │  ⚠️ CRITICAL: Ogni board ha SEMPRE un BMG  │
+    └─────────────────────────────────────────────┘
+        
+   📍 Destinazione promozioni: sempre HOME Scriptorium
+   🔄 Tutti i flussi sono bidirezionali e reversibili
 ```
 
 ### 🎯 **FREESTYLE vs PROJECT: Semantic-Only Difference**
@@ -80,16 +89,17 @@ Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/blueprint.md e ~/atelier/docs/cheat-sheet.md per i dettagli.
 
-LATEST: 20/07/2025 - BIFLOW SYSTEM COMPLETE
+LATEST: 20/07/2025 - BIFLOW v2.0 COMPLETE
 - Branch: feature/custom-pointer-drag 
-- Milestone: BiFlow Mind Garden ↔ Scriptorium with General Garden Exception
-- Status: Bidirectional Flow complete, Freestyle to Project Philosophy implemented
+- Milestone: Complete FMG/PMG/BMG + FS/PS terminology and flows
+- Status: Mind Garden types + Scriptorium home concept + Full bidirectional flows
+- Terminology: Freestyle Mind Garden (FMG), Project Mind Garden (PMG), Board Mind Garden (BMG)
 - Philosophy: "Every idea begins free and fearless. Structure comes when invited, never when forced."
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025 - BIFLOW SYSTEM COMPLETE)
+## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025 - BIFLOW v2.0 WITH COMPLETE TERMINOLOGY)
 
 ### ⚠️ **IMPORTANTE: ATELIER 1.x - ROAD TO 2.0 (PRE-FORK)**
 
@@ -356,13 +366,13 @@ Two-finger pan         → Canvas Navigation (touch-only)
 
 ### 🌱 **BIFLOW SYSTEM** (100% completo)
 
-11. **BiFlow Architecture** (100% completo)
-    - **CORE PRINCIPLE**: Sacred 1:1 Board ↔ Mind Garden relationship
-    - **GENERAL MIND GARDEN EXCEPTION**: Only `id: 'general'` allowed without board
-    - Bidirectional promotion flow: Mind Garden → Board creation
-    - Dedicated garden auto-creation for every board
-    - Origin tracking system (MG-generale, manual, AI, sub-board, duplicated)
-    - Performance optimization with lazy loading and caching
+11. **BiFlow Architecture v2.0** (100% completo)
+    - **Mind Garden Types**: FMG (Freestyle), PMG (Project), BMG (Board) - complete terminology
+    - **Scriptorium Types**: FS (Freestyle), PS (Project) - workspace structures not just boards
+    - **CORE RULES**: BMG sempre 1:1 con board, FMG può esistere senza board
+    - **Scriptorium Home**: Ogni FS/PS ha home locale dove arrivano elementi promossi
+    - **Bidirectional Flows**: FMG↔FS, PMG↔PS, BMG⇄Board, FS⇄PS tutti reversibili
+    - **Origin tracking**: Completo con nuove tipologie e promotion paths
 
 12. **Freestyle to Project Philosophy** (100% completo)
     - **CORE PRINCIPLE**: All creative spaces start as freestyle, promotion optional
@@ -380,21 +390,22 @@ Two-finger pan         → Canvas Navigation (touch-only)
     - Migration utilities for legacy boards without gardens
     - Parent-child hierarchy support for infinite nesting
 
-### ⚠️ **SPECIAL CASE: General Mind Garden Without Board**
+### ⚠️ **SPECIAL CASE: Freestyle Mind Garden (FMG) Without Board**
 
-**CRITICAL NOTE**: Il General Mind Garden (`id: 'general'`) è l'UNICO caso permesso di garden senza board associato.
+**CRITICAL NOTE**: I Freestyle Mind Garden (FMG) sono gli UNICI garden che possono esistere senza board associato.
 
 **Purpose**: 
-- **Root Creative Space**: Dove tutte le idee iniziano prima che esistano progetti
-- **Promotion Source**: Gli elementi promossi da qui creano nuovi board con garden dedicati
-- **Always Present**: Esiste dall'inizializzazione app, mai cancellabile
-- **Sacred Starting Point**: Default per utenti nuovi che non hanno ancora board
+- **Root Creative Space**: Brainstorming libero prima che esistano progetti o board
+- **Multiple FMG**: L'utente può avere quanti FMG vuole per pensiero parallelo
+- **Promotion Source**: Gli elementi promossi creano nuovi Freestyle Scriptorium (FS) con BMG dedicati
+- **Freedom First**: Nessun vincolo, struttura o commitment richiesto
 
 **Implementation Notes**:
-- `boardId: null` permesso SOLO per `id: 'general'`
-- Tutte le validazioni DEVONO escludere General Garden dai controlli orphan
-- Non può essere promosso a project mode (rimane sempre freestyle)
-- Auto-inizializzato se mancante durante app startup
+- `boardId: null` permesso per TUTTI i Freestyle Mind Garden (FMG)
+- Project Mind Garden (PMG) e Board Mind Garden (BMG) DEVONO avere boardId
+- FMG può essere collegato a uno o più Freestyle Scriptorium (FS)
+- FMG può essere promosso a PMG associando un progetto
+- Elementi promossi appaiono sempre nella HOME dello Scriptorium destinazione
 
 ### 🎨 **GESTURE UI SYSTEM** (100% completo)
 
