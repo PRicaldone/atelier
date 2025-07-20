@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '../store.js';
-import { ELEMENT_TYPES } from '../types.js';
+import { ELEMENT_TYPES, getDisplayTitle } from '../types.js';
 import { 
   ChevronRight, 
   ChevronDown, 
@@ -31,6 +31,7 @@ const TreeViewSidebar = () => {
     clearSelection,
     addElement,
     updateElement,
+    updateElementTitle,
     removeElement,
     enterBoard,
     navigateToBoard,
@@ -82,11 +83,9 @@ const TreeViewSidebar = () => {
     }
   };
 
-  // Get element title or fallback
+  // TRINITY AMPLIFIER: Use universal display title with smart fallbacks
   const getElementTitle = (element) => {
-    if (element.data?.title) return element.data.title;
-    if (element.data?.text) return element.data.text.substring(0, 20) + '...';
-    return `${element.type.charAt(0).toUpperCase() + element.type.slice(1)} ${element.id.substring(0, 4)}`;
+    return getDisplayTitle(element);
   };
 
   // Toggle node expansion
@@ -124,20 +123,16 @@ const TreeViewSidebar = () => {
     navigateToBoard(boardId);
   };
 
-  // Handle element editing
+  // TRINITY AMPLIFIER: Handle title editing
   const startEditing = (element) => {
     setEditingId(element.id);
-    setEditingTitle(getElementTitle(element));
+    setEditingTitle(element.title || ''); // Use universal title field
   };
 
   const finishEditing = () => {
-    if (editingId && editingTitle.trim()) {
-      updateElement(editingId, {
-        data: { 
-          ...elements.find(el => el.id === editingId)?.data,
-          title: editingTitle.trim()
-        }
-      });
+    if (editingId) {
+      // Use Trinity Amplifier title update method
+      updateElementTitle(editingId, editingTitle.trim());
     }
     setEditingId(null);
     setEditingTitle('');
@@ -242,14 +237,40 @@ const TreeViewSidebar = () => {
           {getElementIcon(element.type, element)}
           
           <div className="flex-1 min-w-0">
-            <span className="text-xs text-gray-800 dark:text-gray-200 truncate block">
-              {getElementTitle(element)}
-              {isCurrentLevel && <span className="ml-1 text-blue-600 dark:text-blue-400">(current)</span>}
-            </span>
+            {editingId === element.id ? (
+              <input
+                type="text"
+                value={editingTitle}
+                onChange={(e) => setEditingTitle(e.target.value)}
+                onBlur={finishEditing}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') finishEditing();
+                  if (e.key === 'Escape') cancelEditing();
+                }}
+                className="w-full text-xs bg-white dark:bg-gray-700 border border-indigo-300 dark:border-indigo-600 rounded px-1 py-0.5 text-gray-800 dark:text-gray-200"
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span className="text-xs text-gray-800 dark:text-gray-200 truncate block">
+                {getElementTitle(element)}
+                {isCurrentLevel && <span className="ml-1 text-blue-600 dark:text-blue-400">(current)</span>}
+              </span>
+            )}
           </div>
 
           {/* Actions */}
           <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                startEditing(element);
+              }}
+              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
+              title="Edit Title"
+            >
+              <Edit3 size={10} />
+            </button>
             {element.type === ELEMENT_TYPES.BOARD && (
               <button
                 onClick={(e) => {
@@ -389,9 +410,39 @@ const TreeViewSidebar = () => {
                       >
                         {getElementIcon(element.type, element)}
                         <div className="flex-1 min-w-0">
-                          <span className="text-xs text-gray-800 dark:text-gray-200 truncate block">
-                            {getElementTitle(element)}
-                          </span>
+                          {editingId === element.id ? (
+                            <input
+                              type="text"
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onBlur={finishEditing}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') finishEditing();
+                                if (e.key === 'Escape') cancelEditing();
+                              }}
+                              className="w-full text-xs bg-white dark:bg-gray-700 border border-indigo-300 dark:border-indigo-600 rounded px-1 py-0.5 text-gray-800 dark:text-gray-200"
+                              autoFocus
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-800 dark:text-gray-200 truncate block">
+                              {getElementTitle(element)}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Actions for current level elements */}
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEditing(element);
+                            }}
+                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
+                            title="Edit Title"
+                          >
+                            <Edit3 size={10} />
+                          </button>
                         </div>
                       </motion.div>
                     ))}

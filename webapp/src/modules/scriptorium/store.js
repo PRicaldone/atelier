@@ -4,7 +4,10 @@ import {
   createCanvasState, 
   createCanvasElement, 
   canvasHelpers,
-  STORAGE_KEYS 
+  groupHelpers,
+  getDisplayTitle,
+  STORAGE_KEYS,
+  ELEMENT_TYPES 
 } from './types.js';
 import { useProjectStore } from '../../store/projectStore.js';
 import secureStorage from '../../utils/secureStorage.js';
@@ -112,6 +115,22 @@ export const useCanvasStore = create(
         elements: state.elements.map(el => 
           el.id === elementId 
             ? { ...el, ...updates, updatedAt: Date.now() }
+            : el
+        )
+      }));
+      
+      // Save the updated elements to persistence
+      setTimeout(() => {
+        get().saveCurrentLevelToProject();
+      }, 100);
+    },
+
+    // TRINITY AMPLIFIER: Title Field Management
+    updateElementTitle: (elementId, newTitle) => {
+      set((state) => ({
+        elements: state.elements.map(el => 
+          el.id === elementId 
+            ? { ...el, title: newTitle || null, updatedAt: Date.now() } // null for empty
             : el
         )
       }));
@@ -384,6 +403,229 @@ export const useCanvasStore = create(
 
     getElementsByType: (type) => {
       return get().elements.filter(el => el.type === type);
+    },
+
+    // TRINITY AMPLIFIER: Get display title with smart fallbacks
+    getElementDisplayTitle: (elementId) => {
+      const element = get().getElementById(elementId);
+      return element ? getDisplayTitle(element) : null;
+    },
+
+    // 🚀 TRINITY AMPLIFIER: Group Operations
+    createGroup: (selectedIds, groupTitle = null) => {
+      const state = get();
+      
+      if (!selectedIds || selectedIds.length === 0) {
+        console.warn('createGroup: No elements selected');
+        return null;
+      }
+      
+      const selectedElements = state.elements.filter(el => selectedIds.includes(el.id));
+      if (selectedElements.length === 0) {
+        console.warn('createGroup: Selected elements not found');
+        return null;
+      }
+      
+      console.log('🔗 Creating group from', selectedElements.length, 'elements');
+      
+      // Use helper function to create group from selection
+      const groupElement = groupHelpers.createGroupFromSelection(selectedElements, groupTitle);
+      if (!groupElement) {
+        console.error('Failed to create group element');
+        return null;
+      }
+      
+      // Remove selected elements from canvas (they're now inside the group)
+      const remainingElements = state.elements.filter(el => !selectedIds.includes(el.id));
+      
+      // Add the group element
+      const newElements = [...remainingElements, groupElement];
+      
+      set((state) => ({
+        elements: newElements,
+        selectedIds: [groupElement.id]
+      }));
+      
+      // Save the updated elements
+      setTimeout(() => {
+        get().saveCurrentLevelToProject();
+      }, 100);
+      
+      console.log('✅ Group created:', groupElement.id);
+      return groupElement.id;
+    },
+
+    ungroupElement: (groupId) => {
+      const state = get();
+      const groupElement = state.elements.find(el => el.id === groupId);
+      
+      if (!groupElement || groupElement.type !== ELEMENT_TYPES.GROUP) {
+        console.warn('ungroupElement: Group not found or not a group');
+        return false;
+      }
+      
+      console.log('🔓 Ungrouping element:', groupId, 'with', groupElement.data.children.length, 'children');
+      
+      // Get child elements (they should be stored with relative positions)
+      const childrenIds = groupElement.data.children || [];
+      if (childrenIds.length === 0) {
+        console.log('Group has no children, just removing group container');
+        get().removeElement(groupId);
+        return true;
+      }
+      
+      // Find child elements in the current elements (they might be nested)
+      // For now, we'll assume children are stored as data, not as actual elements
+      // This means we need to create new elements from the group's data
+      const ungroupedElements = childrenIds.map(childId => {
+        // Find the child element in our current elements
+        const childElement = state.elements.find(el => el.id === childId);
+        if (childElement) {
+          // Convert relative positions back to absolute
+          return {
+            ...childElement,
+            position: {
+              x: childElement.position.x + groupElement.position.x,
+              y: childElement.position.y + groupElement.position.y
+            },
+            parentGroupId: undefined // Remove group reference
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      // Remove the group and add the ungrouped elements
+      const elementsWithoutGroup = state.elements.filter(el => el.id !== groupId);
+      const newElements = [...elementsWithoutGroup, ...ungroupedElements];
+      
+      set((state) => ({
+        elements: newElements,
+        selectedIds: ungroupedElements.map(el => el.id)
+      }));
+      
+      // Save the updated elements
+      setTimeout(() => {
+        get().saveCurrentLevelToProject();
+      }, 100);
+      
+      console.log('✅ Group ungrouped, created', ungroupedElements.length, 'elements');
+      return true;
+    },
+
+    duplicateGroup: (groupId) => {
+      const state = get();
+      const groupElement = state.elements.find(el => el.id === groupId);
+      
+      if (!groupElement || groupElement.type !== ELEMENT_TYPES.GROUP) {
+        console.warn('duplicateGroup: Group not found or not a group');
+        return null;
+      }
+      
+      console.log('📋 Duplicating group:', groupId);
+      
+      // Create a new group element with offset position
+      const offset = 20;
+      const duplicatedGroup = createCanvasElement(ELEMENT_TYPES.GROUP, {
+        x: groupElement.position.x + offset,
+        y: groupElement.position.y + offset
+      });
+      
+      // Copy all group properties
+      duplicatedGroup.size = { ...groupElement.size };
+      duplicatedGroup.title = groupElement.title ? `${groupElement.title} Copy` : null;
+      duplicatedGroup.data = {
+        ...groupElement.data,
+        title: groupElement.data.title ? `${groupElement.data.title} Copy` : 'Group Copy',
+        children: [] // Will be filled with duplicated children
+      };
+      
+      // Duplicate child elements if any
+      const childrenIds = groupElement.data.children || [];
+      if (childrenIds.length > 0) {
+        // For now, since children might not be actual elements in our store,
+        // we'll create placeholder children. In a full implementation,
+        // this would recursively duplicate all child elements.
+        const duplicatedChildrenIds = childrenIds.map(childId => {
+          // Generate new ID for duplicated child
+          return `${childId}_copy_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+        });
+        
+        duplicatedGroup.data.children = duplicatedChildrenIds;
+      }
+      
+      // Add the duplicated group to elements
+      set((state) => ({
+        elements: [...state.elements, duplicatedGroup],
+        selectedIds: [duplicatedGroup.id]
+      }));
+      
+      // Save the updated elements
+      setTimeout(() => {
+        get().saveCurrentLevelToProject();
+      }, 100);
+      
+      console.log('✅ Group duplicated:', duplicatedGroup.id);
+      return duplicatedGroup.id;
+    },
+
+    // 🚀 TRINITY AMPLIFIER: Group helper methods
+    getGroupChildren: (groupId) => {
+      const state = get();
+      const groupElement = state.elements.find(el => el.id === groupId);
+      
+      if (!groupElement || groupElement.type !== ELEMENT_TYPES.GROUP) {
+        return [];
+      }
+      
+      const childrenIds = groupElement.data.children || [];
+      return state.elements.filter(el => childrenIds.includes(el.id));
+    },
+
+    updateGroupChildren: (groupId, childrenIds) => {
+      const state = get();
+      const groupElement = state.elements.find(el => el.id === groupId);
+      
+      if (!groupElement || groupElement.type !== ELEMENT_TYPES.GROUP) {
+        console.warn('updateGroupChildren: Group not found');
+        return false;
+      }
+      
+      get().updateElement(groupId, {
+        data: {
+          ...groupElement.data,
+          children: childrenIds
+        }
+      });
+      
+      return true;
+    },
+
+    // Auto-resize group to fit children (if enabled)
+    autoResizeGroup: (groupId) => {
+      const state = get();
+      const groupElement = state.elements.find(el => el.id === groupId);
+      
+      if (!groupElement || groupElement.type !== ELEMENT_TYPES.GROUP) {
+        return false;
+      }
+      
+      if (!groupElement.data.autoResize) {
+        return false; // Auto-resize disabled for this group
+      }
+      
+      const children = get().getGroupChildren(groupId);
+      if (children.length === 0) {
+        return false;
+      }
+      
+      const resizedGroup = groupHelpers.autoResizeGroupToFitChildren(groupElement, children);
+      
+      get().updateElement(groupId, {
+        size: resizedGroup.size
+      });
+      
+      console.log('📏 Auto-resized group:', groupId, 'to', resizedGroup.size);
+      return true;
     },
 
     // Canvas operations

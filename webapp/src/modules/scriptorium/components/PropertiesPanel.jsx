@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '../store.js';
-import { ELEMENT_TYPES } from '../types.js';
+import { ELEMENT_TYPES, getDisplayTitle } from '../types.js';
+import { BIFLOW_ORIGINS } from '../biflow-types.js';
 import { 
   X, 
   Palette, 
@@ -13,14 +14,19 @@ import {
   Eye,
   EyeOff,
   RotateCw,
-  Folder
+  Folder,
+  Sprout,
+  TreePine,
+  GitBranch,
+  Sparkles
 } from 'lucide-react';
 
 export const PropertiesPanel = () => {
   const { 
     selectedIds, 
     getSelectedElements, 
-    updateElement, 
+    updateElement,
+    updateElementTitle,
     clearSelection,
     bringToFront,
     sendToBack
@@ -62,15 +68,18 @@ export const PropertiesPanel = () => {
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Title
+            Data Title (Legacy)
           </label>
           <input
             type="text"
             value={element.data.title || ''}
             onChange={(e) => handlePropertyChange('data.title', e.target.value)}
-            placeholder="Note title..."
+            placeholder="Note data title (legacy)..."
             className="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Legacy field. Use Element Title above for display purposes.
+          </p>
         </div>
         
         <div>
@@ -223,15 +232,18 @@ export const PropertiesPanel = () => {
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Title
+            Data Title (Legacy)
           </label>
           <input
             type="text"
             value={element.data.title || ''}
             onChange={(e) => handlePropertyChange('data.title', e.target.value)}
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded"
-            placeholder="Link title"
+            placeholder="Link data title (legacy)"
           />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Legacy field. Use Element Title above for display purposes.
+          </p>
         </div>
         
         <div>
@@ -359,15 +371,18 @@ export const PropertiesPanel = () => {
         <div className="space-y-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Title
+              Data Title (Legacy)
             </label>
             <input
               type="text"
               value={element.data.title || ''}
               onChange={(e) => handlePropertyChange('data.title', e.target.value)}
               className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded"
-              placeholder="Board title"
+              placeholder="Board data title (legacy)"
             />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Legacy field. Use Element Title above for display purposes.
+            </p>
           </div>
           
           <div>
@@ -425,6 +440,114 @@ export const PropertiesPanel = () => {
     );
   };
 
+  // 🌱 BIFLOW: Origin Badge Rendering
+  const renderOriginBadge = () => {
+    if (!element.origin) return null;
+    
+    const getOriginIcon = (origin) => {
+      switch (origin) {
+        case BIFLOW_ORIGINS.MIND_GARDEN_GENERAL:
+          return <Sprout size={12} />;
+        case BIFLOW_ORIGINS.SUB_BOARD:
+          return <GitBranch size={12} />;
+        case BIFLOW_ORIGINS.AI_GENERATED:
+          return <Sparkles size={12} />;
+        case BIFLOW_ORIGINS.DUPLICATED:
+          return <RotateCw size={12} />;
+        case BIFLOW_ORIGINS.MANUAL:
+        default:
+          return <TreePine size={12} />;
+      }
+    };
+    
+    const getOriginColor = (origin) => {
+      switch (origin) {
+        case BIFLOW_ORIGINS.MIND_GARDEN_GENERAL:
+          return 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400';
+        case BIFLOW_ORIGINS.SUB_BOARD:
+          return 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400';
+        case BIFLOW_ORIGINS.AI_GENERATED:
+          return 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400';
+        case BIFLOW_ORIGINS.DUPLICATED:
+          return 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400';
+        case BIFLOW_ORIGINS.MANUAL:
+        default:
+          return 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300';
+      }
+    };
+    
+    const getOriginLabel = (origin) => {
+      switch (origin) {
+        case BIFLOW_ORIGINS.MIND_GARDEN_GENERAL:
+          return 'Mind Garden';
+        case BIFLOW_ORIGINS.SUB_BOARD:
+          return 'Sub Board';
+        case BIFLOW_ORIGINS.AI_GENERATED:
+          return 'AI Generated';
+        case BIFLOW_ORIGINS.DUPLICATED:
+          return 'Duplicated';
+        case BIFLOW_ORIGINS.MANUAL:
+        default:
+          return 'Manual';
+      }
+    };
+    
+    return (
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+          <GitBranch size={16} className="mr-2" />
+          Origin Tracking
+        </h4>
+        
+        <div className="flex items-center space-x-2">
+          <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getOriginColor(element.origin)}`}>
+            {getOriginIcon(element.origin)}
+            <span>{getOriginLabel(element.origin)}</span>
+          </span>
+          
+          {element.biflowMetadata?.generation > 0 && (
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              Gen {element.biflowMetadata.generation}
+            </span>
+          )}
+        </div>
+        
+        {element.biflowMetadata?.autoGeneratedTitle && (
+          <div>
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+              Auto Title
+            </label>
+            <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+              "{element.biflowMetadata.autoGeneratedTitle}"
+            </p>
+          </div>
+        )}
+        
+        {element.mindGardenId && (
+          <div>
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+              Mind Garden
+            </label>
+            <div className="flex items-center space-x-2">
+              <code className="text-xs bg-gray-100 dark:bg-gray-600 px-1 py-0.5 rounded font-mono">
+                {element.mindGardenId.split('_').pop()}
+              </code>
+              <button 
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                onClick={() => {
+                  // TODO: Navigate to Mind Garden
+                  console.log('🌱 Navigate to garden:', element.mindGardenId);
+                }}
+              >
+                Visit Garden
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderElementSpecificProperties = () => {
     switch (element.type) {
       case ELEMENT_TYPES.BOARD:
@@ -478,6 +601,27 @@ export const PropertiesPanel = () => {
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-6">
+            {/* TRINITY AMPLIFIER: Universal Title Field */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Element Title</h4>
+              
+              <div>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={element.title || ''}
+                  onChange={(e) => updateElementTitle(element.id, e.target.value)}
+                  placeholder={`${getDisplayTitle(element)} (auto-generated)`}
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Custom title overrides auto-generated title in TreeView, Breadcrumbs, and Search
+                </p>
+              </div>
+            </div>
+
             {/* General Properties (not for boards) */}
             {element.type !== ELEMENT_TYPES.BOARD && (
               <div className="space-y-4">
@@ -556,6 +700,9 @@ export const PropertiesPanel = () => {
 
             {/* Element Specific Properties */}
             {renderElementSpecificProperties()}
+
+            {/* 🌱 BIFLOW: Origin Tracking (for boards and BiFlow elements) */}
+            {(element.type === ELEMENT_TYPES.BOARD || element.origin) && renderOriginBadge()}
 
             {/* Actions */}
             <div className="space-y-4">

@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import RectangleSelection from './components/RectangleSelection.jsx';
 
 const VisualCanvasStandalone = ({ 
   onCreateElement = null,
@@ -19,6 +20,10 @@ const VisualCanvasStandalone = ({
     draggedElement: null,
     offset: { x: 0, y: 0 }
   });
+  
+  // 🚀 TRINITY AMPLIFIER: Rectangle Selection State
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectionMode, setSelectionMode] = useState(false);
 
   // Create element function - with sync support
   const createTestElement = useCallback((type) => {
@@ -76,9 +81,41 @@ const VisualCanvasStandalone = ({
     return newElement;
   }, [onCreateElement, onElementsChange]);
 
-  // Drag handlers - exactly like standalone
+  // 🚀 TRINITY AMPLIFIER: Selection handlers
+  const handleSelectionChange = useCallback((newSelectedIds) => {
+    console.log('🔲 Selection changed:', newSelectedIds.length, 'elements');
+    setSelectedIds(newSelectedIds);
+  }, []);
+
+  const selectElement = useCallback((elementId, addToSelection = false) => {
+    setSelectedIds(prev => {
+      if (addToSelection) {
+        return prev.includes(elementId) 
+          ? prev.filter(id => id !== elementId)
+          : [...prev, elementId];
+      } else {
+        return [elementId];
+      }
+    });
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds([]);
+  }, []);
+
+  // Enhanced drag handlers with selection support
   const handleMouseDown = useCallback((e, element) => {
     console.log('🎯 Mouse down on element:', element.id);
+    
+    // Handle selection on click
+    if (e.ctrlKey || e.metaKey) {
+      // Multi-select mode
+      selectElement(element.id, true);
+      return;
+    } else if (!selectedIds.includes(element.id)) {
+      // Single select if not already selected
+      selectElement(element.id, false);
+    }
     
     const rect = e.currentTarget.getBoundingClientRect();
     const offset = {
@@ -94,7 +131,7 @@ const VisualCanvasStandalone = ({
 
     e.preventDefault();
     e.stopPropagation();
-  }, []);
+  }, [selectedIds, selectElement]);
 
   const handleMouseMove = useCallback((e) => {
     if (!dragState.isDragging || !dragState.draggedElement) return;
@@ -104,13 +141,30 @@ const VisualCanvasStandalone = ({
       y: e.clientY - dragState.offset.y
     };
 
-    // Update element position in real-time
+    // Calculate delta for multi-element dragging
+    const delta = {
+      x: newPosition.x - dragState.draggedElement.position.x,
+      y: newPosition.y - dragState.draggedElement.position.y
+    };
+
+    // Update element position in real-time - support multi-selection
     setElements(prev => {
-      const updated = prev.map(el => 
-        el.id === dragState.draggedElement.id 
-          ? { ...el, position: newPosition }
-          : el
-      );
+      const elementsToMove = selectedIds.length > 1 && selectedIds.includes(dragState.draggedElement.id) 
+        ? selectedIds 
+        : [dragState.draggedElement.id];
+
+      const updated = prev.map(el => {
+        if (elementsToMove.includes(el.id)) {
+          return {
+            ...el,
+            position: {
+              x: el.position.x + delta.x,
+              y: el.position.y + delta.y
+            }
+          };
+        }
+        return el;
+      });
       
       // Notify parent of position changes (for sync) - debounced for performance
       if (onElementsChange && dragState.isDragging) {
@@ -122,7 +176,16 @@ const VisualCanvasStandalone = ({
       
       return updated;
     });
-  }, [dragState]);
+
+    // Update dragged element position for next frame calculation
+    setDragState(prev => ({
+      ...prev,
+      draggedElement: {
+        ...prev.draggedElement,
+        position: newPosition
+      }
+    }));
+  }, [dragState, selectedIds, onElementsChange]);
 
   const handleMouseUp = useCallback(() => {
     console.log('🎯 Mouse up - drag complete');
@@ -256,6 +319,37 @@ const VisualCanvasStandalone = ({
           >
             Clear
           </button>
+          
+          {/* 🚀 TRINITY AMPLIFIER: Selection Controls */}
+          <div style={{ 
+            marginLeft: '16px', 
+            paddingLeft: '16px', 
+            borderLeft: '1px solid #e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span style={{ fontSize: '12px', color: '#6b7280' }}>
+              Selected: {selectedIds.length}
+            </span>
+            {selectedIds.length > 0 && (
+              <button
+                onClick={clearSelection}
+                style={{
+                  padding: '4px 8px',
+                  background: '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '10px',
+                  fontWeight: '500'
+                }}
+              >
+                Clear Selection
+              </button>
+            )}
+          </div>
         </div>
       </div>
       
@@ -274,42 +368,71 @@ const VisualCanvasStandalone = ({
       }}>
         <div>📊 Elements: {elements.length}</div>
         <div>🎯 Dragging: {dragState.isDragging ? 'YES' : 'NO'}</div>
-        <div>🔥 System: Enterprise Standalone</div>
+        <div>🔲 Selected: {selectedIds.length}</div>
+        <div>🔥 System: Enterprise + Rectangle Selection</div>
       </div>
       
       {/* Canvas */}
-      <div style={{
-        position: 'absolute',
-        top: '80px',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: 'radial-gradient(circle at 20px 20px, rgba(0,0,0,0.05) 1px, transparent 1px)',
-        backgroundSize: '40px 40px'
-      }}>
-        {elements.map(element => (
-          <div
-            key={element.id}
-            onMouseDown={(e) => handleMouseDown(e, element)}
-            style={{
-              position: 'absolute',
-              left: element.position.x,
-              top: element.position.y,
-              width: '200px',
-              height: '120px',
-              background: element.data.colors.bg,
-              border: `2px solid ${element.data.colors.border}`,
-              borderRadius: '8px',
-              padding: '12px',
-              cursor: dragState.isDragging && dragState.draggedElement?.id === element.id ? 'grabbing' : 'grab',
-              userSelect: 'none',
-              boxShadow: dragState.draggedElement?.id === element.id ? 
-                        '0 20px 40px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)',
-              transform: dragState.draggedElement?.id === element.id ? 'scale(1.05)' : 'scale(1)',
-              transition: dragState.isDragging ? 'none' : 'transform 0.2s ease, box-shadow 0.2s ease',
-              zIndex: dragState.draggedElement?.id === element.id ? 1000 : 1
-            }}
-          >
+      <div 
+        id="canvas-container"
+        style={{
+          position: 'absolute',
+          top: '80px',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: 'radial-gradient(circle at 20px 20px, rgba(0,0,0,0.05) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          overflow: 'hidden'
+        }}
+        onMouseDown={(e) => {
+          // Clear selection when clicking on empty canvas (unless Ctrl/Cmd held)
+          if (e.target.id === 'canvas-container' && !e.ctrlKey && !e.metaKey) {
+            clearSelection();
+          }
+        }}
+      >
+        {/* 🚀 TRINITY AMPLIFIER: Rectangle Selection */}
+        <RectangleSelection 
+          onSelectionChange={handleSelectionChange}
+          disabled={dragState.isDragging}
+          elements={elements}
+          selectedIds={selectedIds}
+          viewport={{ x: 0, y: 0, zoom: 1 }}
+        />
+        
+        {elements.map(element => {
+          const isSelected = selectedIds.includes(element.id);
+          const isDragged = dragState.draggedElement?.id === element.id;
+          
+          return (
+            <div
+              key={element.id}
+              data-element-id={element.id}
+              onMouseDown={(e) => handleMouseDown(e, element)}
+              className={isSelected && !isDragged ? 'element-selected-multi' : ''}
+              style={{
+                position: 'absolute',
+                left: element.position.x,
+                top: element.position.y,
+                width: '200px',
+                height: '120px',
+                background: element.data.colors.bg,
+                border: `2px solid ${isSelected ? '#10b981' : element.data.colors.border}`,
+                borderRadius: '8px',
+                padding: '12px',
+                cursor: isDragged ? 'grabbing' : 'grab',
+                userSelect: 'none',
+                boxShadow: isDragged ? 
+                          '0 20px 40px rgba(0,0,0,0.3)' : 
+                          isSelected ? 
+                          '0 0 0 2px #10b981, 0 0 12px rgba(16, 185, 129, 0.4)' :
+                          '0 4px 12px rgba(0,0,0,0.1)',
+                transform: isDragged ? 'scale(1.05)' : 'scale(1)',
+                transition: dragState.isDragging ? 'none' : 'transform 0.2s ease, box-shadow 0.2s ease',
+                zIndex: isDragged ? 1000 : isSelected ? 200 : 1
+              }}
+            >
             <div style={{ 
               fontSize: '14px', 
               fontWeight: 'bold', 
@@ -350,20 +473,31 @@ const VisualCanvasStandalone = ({
         border: '1px solid #e5e7eb',
         borderRadius: '8px',
         padding: '12px',
-        maxWidth: '300px',
+        maxWidth: '320px',
         fontSize: '12px',
         zIndex: 100,
         backdropFilter: 'blur(8px)'
       }}>
         <h3 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#111827' }}>
-          🚀 Enterprise Canvas
+          🚀 Enterprise Canvas + Rectangle Selection
         </h3>
-        <ul style={{ margin: 0, paddingLeft: '16px', color: '#6b7280' }}>
-          <li>Figma-style 60fps drag system</li>
-          <li>Zero interference from Atelier</li>
-          <li>Enterprise-grade performance</li>
-          <li>Production ready architecture</li>
+        <ul style={{ margin: 0, paddingLeft: '16px', color: '#6b7280', lineHeight: '1.4' }}>
+          <li><strong>Drag:</strong> 60fps multi-element dragging</li>
+          <li><strong>Select:</strong> Click element (Ctrl/Cmd for multi)</li>
+          <li><strong>Rectangle:</strong> Drag on empty area</li>
+          <li><strong>Modes:</strong> Shift=Contain, Alt=Center</li>
+          <li><strong>Performance:</strong> Professional grade</li>
         </ul>
+        <div style={{ 
+          marginTop: '8px', 
+          padding: '4px 8px', 
+          background: '#f3f4f6', 
+          borderRadius: '4px',
+          fontSize: '10px',
+          color: '#6b7280'
+        }}>
+          🎯 TRINITY AMPLIFIER: Rectangle Multi-Selection
+        </div>
       </div>
     </div>
   );
