@@ -6,6 +6,13 @@
 **Authority**: BiFlow Architecture Complete  
 **Reference**: User Strategic Vision + Product-Grade Documentation  
 
+## ⚠️ **SINGLE SOURCE OF TRUTH**
+
+**IMPORTANTE**: Questo documento è la **SINGLE SOURCE OF TRUTH** per tutti i flussi Mind Garden/Scriptorium.
+- **Per Developer/AI**: Usare SEMPRE questo documento come riferimento definitivo
+- **Per Code Alignment**: Ogni implementazione DEVE seguire questa specifica
+- **Per Updates**: Qualsiasi modifica ai flussi DEVE essere prima aggiornata qui  
+
 ---
 
 ## 1️⃣ **TIPI DI MIND GARDEN**
@@ -86,6 +93,7 @@ Da Project Mind Garden (PMG) puoi:
 - **Promuovere idee/gruppi** → Project Scriptorium (PS)
 - **Creare nuove** board/note/link nel PS
 - **Arricchire** board esistenti nel PS
+- **🎯 IMPORTANTE**: Dal PMG puoi generare direttamente nuove board PS senza passare da FS
 
 **Destinazione**: Gli elementi promossi appaiono sempre nella **home dello Scriptorium (PS)** e sono organizzabili dall'utente (trascinamento verso sezioni/tree)
 
@@ -159,6 +167,8 @@ Ogni board (in FS o PS) ha relazione 1:1 con suo BMG:
     └──────────────────────────────────────────────┘
 ```
 
+**📊 Future Enhancement**: In futuro verrà aggiunto diagramma visuale Miro/Lucidchart per chi preferisce rappresentazioni grafiche
+
 ---
 
 ## 📱 **MOBILE-FIRST CONSIDERATIONS**
@@ -170,6 +180,16 @@ Long-press su FS → Menu: Promote to PS, Add boards, Archive
 Swipe between → Navigate FMG ↔ FS, PMG ↔ PS, BMG ⇄ Board
 Double-tap → Quick entry into any Mind Garden or Scriptorium
 ```
+
+### **Future Mobile Gestures Enhancement**
+```
+Multi-touch pinch → Zoom in/out di Mind Garden o Scriptorium canvas
+Three-finger swipe → Switch rapido tra FMG multipli
+Four-finger pinch → Overview di tutti gli spazi attivi
+Two-finger rotate → Riorganizzazione layout in Mind Garden
+Edge swipe → Quick access a Scriptorium home da qualsiasi board
+```
+**Note**: Esempi edge case multi-touch verranno espansi con user testing su device reali
 
 ---
 
@@ -197,6 +217,7 @@ Freestyle Mind Garden e Freestyle Scriptorium permettono di iniziare senza ansia
 
 ---
 
-*Document Version: 2.0*  
+*Document Version: 2.0.1*  
 *Last Updated: 20 July 2025*  
+*Updates: GPT 4.1 refinements - PMG→PS direct flow, single source of truth, future enhancements*  
 *Status: 🔒 **DEFINITIVE BIFLOW SPECIFICATION***
