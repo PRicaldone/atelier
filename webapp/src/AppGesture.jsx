@@ -55,6 +55,8 @@ import CustomDragTest from './pages/CustomDragTest';
 import SimpleDragTest from './pages/SimpleDragTest';
 import VisualCanvasCustom from './modules/scriptorium/VisualCanvasCustom';
 import VisualCanvasStandalone from './modules/scriptorium/VisualCanvasStandalone';
+import VisualCanvasStandaloneSync from './modules/scriptorium/VisualCanvasStandaloneSync';
+import TrinityValidationTest from './test/TrinityValidationTest';
 
 function AppGesture() {
   const [showProjectSelector, setShowProjectSelector] = useState(false);
@@ -138,11 +140,17 @@ function AppGesture() {
         <Route path="/simple-drag" element={<SimpleDragTest />} />
         <Route path="/drag-test" element={<CustomDragTest />} />
         
-        {/* ⚠️ SCRIPTORIUM - STANDALONE (NO GestureLayout) 
-            Using proven working drag system from StandaloneDragTest */}
-        <Route path="/scriptorium" element={<VisualCanvasStandalone />} />
-        <Route path="/atelier" element={<VisualCanvasStandalone />} />
-        <Route path="/canvas" element={<VisualCanvasStandalone />} />
+        {/* ⚠️ SCRIPTORIUM - STANDALONE WITH SYNC (NO GestureLayout) 
+            Enterprise drag system with TreeView synchronization */}
+        <Route path="/scriptorium" element={<VisualCanvasStandaloneSync />} />
+        <Route path="/atelier" element={<VisualCanvasStandaloneSync />} />
+        <Route path="/canvas" element={<VisualCanvasStandaloneSync />} />
+        
+        {/* 🧪 PURE STANDALONE (for baseline testing) */}
+        <Route path="/scriptorium-pure" element={<VisualCanvasStandalone />} />
+        
+        {/* 🎯 TRINITY VALIDATION TEST (NO GestureLayout) */}
+        <Route path="/trinity-test" element={<TrinityValidationTest />} />
         
         {/* Default route */}
         <Route path="/" element={<Navigate to="/scriptorium" replace />} />

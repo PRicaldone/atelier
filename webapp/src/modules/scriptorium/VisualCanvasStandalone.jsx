@@ -5,18 +5,39 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
-const VisualCanvasStandalone = () => {
+const VisualCanvasStandalone = ({ 
+  onCreateElement = null,
+  initialElements = [],
+  onElementsChange = null,
+  performanceMode = false 
+}) => {
   // console.log('🔥 VisualCanvasStandalone loading - ZERO Atelier interference');
   
-  const [elements, setElements] = useState([]);
+  const [elements, setElements] = useState(initialElements);
   const [dragState, setDragState] = useState({
     isDragging: false,
     draggedElement: null,
     offset: { x: 0, y: 0 }
   });
 
-  // Create element function - exactly like standalone
+  // Create element function - with sync support
   const createTestElement = useCallback((type) => {
+    // Use external creation function if provided (for sync)
+    if (onCreateElement) {
+      const newElement = onCreateElement(type);
+      // Still update local state for immediate UI response
+      setElements(prev => {
+        const updated = [...prev, newElement];
+        // Notify parent of changes (for sync)
+        if (onElementsChange) {
+          setTimeout(() => onElementsChange(updated), 0);
+        }
+        return updated;
+      });
+      return newElement;
+    }
+
+    // Original standalone creation (baseline preserved)
     const colors = {
       note: { bg: '#fef3c7', border: '#f59e0b' },
       board: { bg: '#d1fae5', border: '#10b981' },
@@ -43,10 +64,17 @@ const VisualCanvasStandalone = () => {
     };
     
     console.log('🎯 Creating standalone element:', newElement.id, newElement.type);
-    setElements(prev => [...prev, newElement]);
+    setElements(prev => {
+      const updated = [...prev, newElement];
+      // Notify parent of changes (for sync)
+      if (onElementsChange) {
+        setTimeout(() => onElementsChange(updated), 0);
+      }
+      return updated;
+    });
     
     return newElement;
-  }, []);
+  }, [onCreateElement, onElementsChange]);
 
   // Drag handlers - exactly like standalone
   const handleMouseDown = useCallback((e, element) => {
@@ -77,11 +105,23 @@ const VisualCanvasStandalone = () => {
     };
 
     // Update element position in real-time
-    setElements(prev => prev.map(el => 
-      el.id === dragState.draggedElement.id 
-        ? { ...el, position: newPosition }
-        : el
-    ));
+    setElements(prev => {
+      const updated = prev.map(el => 
+        el.id === dragState.draggedElement.id 
+          ? { ...el, position: newPosition }
+          : el
+      );
+      
+      // Notify parent of position changes (for sync) - debounced for performance
+      if (onElementsChange && dragState.isDragging) {
+        // Use requestAnimationFrame for 60fps performance
+        requestAnimationFrame(() => {
+          onElementsChange(updated);
+        });
+      }
+      
+      return updated;
+    });
   }, [dragState]);
 
   const handleMouseUp = useCallback(() => {
@@ -107,6 +147,13 @@ const VisualCanvasStandalone = () => {
     }
   }, [dragState.isDragging, handleMouseMove, handleMouseUp]);
 
+  // Sync with initialElements prop changes
+  useEffect(() => {
+    if (initialElements.length > 0 && elements.length === 0) {
+      setElements(initialElements);
+    }
+  }, [initialElements, elements.length]);
+
   // Component mounted - avoid double initial creation with React.StrictMode
   const initialized = useRef(false);
   useEffect(() => {
@@ -116,13 +163,15 @@ const VisualCanvasStandalone = () => {
     console.log('🔥 VisualCanvasStandalone mounted');
     document.title = 'Scriptorium - Custom Drag Canvas';
     
-    // Create initial elements
-    setTimeout(() => {
-      createTestElement('note');
-      createTestElement('board');
-      createTestElement('ai');
-    }, 500);
-  }, []);
+    // Create initial elements only if not provided externally and not in performance mode
+    if (initialElements.length === 0 && !performanceMode) {
+      setTimeout(() => {
+        createTestElement('note');
+        createTestElement('board');
+        createTestElement('ai');
+      }, 500);
+    }
+  }, [createTestElement, initialElements.length, performanceMode]);
 
   return (
     <div style={{

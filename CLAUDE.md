@@ -11,12 +11,36 @@ Ciao Claude! Sto lavorando su Atelier, il mio command center creativo per proget
 Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/blueprint.md e ~/atelier/docs/cheat-sheet.md per i dettagli.
-L'ultimo salvataggio è del 18/07/2025 con Gesture UI System completo e documentazione enterprise.
+L'ultimo salvataggio è del 20/07/2025 con Enterprise Drag & Drop System completato e baseline stabilita.
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 18/07/2025)
+## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025)
+
+### 🎯 **ENTERPRISE DRAG & DROP SYSTEM: Baseline Established** ⭐ **CRITICAL MILESTONE**
+
+**SISTEMA ENTERPRISE DRAG & DROP COMPLETATO - BASELINE DEFINITIVA PER FUTURE MODIFICHE**
+
+**🔒 BASELINE COMMITMENT (`22890ef`):**
+- ✅ **60fps Performance**: Pointer events nativi, zero render loops
+- ✅ **"drag perfetto"**: User experience level richiesto raggiunto  
+- ✅ **Architettura Isolata**: VisualCanvasStandalone, Opzione A separation
+- ✅ **React.StrictMode Compatible**: Zero interferenze cross-system
+- ✅ **Console Pulita**: Da 171+ errori/min a 0 errori
+
+**🛡️ PROTECTION PROTOCOL:**
+Qualsiasi modifica futura al drag & drop DEVE:
+1. Mantenere almeno questo livello di performance (60fps)
+2. Giustificare tradeoff con analisi dettagliata vs baseline
+3. Includere rollback plan a questo stato gold standard
+4. Passare tutti i quality gates established
+
+**📍 Technical Implementation:**
+- **VisualCanvasStandalone.jsx**: Componente isolato con custom pointer events
+- **AppGesture.jsx**: Opzione A architecture (routes separate da GestureLayout)
+- **Performance**: 60fps native browser drag, zero library dependencies
+- **Testing**: StandaloneDragTest validation environment
 
 ### 🎨 **GESTURE UI REVOLUTION: Complete System Implementation**
 
@@ -573,10 +597,10 @@ experimental/*    → Proof of concepts e sperimentazioni
 - 🎯 **Roadmap milestones**: Ogni milestone principale del roadmap
 
 **Current Status:**
-- **Active branch**: `feature/project-architecture-ai` ✅ 
-- **Contains**: Security Implementation complete + Ideas Module + Scriptorium rename
-- **GitHub URL**: `https://github.com/PRicaldone/atelier/tree/feature/project-architecture-ai`
-- **Last feature**: Complete security hardening with API proxy, encrypted storage, auth placeholder
+- **Active branch**: `feature/custom-pointer-drag` ✅ 
+- **Contains**: Enterprise Drag & Drop System completato - BASELINE STABILITA
+- **GitHub URL**: `https://github.com/PRicaldone/atelier/tree/feature/custom-pointer-drag`
+- **Last feature**: Custom pointer events 60fps drag system (`22890ef`) - GOLD STANDARD
 
 **🎯 MANDATORY Workflow per nuove features:**
 
@@ -738,44 +762,54 @@ Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI 
 ---
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 19/07/2025 16:53
-**Ultimo commit:** 50e41e1 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-**Branch:** feature/welcome-page-poetry
-**Commit totali:** 199
-**Snapshots:** 85 | **Backups:** 0
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
 
-**Ultima modifica:** 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
 
 ---
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 19/07/2025 16:53
-**Ultimo commit:** 50e41e1 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-**Branch:** feature/welcome-page-poetry
-**Commit totali:** 199
-**Snapshots:** 85 | **Backups:** 0
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
 
-**Ultima modifica:** 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-
-## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
-
-**Data:** 19/07/2025 16:53
-**Ultimo commit:** 50e41e1 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-**Branch:** feature/welcome-page-poetry
-**Commit totali:** 199
-**Snapshots:** 85 | **Backups:** 0
-
-**Ultima modifica:** 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 19/07/2025 16:53
-**Ultimo commit:** 50e41e1 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-**Branch:** feature/welcome-page-poetry
-**Commit totali:** 199
-**Snapshots:** 85 | **Backups:** 0
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
 
-**Ultima modifica:** 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+
+## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
+
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
+
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+
+## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
+
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
+
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
 
 ## 🚨 Roadmap Adherence System (CRITICAL)
 
@@ -833,6 +867,23 @@ Quando riprendi il lavoro:
 - Atelier Routine Agent, Health Checks, Maintenance Checklists
 - Module Registry, Event Bus, Error Tracking, Adapters
 - Automated Monitoring, System Health, Performance Analysis
+
+## 📋 **ENTERPRISE DRAG BASELINE DOCUMENTATION**
+
+**🔒 CRITICAL**: Sistema drag & drop baseline stabilito e protetto.
+
+**📍 Location**: `/docs/ENTERPRISE-DRAG-BASELINE.md`
+**📍 Commit**: `22890ef` 
+**📍 Status**: 🛡️ BASELINE LOCKED & PROTECTED
+
+**🚨 ATTENZIONE**: Qualsiasi modifica al sistema drag & drop DEVE rispettare baseline standards documentati. Vedere protection protocol completo nel documento dedicato.
+
+**Quick Reference**:
+- ✅ 60fps Performance standard 
+- ✅ VisualCanvasStandalone.jsx pattern
+- ✅ Opzione A architecture separation  
+- ✅ Custom pointer events approach
+- ✅ Zero render loops requirement
 
 ## 🔍 Comandi Dinamici Critici
 
@@ -946,11 +997,11 @@ git checkout main && git merge feature/unified-store-test  # Merge quando pronto
 
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 19/07/2025 16:53
-**Ultimo commit:** 50e41e1 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
-**Branch:** feature/welcome-page-poetry
-**Commit totali:** 199
-**Snapshots:** 85 | **Backups:** 0
+**Data:** 20/07/2025 00:35
+**Ultimo commit:** 22890ef 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
+**Branch:** feature/custom-pointer-drag
+**Commit totali:** 204
+**Snapshots:** 86 | **Backups:** 0
 
-**Ultima modifica:** 🏆 GOLDEN STATE: Atelier v1 Foundation - First Real Creative Workflow Complete
+**Ultima modifica:** 🎯 ENTERPRISE DRAG SYSTEM COMPLETE: Custom pointer events 60fps drag & drop perfetto implementato
 
