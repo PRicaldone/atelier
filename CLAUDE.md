@@ -2,6 +2,16 @@
 
 > Questo file contiene informazioni specifiche per Claude AI per comprendere rapidamente il progetto Atelier quando si riprende il lavoro.
 
+## 🎨 **ATELIER PHILOSOPHY MANIFESTO**
+
+**Atelier nasce per dare spazio a chi cambia idea spesso.**  
+Ogni elemento, ogni flusso è pensato per la metamorfosi creativa, non per la rigidità.  
+L'atto gestuale è linguaggio. Il canvas è luogo di ramificazione e radicamento insieme.  
+**Mind Garden** germina idee, **Scriptorium** le radica in progetti.  
+Non costruiamo solo tool, ma habitat dove il pensiero può propagarsi, cambiare e tornare indietro.  
+**Nessun workflow è mai un vicolo cieco.** Ogni freestyle può diventare progetto con un click—zero attrito, zero lock-in.  
+*"In Atelier, every idea begins free and fearless. Structure comes when invited, never when forced."*
+
 ## 📋 **KEY DOCUMENTATION QUICK ACCESS**
 
 **🏆 Core Architecture:**
@@ -31,6 +41,35 @@
 - `/webapp/src/modules/scriptorium/biflow-types.js` - Complete data model implementation
 - `/webapp/src/modules/scriptorium/biflow-store.js` - Store operations and validation
 
+### 🌳 **BIFLOW CORE FLOW DIAGRAM**
+```
+   🌱 Mind Garden (Ramificazione)    ↔    🏛️ Scriptorium (Radicamento)
+        ↓                                       ↓
+   💭 Freestyle Ideas                      📋 Freestyle Boards
+   🎯 Project Gardens                      🚀 Project Boards
+        ↓                                       ↓
+   ┌─────────────────────────────────────────────────────────┐
+   │  🌟 SACRED 1:1 RELATIONSHIP (except General Garden)     │
+   │  Every Board MUST have Mind Garden                      │
+   │  Every Mind Garden MUST have Board                      │
+   │  ⚠️  EXCEPTION: General Mind Garden (id='general')      │
+   └─────────────────────────────────────────────────────────┘
+        ↓                                       ↓
+   🔄 Promotion Flow: Ideas → Boards → Sub-boards → Sub-gardens
+   ♻️  Mode Flow: Freestyle ↔ Project (reversible, zero data loss)
+```
+
+### 🎯 **FREESTYLE vs PROJECT: Semantic-Only Difference**
+
+**CRITICO**: La differenza tra "freestyle" e "project" è SOLO di percezione UX, non tecnica.
+- **Storage**: Identico - ogni spazio è memorizzato come "progetto" completo
+- **Features**: Identiche - canvas, gesture, AI, search, export sempre disponibili  
+- **Performance**: Identica - 60fps, caching, validazione sempre attivi
+- **Transition**: Un click - freestyle → project con zero attrito, zero lock-in
+- **Memory**: Permanente - tutti gli spazi (freestyle/project) sempre accessibili
+
+**Philosophy**: Eliminiamo l'ansia creativa del "naming" - ogni idea parte libera e cresce quando è pronta.
+
 ## 🎯 Quick Start Command
 
 Copia e incolla questo comando quando inizi una nuova chat:
@@ -40,12 +79,17 @@ Ciao Claude! Sto lavorando su Atelier, il mio command center creativo per proget
 Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/blueprint.md e ~/atelier/docs/cheat-sheet.md per i dettagli.
-L'ultimo salvataggio è del 20/07/2025 con Trinity+Gesture+Mobile Manifesto v1.4 - Mobile-First Foundation implementata con PRO Amplifiers completi.
+
+LATEST: 20/07/2025 - BIFLOW SYSTEM COMPLETE
+- Branch: feature/custom-pointer-drag 
+- Milestone: BiFlow Mind Garden ↔ Scriptorium with General Garden Exception
+- Status: Bidirectional Flow complete, Freestyle to Project Philosophy implemented
+- Philosophy: "Every idea begins free and fearless. Structure comes when invited, never when forced."
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
 
-## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025 - MOBILE-FIRST FOUNDATION)
+## 📊 Stato Progetto (Ultimo aggiornamento: 20/07/2025 - BIFLOW SYSTEM COMPLETE)
 
 ### ⚠️ **IMPORTANTE: ATELIER 1.x - ROAD TO 2.0 (PRE-FORK)**
 
@@ -335,6 +379,22 @@ Two-finger pan         → Canvas Navigation (touch-only)
     - Validation system with General Garden exception handling
     - Migration utilities for legacy boards without gardens
     - Parent-child hierarchy support for infinite nesting
+
+### ⚠️ **SPECIAL CASE: General Mind Garden Without Board**
+
+**CRITICAL NOTE**: Il General Mind Garden (`id: 'general'`) è l'UNICO caso permesso di garden senza board associato.
+
+**Purpose**: 
+- **Root Creative Space**: Dove tutte le idee iniziano prima che esistano progetti
+- **Promotion Source**: Gli elementi promossi da qui creano nuovi board con garden dedicati
+- **Always Present**: Esiste dall'inizializzazione app, mai cancellabile
+- **Sacred Starting Point**: Default per utenti nuovi che non hanno ancora board
+
+**Implementation Notes**:
+- `boardId: null` permesso SOLO per `id: 'general'`
+- Tutte le validazioni DEVONO escludere General Garden dai controlli orphan
+- Non può essere promosso a project mode (rimane sempre freestyle)
+- Auto-inizializzato se mancante durante app startup
 
 ### 🎨 **GESTURE UI SYSTEM** (100% completo)
 
