@@ -517,6 +517,7 @@ Two-finger pan         → Canvas Navigation (touch-only)
 │   │   │   │   ├── types.js (tipi + GROUP element + groupHelpers)
 │   │   │   │   ├── biflow-types.js (🌱 BiFlow v2.0 - FMG/PMG/BMG types)
 │   │   │   │   ├── biflow-store.js (🌱 BiFlow operations + validation)
+│   │   │   │   ├── README.md (🔒 BiFlow reference guide)
 │   │   │   │   └── components/
 │   │   │   │       ├── TreeViewSidebar.jsx (gerarchia)
 │   │   │   │       ├── PathBreadcrumb.jsx (navigazione)
@@ -525,7 +526,8 @@ Two-finger pan         → Canvas Navigation (touch-only)
 │   │   │   │       └── RectangleSelection.jsx (🚀 PRO marquee selection)
 │   │   │   ├── mind-garden/
 │   │   │   │   ├── MindGarden.jsx (componente principale)
-│   │   │   │   └── store.js (stato e logica)
+│   │   │   │   ├── store.js (stato e logica)
+│   │   │   │   └── README.md (🔒 BiFlow reference guide)
 │   │   │   ├── orchestra/
 │   │   │   │   └── Orchestra.jsx (componente principale)
 │   │   │   └── shared/
@@ -700,9 +702,17 @@ Two-finger pan         → Canvas Navigation (touch-only)
    - **Touch-First PWA**: Progressive Web App optimization for mobile devices
    - **Plugin Architecture**: Extensible functionality system
 
+### 🌱 **BiFlow Reference Guide**
+
+**Per OGNI dubbio su flussi Mind Garden/Scriptorium:**
+- 🔒 **Consulta SEMPRE**: [BIFLOW-COMPLETE-TYPES.md](/docs/BIFLOW-COMPLETE-TYPES.md) 
+- **Single Source of Truth** per tipologie FMG/PMG/BMG + FS/PS
+- **Flussi definitivi** con diagrammi e regole complete
+- **Version tracking** per future updates basate su user feedback
+
 ### 💡 Note Tecniche Importanti
 
-1. **Trinity+Gesture+Mobile Architecture (v1.4)**:
+1. **Trinity+Gesture+Mobile Architecture (v1.6)**:
    ```javascript
    // CORE FEATURE GATE CHECK (Desktop + Mobile)
    const isFeatureCore = (feature) => {
@@ -1146,10 +1156,11 @@ Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI 
 
 **MANDATORY STEPS for ANY contributor:**
 
-1. **📚 Read CLAUDE.md and latest Trinity+Gesture Manifesto** (v1.3)
+1. **📚 Read CLAUDE.md and latest Trinity+Gesture Manifesto** (v1.6)
    - Understand Trinity+Gesture philosophy as protocol
    - Review all PRO Trinity Amplifiers documentation
    - Check current branch status and roadmap
+   - **🔒 For ANY BiFlow/Mind Garden/Scriptorium questions**: See [BIFLOW-COMPLETE-TYPES.md](/docs/BIFLOW-COMPLETE-TYPES.md)
 
 2. **🚫 NEVER develop on main** (see Branch Policy section)
    - Always create feature branch: `git checkout -b feature/description`
