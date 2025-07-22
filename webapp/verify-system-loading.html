@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier System Verification</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🧠 Atelier System Verification</h1>
+    <p>This page tests if all Zero Cognitive Load systems are loaded and working correctly.</p>
+    
+    <div class="test-section">
+        <h2>🎯 Quick Tests</h2>
+        <button onclick="testZeroCognitiveLoadAudit()">Test Zero Cognitive Load Audit</button>
+        <button onclick="testModuleContracts()">Test Module Contracts</button>
+        <button onclick="testAllSystems()">Test All Systems</button>
+        <button onclick="runComplianceCheck()">Run Compliance Check</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        let resultCounter = 0;
+        
+        function addResult(type, message) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `[${++resultCounter}] ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            resultCounter = 0;
+            addResult('info', '🧹 Results cleared');
+        }
+        
+        async function testZeroCognitiveLoadAudit() {
+            addResult('info', '🧠 Testing Zero Cognitive Load Audit System...');
+            
+            if (!window.__zeroCognitiveLoadAudit) {
+                addResult('error', '❌ Zero Cognitive Load Audit system not found');
+                return;
+            }
+            
+            addResult('success', '✅ Zero Cognitive Load Audit system found');
+            
+            try {
+                const status = window.__zeroCognitiveLoadAudit.getComplianceStatus();
+                addResult('success', `✅ Status retrieved: ${status.complianceRate * 100}% compliant`);
+                addResult('info', `📊 ${status.compliantSystems} compliant, ${status.violations} violations`);
+                
+                if (status.summary) {
+                    addResult('info', `🔍 Violations: ${status.summary.high} high, ${status.summary.medium} medium, ${status.summary.low} low, ${status.summary.info} info`);
+                }
+                
+            } catch (error) {
+                addResult('error', `❌ Status check failed: ${error.message}`);
+            }
+            
+            // Test export functionality
+            try {
+                const exportData = window.__zeroCognitiveLoadAudit.exportAuditData();
+                addResult('success', `✅ Export successful: ${exportData.length} characters`);
+            } catch (error) {
+                addResult('error', `❌ Export failed: ${error.message}`);
+            }
+        }
+        
+        async function testModuleContracts() {
+            addResult('info', '🔧 Testing Module Contracts...');
+            
+            if (!window.__moduleRegistry) {
+                addResult('error', '❌ Module Registry not found');
+                return;
+            }
+            
+            addResult('success', '✅ Module Registry found');
+            
+            try {
+                const info = window.__moduleRegistry.getInfo();
+                addResult('success', `✅ Registry info: ${info.registeredModules.length} modules registered`);
+                
+                // Test each module
+                for (const moduleName of info.registeredModules) {
+                    try {
+                        const module = await window.__moduleRegistry.getModule(moduleName);
+                        if (module) {
+                            addResult('success', `✅ Module "${moduleName}" loaded successfully`);
+                            
+                            // Test basic contract methods if available
+                            const contractMethods = ['getElements', 'getSelectedIds', 'getCurrentBoardId'];
+                            const availableMethods = contractMethods.filter(method => typeof module[method] === 'function');
+                            
+                            if (availableMethods.length > 0) {
+                                addResult('info', `   📋 Contract methods available: ${availableMethods.join(', ')}`);
+                            }
+                            
+                        } else {
+                            addResult('warning', `⚠️ Module "${moduleName}" returned null`);
+                        }
+                    } catch (error) {
+                        addResult('error', `❌ Module "${moduleName}" failed to load: ${error.message}`);
+                    }
+                }
+                
+            } catch (error) {
+                addResult('error', `❌ Module Registry test failed: ${error.message}`);
+            }
+        }
+        
+        async function testAllSystems() {
+            addResult('info', '🚀 Testing All Systems...');
+            
+            const systems = [
+                { name: 'AI Feature Manager', key: '__aiFeatureManager', testMethod: 'getStatus' },
+                { name: 'WIP Protection', key: 'wipProtection', testMethod: 'getStats' },
+                { name: 'Health Check Integration', key: '__healthCheckIntegration', testMethod: 'isSystemHealthy' },
+                { name: 'Error Tracker', key: '__errorTracker', testMethod: 'getStats' },
+                { name: 'Secure Storage', key: '__secureStorage' },
+                { name: 'Module Registry', key: '__moduleRegistry', testMethod: 'getInfo' },
+                { name: 'Event Bus', key: '__eventBus', testMethod: 'getStats' },
+                { name: 'Claude Connectors Adapter', key: '__claudeConnectorsAdapter', testMethod: 'getOperationStats' }
+            ];
+            
+            let working = 0;
+            let total = systems.length;
+            
+            for (const system of systems) {
+                if (window[system.key]) {
+                    addResult('success', `✅ ${system.name} found`);
+                    working++;
+                    
+                    // Test specific functionality
+                    if (system.testMethod && typeof window[system.key][system.testMethod] === 'function') {
+                        try {
+                            const result = await window[system.key][system.testMethod]();
+                            addResult('info', `   📊 ${system.testMethod}() succeeded`);
+                        } catch (error) {
+                            addResult('warning', `   ⚠️ ${system.testMethod}() failed: ${error.message}`);
+                        }
+                    }
+                } else {
+                    addResult('error', `❌ ${system.name} not found`);
+                }
+            }
+            
+            const percentage = Math.round((working / total) * 100);
+            addResult('info', `📊 Systems Status: ${working}/${total} (${percentage}%) systems loaded`);
+            
+            if (percentage >= 80) {
+                addResult('success', '🎉 System health is good!');
+            } else if (percentage >= 60) {
+                addResult('warning', '⚠️ System health needs attention');
+            } else {
+                addResult('error', '🚨 System health is poor - investigation needed');
+            }
+        }
+        
+        async function runComplianceCheck() {
+            addResult('info', '🔍 Running Full Compliance Check...');
+            
+            if (!window.__zeroCognitiveLoadAudit) {
+                addResult('error', '❌ Cannot run compliance check - audit system not found');
+                return;
+            }
+            
+            try {
+                const result = await window.__zeroCognitiveLoadAudit.checkCompliance();
+                addResult('success', '✅ Compliance check completed');
+                
+                const report = window.__zeroCognitiveLoadAudit.getComplianceReport();
+                
+                // Show violations
+                if (report.violations.length > 0) {
+                    addResult('warning', `⚠️ Found ${report.violations.length} violations:`);
+                    report.violations.slice(0, 5).forEach(violation => {
+                        addResult('warning', `   • ${violation.system}: ${violation.reason}`);
+                    });
+                    
+                    if (report.violations.length > 5) {
+                        addResult('info', `   ... and ${report.violations.length - 5} more violations`);
+                    }
+                }
+                
+                // Show compliant systems
+                if (report.compliantSystems.length > 0) {
+                    addResult('success', `✅ ${report.compliantSystems.length} systems are compliant:`);
+                    report.compliantSystems.slice(0, 3).forEach(system => {
+                        addResult('success', `   • ${system.system}: ${system.reason}`);
+                    });
+                    
+                    if (report.compliantSystems.length > 3) {
+                        addResult('info', `   ... and ${report.compliantSystems.length - 3} more compliant systems`);
+                    }
+                }
+                
+                // Show recommendations
+                if (report.recommendations.length > 0) {
+                    addResult('info', `🔧 ${report.recommendations.length} recommendations:`);
+                    report.recommendations.slice(0, 3).forEach(rec => {
+                        addResult('info', `   • ${rec.system}: ${rec.action} (${rec.priority})`);
+                    });
+                }
+                
+                const complianceRate = Math.round(report.overview.complianceRate * 100);
+                if (complianceRate >= 80) {
+                    addResult('success', `🎉 Overall Compliance: ${complianceRate}% - Excellent!`);
+                } else if (complianceRate >= 60) {
+                    addResult('warning', `⚠️ Overall Compliance: ${complianceRate}% - Good but can improve`);
+                } else {
+                    addResult('error', `🚨 Overall Compliance: ${complianceRate}% - Needs significant improvement`);
+                }
+                
+            } catch (error) {
+                addResult('error', `❌ Compliance check failed: ${error.message}`);
+            }
+        }
+        
+        // Auto-run basic test on page load
+        window.onload = function() {
+            addResult('info', '🏁 System verification page loaded');
+            addResult('info', '🔗 Connected to: ' + window.location.href);
+            
+            // Test if we're connected to the right app
+            if (window.React && window.__zeroCognitiveLoadAudit) {
+                addResult('success', '✅ Connected to Atelier application');
+                addResult('info', '👆 Use the buttons above to run tests');
+            } else {
+                addResult('error', '❌ Not connected to Atelier application or systems not loaded');
+                addResult('info', '💡 Make sure you\'re running this from the Atelier development server');
+            }
+        };
+    </script>
+</body>
+</html>

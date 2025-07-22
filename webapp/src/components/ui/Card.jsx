@@ -7,7 +7,7 @@ const Card = ({
   padding = true,
   ...props 
 }) => {
-  const baseStyles = 'bg-white rounded-2xl border border-gray-200';
+  const baseStyles = 'bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700';
   const paddingStyles = padding ? 'p-6' : '';
   
   if (hover) {

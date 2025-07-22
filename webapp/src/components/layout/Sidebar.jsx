@@ -2,19 +2,26 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ChevronLeft, 
-  Grid3x3, 
-  Rocket, 
-  FolderOpen, 
-  Zap,
-  Menu
+  Rocket,
+  Menu,
+  Activity,
+  TestTube,
+  Bell,
+  Shield,
+  Brain,
+  BarChart3,
+  Lightbulb
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 const menuItems = [
-  { id: 'canvas', label: 'Visual Canvas', icon: Grid3x3, path: '/canvas' },
   { id: 'start', label: 'Project Start', icon: Rocket, path: '/start' },
-  { id: 'tracker', label: 'Project Tracker', icon: FolderOpen, path: '/tracker' },
-  { id: 'business', label: 'Business Mode', icon: Zap, path: '/business' },
+  { id: 'intelligence', label: 'Intelligence System', icon: Brain, path: '/intelligence' },
+  { id: 'analytics', label: 'Analytics Dashboard', icon: BarChart3, path: '/analytics' },
+  { id: 'monitoring', label: 'Event Monitor', icon: Activity, path: '/monitoring' },
+  { id: 'tests', label: 'Integration Tests', icon: TestTube, path: '/tests' },
+  { id: 'alerts', label: 'Alert Config', icon: Bell, path: '/alerts' },
+  { id: 'routine', label: 'Routine Agent', icon: Shield, path: '/routine' },
 ];
 
 const Sidebar = () => {

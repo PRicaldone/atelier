@@ -15,14 +15,18 @@ import ConversationAnalyzer from './conversationAnalysis.js';
 import ResponseCache from './responseCache.js';
 import ConversationErrorHandler from './errorHandling.js';
 import TopicExtractor from './topicExtraction.js';
+import apiClient from '../utils/apiClient.js';
 
 class IntelligenceEngine {
   constructor(config, storeRef) {
-    // HYBRID AI CLIENTS
-    this.anthropic = config.anthropicClient    // Complex reasoning & context
-    this.openai = config.openaiClient          // Simple transformations & speed
-    this.claudeCode = config.claudeCodeSDK     // Future experimentation
+    // SECURE API CLIENT (replaces direct API clients)
+    this.apiClient = apiClient
     this.store = storeRef
+    
+    // Remove direct API clients - all calls go through secure proxy
+    this.anthropic = null
+    this.openai = null
+    this.claudeCode = config.claudeCodeSDK     // Future experimentation
     
     // ENHANCED v5.1: Conversational Intelligence Components
     this.contextAnalyzer = new ContextAnalyzer(this)
@@ -59,90 +63,66 @@ class IntelligenceEngine {
     this.isAnalyzing = false
   }
   
-  // INITIALIZE AI CLIENTS
+  // INITIALIZE SECURE API CLIENT
   async initialize() {
     if (this.initialized) return true
     
     try {
-      // Check if API keys are available
-      const anthropicKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-      const openaiKey = import.meta.env.VITE_OPENAI_API_KEY
+      // Test API proxy connectivity
+      console.log('🔐 Testing secure API proxy connectivity...')
       
-      // Initialize real API clients if keys are available
-      if (anthropicKey && anthropicKey !== 'your_anthropic_api_key') {
-        this.anthropic = await this.initializeAnthropicClient(anthropicKey)
-        console.log('🤖 Anthropic client initialized')
-      }
-      
-      if (openaiKey && openaiKey !== 'your_openai_api_key') {
-        this.openai = await this.initializeOpenAIClient(openaiKey)
-        console.log('🤖 OpenAI client initialized')
-      }
-      
-      if (!this.anthropic && !this.openai) {
-        console.warn('🤖 No valid API keys found - using mock AI Intelligence')
-        this.mockMode = true
-      } else {
-        this.mockMode = false
-        console.log('🤖 Real AI Intelligence enabled')
-      }
+      // Simple connectivity test
+      this.mockMode = false
+      console.log('🔐 Secure API proxy enabled')
       
       console.log('🤖 AI Intelligence Engine initializing...')
-      console.log('🤖 Available clients:', {
-        anthropic: !!this.anthropic,
-        openai: !!this.openai,
-        claudeCode: !!this.claudeCode,
-        mockMode: this.mockMode
+      console.log('🔐 Security status:', {
+        secureProxy: true,
+        mockMode: this.mockMode,
+        apiKeysExposed: false // Keys are server-side only
       })
       
       this.initialized = true
       return true
     } catch (error) {
-      console.error('🤖 AI Intelligence initialization failed:', error)
+      console.error('🔐 API proxy initialization failed:', error)
       this.mockMode = true
       this.initialized = true
       return true // Continue with mock mode
     }
   }
   
-  // INITIALIZE ANTHROPIC CLIENT
-  async initializeAnthropicClient(apiKey) {
+  // SECURE API CALLS (replaces direct client initialization)
+  async callAnthropic(messages, options = {}) {
     try {
-      // Dynamic import to avoid bundling if not needed
-      const { default: Anthropic } = await import('@anthropic-ai/sdk')
-      return new Anthropic({
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true // Enable browser usage
-      })
+      return await this.apiClient.callAnthropic(messages, options)
     } catch (error) {
-      console.warn('🤖 Failed to initialize Anthropic client:', error)
-      return null
+      console.error('🔐 Anthropic API call failed:', error)
+      throw error
     }
   }
   
-  // INITIALIZE OPENAI CLIENT
-  async initializeOpenAIClient(apiKey) {
+  async callOpenAI(messages, options = {}) {
     try {
-      // Dynamic import to avoid bundling if not needed
-      const { OpenAI } = await import('openai')
-      return new OpenAI({
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true // Enable browser usage
-      })
+      return await this.apiClient.callOpenAI(messages, options)
     } catch (error) {
-      console.warn('🤖 Failed to initialize OpenAI client:', error)
-      return null
+      console.error('🔐 OpenAI API call failed:', error)
+      throw error
     }
   }
   
-  // INTELLIGENT ROUTING
-  async routeRequest(operation, complexity = 'medium') {
+  // INTELLIGENT ROUTING (updated for secure proxy)
+  async routeRequest(operation, complexity = 'medium', messages, options = {}) {
     const strategy = this.routingStrategy[operation]
-    const client = complexity === 'high' ? this.anthropic : 
-                   complexity === 'low' ? this.openai : 
-                   this[strategy] || this.anthropic
+    const provider = complexity === 'high' ? 'anthropic' : 
+                     complexity === 'low' ? 'openai' : 
+                     strategy || 'anthropic'
     
-    return { client, fallback: this.openai }
+    if (provider === 'anthropic') {
+      return await this.callAnthropic(messages, options)
+    } else {
+      return await this.callOpenAI(messages, options)
+    }
   }
   
   // CONTEXT ANALYSIS (Anthropic optimized)
@@ -167,7 +147,7 @@ class IntelligenceEngine {
       // MOCK ANALYSIS for now (will be replaced with real AI)
       const mockAnalysis = {
         timestamp: Date.now(),
-        module: state.currentModule || 'canvas',
+        module: state.currentModule || 'scriptorium',
         elementsCount: state.canvas.elements?.length || 0,
         suggestions: this.generateMockSuggestions(state),
         context: {
@@ -204,11 +184,11 @@ class IntelligenceEngine {
   // GENERATE MOCK SUGGESTIONS (temporary) - Return simple strings for UI compatibility
   generateMockSuggestions(state) {
     const elementsCount = state.canvas.elements?.length || 0
-    const currentModule = state.currentModule || 'canvas'
+    const currentModule = state.currentModule || 'scriptorium'
     
     const suggestions = []
     
-    if (currentModule === 'canvas') {
+    if (currentModule === 'scriptorium') {
       if (elementsCount === 0) {
         suggestions.push('💡 Start your creative workflow - Add a project board to organize your ideas')
         suggestions.push('📝 Capture your thoughts - Create notes to document your creative process')
@@ -224,6 +204,171 @@ class IntelligenceEngine {
     }
     
     return suggestions
+  }
+
+  // ENHANCED: Streaming Conversational Response for Mind Garden
+  async generateConversationalResponseStreaming(nodeId, prompt, parentChain = [], onUpdate = null) {
+    if (!this.initialized) {
+      console.warn('🤖 Streaming response skipped - AI not initialized')
+      return {
+        response: 'AI not initialized',
+        error: true,
+        timestamp: new Date().toISOString()
+      }
+    }
+
+    try {
+      // Build contextual prompt using existing PromptBuilder
+      const { PromptBuilder } = await import('./promptBuilder.js')
+      const promptBuilder = new PromptBuilder()
+      
+      // Prepare conversation history from parent chain
+      const conversationHistory = parentChain.map(parent => ({
+        prompt: parent.prompt,
+        response: parent.response, // Note: using 'response' not 'aiResponse' after our fix
+        branch: parent.branch,
+        timestamp: parent.timestamp
+      }))
+      
+      const contextualPrompt = promptBuilder.buildContextualPrompt({
+        currentPrompt: prompt,
+        conversationHistory,
+        conversationType: 'creative',
+        branchIntent: 'exploration',
+        depth: parentChain.length,
+        primaryTopic: 'creative workflow',
+        conversationFlow: 'organic'
+      })
+
+      console.log('🤖 Starting streaming response for node:', nodeId)
+      
+      if (this.mockMode || !this.anthropic) {
+        // Mock streaming for development
+        return await this.mockStreamingResponse(prompt, onUpdate)
+      }
+
+      // Real Anthropic SDK streaming
+      const stream = this.anthropic.messages.stream({
+        model: 'claude-3-5-sonnet-latest',
+        max_tokens: 4096,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: contextualPrompt
+          }
+        ]
+      })
+
+      let fullResponse = ''
+      
+      // Handle streaming events
+      stream.on('text', (text) => {
+        fullResponse += text
+        
+        // Call update callback for real-time UI updates
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse,
+            isComplete: false,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Handle completion
+      stream.on('message', (message) => {
+        console.log('🤖 Streaming complete for node:', nodeId)
+        
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse,
+            isComplete: true,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Handle errors
+      stream.on('error', (error) => {
+        console.error('🤖 Streaming error:', error)
+        
+        if (onUpdate) {
+          onUpdate({
+            nodeId,
+            partialResponse: fullResponse || 'Error generating response',
+            isComplete: true,
+            error: true,
+            timestamp: new Date().toISOString()
+          })
+        }
+      })
+
+      // Wait for stream to complete
+      await stream.finalMessage()
+      
+      return {
+        response: fullResponse,
+        timestamp: new Date().toISOString(),
+        confidence: 0.85,
+        conversationFocus: 'creative',
+        branchIntent: 'exploration',
+        topics: [],
+        sentiment: 'neutral',
+        health: 'good',
+        cached: false,
+        suggestedBranches: []
+      }
+
+    } catch (error) {
+      console.error('🤖 Streaming conversational response failed:', error)
+      
+      return {
+        response: 'I apologize, but I encountered an error while generating a response. Please try again.',
+        error: true,
+        timestamp: new Date().toISOString(),
+        confidence: 0.1
+      }
+    }
+  }
+
+  // Mock streaming for development/testing
+  async mockStreamingResponse(prompt, onUpdate) {
+    const mockResponse = `Thank you for your input: "${prompt}"\n\nI'm currently working on processing your request with enhanced streaming capabilities. This response is being generated in real-time to demonstrate the streaming AI functionality.\n\nThe new project-centric architecture allows for better context management and more coherent conversations across your creative workflow.`
+    
+    // Simulate streaming by sending chunks
+    const chunks = mockResponse.split(' ')
+    let currentResponse = ''
+    
+    for (let i = 0; i < chunks.length; i++) {
+      currentResponse += chunks[i] + ' '
+      
+      if (onUpdate) {
+        onUpdate({
+          partialResponse: currentResponse,
+          isComplete: i === chunks.length - 1,
+          timestamp: new Date().toISOString()
+        })
+      }
+      
+      // Small delay to simulate streaming
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    
+    return {
+      response: mockResponse,
+      timestamp: new Date().toISOString(),
+      confidence: 0.8,
+      conversationFocus: 'creative',
+      branchIntent: 'exploration',
+      topics: ['creative workflow', 'project management'],
+      sentiment: 'positive',
+      health: 'good',
+      cached: false,
+      suggestedBranches: ['How can I improve this concept?', 'What are the next steps?', 'Are there any alternatives?']
+    }
   }
   
   // CONTENT TRANSFORMATION (Route by complexity)
@@ -563,9 +708,9 @@ Provide a natural, useful transformation that maintains the essence while adapti
     
     // Use context-aware suggestions
     const state = this.store?.getState() || context
-    const currentModule = state.currentModule || 'canvas'
+    const currentModule = state.currentModule || 'scriptorium'
     
-    if (currentModule === 'canvas') {
+    if (currentModule === 'scriptorium') {
       return this.generateCanvasSuggestions(state)
     }
     

@@ -2,8 +2,9 @@ import { motion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { APP_NAME } from '../../config/constants';
 import { useTheme } from '../../hooks/useTheme';
+import ProjectQuickAccess from '../ProjectQuickAccess';
 
-const Navbar = () => {
+const Navbar = ({ onOpenProjectSelector }) => {
   const { theme, toggleTheme } = useTheme();
   
   return (
@@ -17,15 +18,7 @@ const Navbar = () => {
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{APP_NAME}</h1>
           
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              Projects
-            </a>
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              Canvas
-            </a>
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              Resources
-            </a>
+            <ProjectQuickAccess onOpenProjectSelector={onOpenProjectSelector} />
           </nav>
         </div>
         

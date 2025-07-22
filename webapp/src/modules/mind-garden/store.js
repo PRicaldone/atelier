@@ -1,3 +1,15 @@
+// 🚨 POLICY: Universal Content Awareness (UCA)
+// Ogni componente, modulo, o feature che consente drop, upload, incolla, creazione o promozione di file/elementi
+// DEVE implementare la Universal Content Awareness come descritto nella spec ufficiale (v.2.0.1) di BIFLOW-COMPLETE-TYPES.md e Amplifiers section.
+//
+// - Ogni nuovo elemento (file, media, link, doc, etc) DEVE essere riconosciuto e rappresentato secondo il suo tipo
+// - I metadata, preview, e info accessorie DEVONO essere preservati in tutti i flussi (drop, copia, promozione tra spazi, AI agent)
+// - L'AI assistant DEVE poter accedere a questi dati sia per answer contestuali che per automazioni generative
+// - Nessun modulo può degradare o ignorare l'Universal Content Awareness senza esplicito update della spec
+//
+// ❗In caso di dubbio, la versione più recente di BIFLOW-COMPLETE-TYPES.md + Amplifiers section HA SEMPRE PRECEDENZA su codice e chat!
+// ❗ Ogni PR o modifica sostanziale DEVE citare la compliance UCA nel testo del PR e testarne la funzionalità in tutti i moduli chiave.
+
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { 
@@ -7,6 +19,8 @@ import {
   BRANCH_TYPES,
   getNextState
 } from './types/conversationTypes';
+import { useProjectStore } from '../../store/projectStore.js';
+import secureStorage from '../../utils/secureStorage.js';
 
 // Initial demo data
 const initialNodes = [
@@ -473,41 +487,44 @@ export const useMindGardenStore = create(
           };
         });
 
-        // Add to canvas through Canvas Store using proper Canvas element creation
-        const { useCanvasStore } = await import('../visual-canvas/store');
-        const { createCanvasElement } = await import('../visual-canvas/types');
+        // Use the event bus for loose coupling
+        const { eventBus, ModuleEvents } = await import('../shared/events/EventBus');
         
-        // Create proper Canvas elements and merge with our data
-        const properCanvasElements = canvasElements.map(element => {
-          const baseElement = createCanvasElement(element.type, element.position);
-          const mergedElement = {
-            ...baseElement,
-            data: { ...baseElement.data, ...element.data }
-          };
-          console.log('🐛 Created canvas element:', JSON.stringify(mergedElement, null, 2));
-          return mergedElement;
+        // Emit export request event
+        eventBus.emit(ModuleEvents.MINDGARDEN_EXPORT_REQUESTED, {
+          nodeIds: nodeIds,
+          elements: canvasElements
         });
         
-        // Add elements to Canvas Store state (support adaptive sizing)
-        useCanvasStore.setState((state) => ({
-          ...state,
-          elements: [...state.elements, ...properCanvasElements],
-          selectedIds: properCanvasElements.map(el => el.id)
-        }));
+        // Wait for export completion
+        const exportCompleted = new Promise((resolve) => {
+          const unsubscribe = eventBus.on(ModuleEvents.MINDGARDEN_EXPORT_COMPLETED, (data) => {
+            if (data.nodeIds && data.nodeIds.length === nodeIds.length) {
+              unsubscribe();
+              resolve(data);
+            }
+          });
+          
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            unsubscribe();
+            resolve({ success: false, error: 'Export timeout' });
+          }, 5000);
+        });
         
-        // Force save to localStorage immediately
-        const canvasStore = useCanvasStore.getState();
-        console.log('🌱 EXPORT DEBUG: Canvas store before save:', canvasStore.elements.length, 'elements');
-        canvasStore.saveCurrentLevelToHierarchy();
-        console.log('🌱 EXPORT DEBUG: Canvas store after save');
+        const result = await exportCompleted;
         
-        // Also update Unified Store for coordination
-        useUnifiedStore.setState((state) => ({
-          lastActivity: new Date().toISOString(),
-          currentModule: 'canvas'
-        }));
-        
-        console.log('🌱 EXPORT DEBUG: Export completed successfully, added', properCanvasElements.length, 'elements to canvas');
+        if (result.success) {
+          console.log('🌱 EXPORT DEBUG: Export completed successfully via event bus');
+          
+          // Also update Unified Store for coordination
+          useUnifiedStore.setState((state) => ({
+            lastActivity: new Date().toISOString(),
+            currentModule: 'canvas'
+          }));
+        } else {
+          console.error('🌱 EXPORT DEBUG: Export failed:', result.error);
+        }
 
         // Record export history
         const exportRecord = {
@@ -534,8 +551,48 @@ export const useMindGardenStore = create(
       }
     },
 
+    // PROJECT-SCOPED PERSISTENCE
+    saveToProject: () => {
+      const { nodes, edges, viewport, currentPhase, exportHistory } = get();
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('🌱 No current project - cannot save MindGarden data');
+        return;
+      }
+      
+      try {
+        const mindGardenData = {
+          conversations: [], // Will be populated from nodes
+          nodes,
+          edges, 
+          viewport,
+          aiHistory: [], // Will be populated from nodes
+          contextCache: new Map(), // Will be populated from nodes
+          exportHistory
+        };
+        
+        // Update project workspace
+        projectStore.updateWorkspace('mindGarden', mindGardenData);
+        
+        console.log('🌱 ✅ MindGarden data saved to project successfully');
+        
+      } catch (error) {
+        console.error('🌱 ❌ Failed to save MindGarden to project:', error);
+      }
+    },
+
     // Persistence
     saveToLocalStorage: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (projectStore.currentProjectId) {
+        // Use project-scoped storage
+        get().saveToProject();
+        return;
+      }
+      
+      // Fallback to localStorage for backward compatibility
       const { nodes, edges, viewport, currentPhase, exportHistory } = get();
       const data = {
         nodes,
@@ -547,17 +604,58 @@ export const useMindGardenStore = create(
       };
       
       try {
-        localStorage.setItem('ATELIER_MIND_GARDEN', JSON.stringify(data));
+        secureStorage.setItem('ATELIER_MIND_GARDEN', data);
       } catch (error) {
         console.error('🌱 Failed to save to localStorage:', error);
       }
     },
 
-    loadFromLocalStorage: () => {
+    loadFromProject: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (!projectStore.currentProjectId) {
+        console.warn('🌱 No current project - cannot load MindGarden data');
+        return false;
+      }
+      
       try {
-        const saved = localStorage.getItem('ATELIER_MIND_GARDEN');
-        if (saved) {
-          const data = JSON.parse(saved);
+        const currentProject = projectStore.getCurrentProject();
+        if (!currentProject) {
+          console.error('🌱 Current project not found');
+          return false;
+        }
+        
+        const mindGardenWorkspace = currentProject.workspace.mindGarden;
+        
+        set({
+          nodes: mindGardenWorkspace.nodes || [],
+          edges: mindGardenWorkspace.edges || [],
+          viewport: mindGardenWorkspace.viewport || { x: 0, y: 0, zoom: 1 },
+          currentPhase: 'dump', // Default phase
+          exportHistory: mindGardenWorkspace.exportHistory || []
+        });
+        
+        console.log('🌱 Loaded Mind Garden from project successfully');
+        return true;
+        
+      } catch (error) {
+        console.error('🌱 Failed to load from project:', error);
+        return false;
+      }
+    },
+
+    loadFromLocalStorage: () => {
+      const projectStore = useProjectStore.getState();
+      
+      if (projectStore.currentProjectId) {
+        // Use project-scoped storage
+        return get().loadFromProject();
+      }
+      
+      // Fallback to localStorage for backward compatibility
+      try {
+        const data = secureStorage.getItem('ATELIER_MIND_GARDEN');
+        if (data) {
           set({
             nodes: data.nodes || initialNodes,
             edges: data.edges || initialEdges,
@@ -662,6 +760,152 @@ export const useMindGardenStore = create(
         exportHistory: []
       });
       get().saveToLocalStorage();
+    },
+
+    // Contract compliance methods for IMindGarden
+
+    // Node creation with IMindGarden contract
+    createNode: (nodeData) => {
+      const position = nodeData.position || { x: 100, y: 100 };
+      const data = {
+        title: nodeData.title || 'New Node',
+        content: nodeData.content || '',
+        type: nodeData.type || 'text',
+        phase: nodeData.phase || 'narrative',
+        createdAt: Date.now(),
+        lastModified: Date.now(),
+        ...nodeData
+      };
+      
+      const newNode = {
+        id: `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: 'card',
+        position,
+        data
+      };
+      
+      set((state) => ({
+        nodes: [...state.nodes, newNode]
+      }));
+      
+      get().saveToLocalStorage();
+      return newNode.id;
+    },
+
+    // Node deletion with IMindGarden contract
+    deleteNode: (nodeId) => {
+      set((state) => ({
+        nodes: state.nodes.filter(node => node.id !== nodeId),
+        edges: state.edges.filter(edge => 
+          edge.source !== nodeId && edge.target !== nodeId
+        )
+      }));
+      get().saveToLocalStorage();
+      return true;
+    },
+
+    // Edge creation with IMindGarden contract  
+    createEdge: (sourceId, targetId, edgeType = 'organic') => {
+      const newEdge = {
+        id: `edge_${sourceId}_${targetId}`,
+        source: sourceId,
+        target: targetId,
+        type: edgeType,
+        data: { strength: 'medium' }
+      };
+      
+      set((state) => ({
+        edges: [...state.edges, newEdge]
+      }));
+      
+      get().saveToLocalStorage();
+      return newEdge.id;
+    },
+
+    // Edge deletion with IMindGarden contract
+    deleteEdge: (edgeId) => {
+      set((state) => ({
+        edges: state.edges.filter(edge => edge.id !== edgeId)
+      }));
+      get().saveToLocalStorage();
+      return true;
+    },
+
+    // Selection management with IMindGarden contract
+    clearSelection: () => {
+      set((state) => ({
+        nodes: state.nodes.map(node => ({ ...node, selected: false }))
+      }));
+    },
+
+    getSelectedNodes: () => {
+      return get().nodes.filter(node => node.selected);
+    },
+
+    // Export functionality for single nodes
+    exportNode: (nodeId) => {
+      const nodes = get().nodes.filter(n => n.id === nodeId);
+      if (nodes.length === 0) return false;
+      return get().exportToCanvas([nodeId]);
+    },
+
+    exportSelectedNodes: () => {
+      const selectedNodes = get().getSelectedNodes();
+      if (selectedNodes.length === 0) return false;
+      return get().exportToCanvas(selectedNodes.map(n => n.id));
+    },
+
+    // Layout and view management
+    autoLayout: () => {
+      // Simple auto-layout: arrange nodes in a grid
+      const nodes = get().nodes;
+      const gridSize = Math.ceil(Math.sqrt(nodes.length));
+      const spacing = 200;
+      
+      const updatedNodes = nodes.map((node, index) => {
+        const row = Math.floor(index / gridSize);
+        const col = index % gridSize;
+        return {
+          ...node,
+          position: {
+            x: col * spacing + 100,
+            y: row * spacing + 100
+          }
+        };
+      });
+      
+      set({ nodes: updatedNodes });
+      get().saveToLocalStorage();
+      return true;
+    },
+
+    centerNode: (nodeId) => {
+      const node = get().nodes.find(n => n.id === nodeId);
+      if (!node) return false;
+      
+      // Center the viewport on this node
+      const screenCenterX = window.innerWidth / 2;
+      const screenCenterY = window.innerHeight / 2;
+      
+      const newViewport = {
+        x: screenCenterX - node.position.x,
+        y: screenCenterY - node.position.y,
+        zoom: 1
+      };
+      
+      set({ viewport: newViewport });
+      get().saveToLocalStorage();
+      return true;
+    },
+
+    fitView: () => {
+      const nodes = get().nodes;
+      if (nodes.length === 0) return false;
+      
+      const centeredViewport = get().getCenteredViewport(nodes);
+      set({ viewport: centeredViewport });
+      get().saveToLocalStorage();
+      return true;
     },
 
     // Helper methods for keyboard navigation

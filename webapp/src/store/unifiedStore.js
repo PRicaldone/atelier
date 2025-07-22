@@ -24,7 +24,7 @@ const createUnifiedState = () => ({
   theme: 'light',
   isSidebarCollapsed: false,
   
-  // Canvas State (from visual-canvas/store.js)
+  // Canvas State (from scriptorium/store.js)
   canvas: {
     elements: [],
     selectedIds: [],

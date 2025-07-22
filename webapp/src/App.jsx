@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Layout } from './components/layout'
 import { useUnifiedStore } from './store/unifiedStore'
+import { useProjectStore } from './store/projectStore'
+import ProjectSelector from './components/ProjectSelector'
+import MigrationManager from './components/MigrationManager'
 import { 
-  VisualCanvas, 
+  CreativeAtelier, 
   ProjectStart, 
   ProjectTracker, 
   BusinessSwitcher,
@@ -11,6 +14,32 @@ import {
   MindGarden
 } from './modules'
 import UnifiedStoreTestSimple from './modules/unified-store-test/UnifiedStoreTestSimple'
+import { initializeModules } from './modules/shared/moduleInit'
+import ModuleSystemDemo from './components/ModuleSystemDemo'
+import ErrorTrackingDemo from './components/ErrorTrackingDemo'
+import EventMonitoringDashboard from './components/EventMonitoringDashboard'
+import IntegrationTestDashboard from './components/IntegrationTestDashboard'
+import AlertingConfigurationUI from './components/AlertingConfigurationUI'
+import RoutineAgentDashboard from './components/RoutineAgentDashboard'
+import IntelligenceSystemDashboard from './components/IntelligenceSystemDashboard'
+import AnalyticsDashboard from './components/AnalyticsDashboard'
+import SecurityStatus from './components/SecurityStatus'
+import RecoveryTestDashboard from './components/RecoveryTestDashboard'
+import AlertNotifications from './components/AlertNotifications'
+import AlertManagementDashboard from './components/AlertManagementDashboard'
+import CryptoMigrationDashboard from './components/CryptoMigrationDashboard'
+import WIPProtectionIndicator from './components/WIPProtectionIndicator'
+import WIPProtectionDashboard from './components/WIPProtectionDashboard'
+import AuditLogsDashboard from './components/AuditLogsDashboard'
+import AITransparencyDashboard from './components/AITransparencyDashboard'
+import './modules/shared/analytics'  // Initialize analytics system
+import './utils/alertSystem'  // Initialize alert system
+import './utils/wipProtection'  // Initialize WIP protection
+import './utils/auditLogger'  // Initialize audit logging
+import './modules/shared/ai'  // Initialize AI system
+import './utils/aiFeatureManager'  // Initialize AI Feature Manager (auto-restoration)
+import './utils/zeroCognitiveLoadAudit'  // Initialize Zero Cognitive Load Audit System
+import { autoMigrateOnStartup } from './utils/migrationSecureStorage'
 
 // Navigation sync component - ROBUST version to prevent loops
 function NavigationSync() {
@@ -23,16 +52,20 @@ function NavigationSync() {
   
   // Route mapping
   const routeToModule = {
-    '/canvas': 'canvas',
+    '/scriptorium': 'scriptorium',
+    '/atelier': 'scriptorium', // Backward compatibility
+    '/canvas': 'scriptorium', // Backward compatibility
     '/unified-store': 'unified-store-test',
-    '/start': 'mind-garden',
+    '/start': 'project-start',
     '/mind-garden': 'mind-garden',
-    '/tracker': 'projects'
+    '/tracker': 'projects',
   };
   
   const moduleToRoute = {
-    'canvas': '/canvas',
+    'scriptorium': '/scriptorium',
+    'canvas': '/scriptorium', // Backward compatibility alias
     'unified-store-test': '/unified-store',
+    'project-start': '/start',
     'mind-garden': '/mind-garden',
     'projects': '/tracker'
   };
@@ -54,6 +87,15 @@ function NavigationSync() {
     const routeFromModule = moduleToRoute[currentModule];
     
     console.log('🔄 Mappings:', { moduleFromRoute, routeFromModule });
+    
+    // IMPORTANT: Allow certain routes to work independently without sync
+    const independentRoutes = ['/start', '/tracker', '/business'];
+    const isIndependentRoute = independentRoutes.includes(location.pathname);
+    
+    if (isIndependentRoute) {
+      console.log('🔄 Independent route - no sync needed:', location.pathname);
+      return;
+    }
     
     // Check if we need Store→Route sync first (button clicks)
     if (routeFromModule && location.pathname !== routeFromModule) {
@@ -77,19 +119,101 @@ function NavigationSync() {
 }
 
 function App() {
+  const [showProjectSelector, setShowProjectSelector] = useState(false);
+  const [modulesInitialized, setModulesInitialized] = useState(false);
+  const { initialized, currentProjectId, initialize, projects } = useProjectStore();
+  
+  // Initialize project store on app load
+  useEffect(() => {
+    if (!initialized) {
+      initialize();
+    }
+  }, [initialized, initialize]);
+  
+  // Initialize module system
+  useEffect(() => {
+    if (initialized && !modulesInitialized) {
+      // Auto-migrate to secure storage first
+      autoMigrateOnStartup();
+      
+      initializeModules().then(() => {
+        setModulesInitialized(true);
+        console.log('🎯 Module system initialized');
+      }).catch(error => {
+        console.error('🎯 Module system initialization failed:', error);
+      });
+    }
+  }, [initialized, modulesInitialized]);
+  
+  // Show project selector if no current project or if explicitly requested
+  useEffect(() => {
+    if (initialized && !currentProjectId) {
+      setShowProjectSelector(true);
+    }
+  }, [initialized, currentProjectId]);
+  
+  // Global keyboard shortcut for project selector
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + P to open project selector
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        setShowProjectSelector(true);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  
   return (
-    <Layout>
-      <NavigationSync />
-      <Routes>
-        <Route path="/" element={<Navigate to="/canvas" replace />} />
-        <Route path="/canvas" element={<VisualCanvas />} />
-        <Route path="/start" element={<ProjectStart />} />
-        <Route path="/mind-garden" element={<MindGarden />} />
-        <Route path="/tracker" element={<ProjectTracker />} />
-        <Route path="/business" element={<BusinessSwitcher />} />
-        <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
-      </Routes>
-    </Layout>
+    <MigrationManager>
+      <Layout onOpenProjectSelector={() => setShowProjectSelector(true)}>
+        <NavigationSync />
+        
+        {/* Project Selector Modal */}
+        <ProjectSelector
+          isOpen={showProjectSelector}
+          onClose={() => setShowProjectSelector(false)}
+        />
+        
+        {/* Main Routes */}
+        <Routes>
+          <Route path="/" element={<Navigate to="/scriptorium" replace />} />
+          <Route path="/scriptorium" element={<CreativeAtelier />} />
+          <Route path="/atelier" element={<CreativeAtelier />} />
+          <Route path="/canvas" element={<CreativeAtelier />} />
+          <Route path="/start" element={<ProjectStart />} />
+          <Route path="/mind-garden" element={<MindGarden />} />
+          <Route path="/tracker" element={<ProjectTracker />} />
+          <Route path="/business" element={<BusinessSwitcher />} />
+          <Route path="/unified-store" element={<UnifiedStoreTestSimple />} />
+          <Route path="/module-demo" element={<ModuleSystemDemo />} />
+          <Route path="/error-demo" element={<ErrorTrackingDemo />} />
+          <Route path="/monitoring" element={<EventMonitoringDashboard />} />
+          <Route path="/tests" element={<IntegrationTestDashboard />} />
+          <Route path="/alerts" element={<AlertingConfigurationUI />} />
+          <Route path="/routine" element={<RoutineAgentDashboard />} />
+          <Route path="/intelligence" element={<IntelligenceSystemDashboard />} />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/recovery" element={<RecoveryTestDashboard />} />
+          <Route path="/alerts-mgmt" element={<AlertManagementDashboard />} />
+          <Route path="/crypto-migration" element={<CryptoMigrationDashboard />} />
+          <Route path="/wip-protection" element={<WIPProtectionDashboard />} />
+          <Route path="/audit-logs" element={<AuditLogsDashboard />} />
+          <Route path="/ai-transparency" element={<AITransparencyDashboard />} />
+        </Routes>
+        
+        {/* Security Status (Development Only) */}
+        <SecurityStatus />
+        
+        {/* Alert Notifications System */}
+        <AlertNotifications />
+        
+        {/* WIP Protection Indicator */}
+        <WIPProtectionIndicator />
+      </Layout>
+    </MigrationManager>
   )
 }
 
