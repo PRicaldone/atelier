@@ -35,7 +35,7 @@ Ciao Claude! Sto lavorando su Atelier, il mio command center creativo per proget
 Il progetto è in ~/atelier/ con webapp React in ~/atelier/webapp/.
 Leggi ~/atelier/CLAUDE.md per il contesto completo e lo stato attuale del progetto.
 Poi leggi ~/atelier/docs/BIFLOW-COMPLETE-TYPES.md per il sistema BiFlow v2.0 (SINGLE SOURCE OF TRUTH).
-L'ultimo salvataggio è del 21/07/2025 con BiFlow v2.0 data model completato.
+L'ultimo salvataggio è del 22/07/2025 con complete module cleanup, contract compliance, automation systems.
 
 IMPORTANTE: Attiva il Context Monitor automatico - monitora la conversazione e avvisami proattivamente quando è il momento di fare atelier-save prima che il contesto si esaurisca.
 ```
@@ -862,13 +862,13 @@ Se l'utente chiede modifiche architetturali, DEVI ricordare di aggiornare TUTTI 
 ---
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
 
-**Data:** 22/07/2025 00:20
-**Ultimo commit:** 9f35951 📋 CLAUDE.MD UPDATED: AI Protocol added as Core Feature with mandatory compliance section, technical stack integration, and multi-agent coordination reference. Complete documentation sync for AI-native platform architecture [skip ci]
-**Branch:** feature/project-architecture-ai
-**Commit totali:** 219
+**Data:** 22/07/2025 16:19
+**Ultimo commit:** b8d2d2f 🧹 COMPLETE MODULE CLEANUP: Orchestra + Ideas removal, contract compliance, automation systems
+**Branch:** feature/cleanup-modules-contracts
+**Commit totali:** 135
 **Snapshots:** 95 | **Backups:** 0
 
-**Ultima modifica:** 📋 CLAUDE.MD UPDATED: AI Protocol added as Core Feature with mandatory compliance section, technical stack integration, and multi-agent coordination reference. Complete documentation sync for AI-native platform architecture [skip ci]
+**Ultima modifica:** 🧹 COMPLETE MODULE CLEANUP: Orchestra + Ideas removal, contract compliance, automation systems - Orchestra module completely removed (preserved OrchestratorAdapter), Ideas module removed, all module contracts 100% compliant, automation systems active (AI Feature Manager, Zero Cognitive Load Audit, WIP Protection)
 
 ---
 ## 🔄 ULTIMA SESSIONE (Auto-aggiornata)
